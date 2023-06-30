@@ -1,7 +1,7 @@
 <template>
   <div class="bg-primary window-height window-width row justify-center">
     <div class="col-9 fondoimg" >
-        <div class="absolute-bottom-right text-subtitle2">
+        <div class="absolute-bottom-left text-subtitle2">
           <img src="logo_sit.jpg" style="max-width: 180px;" />
         </div>
     </div>
