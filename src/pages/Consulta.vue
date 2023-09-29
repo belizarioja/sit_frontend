@@ -809,7 +809,7 @@ export default {
     },
     exportPDF () {
       const vm = this
-      this.crearbitacora(vm.dateFrom, vm.dateTo, 7)
+      const time1 = moment().valueOf()
       const columns = [
         { title: 'Emisor', dataKey: 'razonsocial' },
         { title: 'Rif', dataKey: 'rif' },
@@ -844,17 +844,21 @@ export default {
         margin: { top: 60 }
       })
       addFooters(doc)
-      doc.save('impredigitalRegistros.pdf')
+      doc.save('smartRegistros.pdf')
+      const time2 = moment().valueOf()
+      this.crearbitacora(vm.dateFrom, vm.dateTo, 7, time2 - time1)
     },
     exportXMLDetail (reg) {
       this.rowtempxml.push(this.detailXML(reg))
       this.exportXML(this.rowtempxml)
     },
     async openDetail (reg) {
-      //  console.log('openDetail')
-      if (this.co_rol === '3') {
-        window.open(ENDPOINT_PATH_V2 + 'archivos/' + reg.rif + reg.numerodocumento)
-      } else {
+      console.log('reg.fecha')
+      console.log(reg.fecha)
+      // if (this.co_rol === '3') {
+      const anniomes = moment(reg.fecha, 'DD/MM/YYYY HH:mm:ss a').format('YYYY') + '-' + moment(reg.fecha, 'DD/MM/YYYY HH:mm:ss a').format('MM')
+      window.open(ENDPOINT_PATH_V2 + 'archivos/' + reg.rif + '/' + anniomes + '/' + reg.rif + reg.numerodocumento)
+      /* } else {
         this.rowtempxml = []
         this.detallesDoc = []
         if (reg.cod) {
@@ -933,7 +937,7 @@ export default {
         this.registro.totalimpuestodetail = this.completarDecimales(this.registro.totalimpuestodetail)
         this.registro.subtotaldetail = this.completarDecimales(reg.subtotal)
         this.registro.totaldetail = this.completarDecimales(reg.total)
-      }
+      } */
     },
     searchCliente (val, update, abort) {
       if (val.length < 3) {
@@ -1027,8 +1031,6 @@ export default {
       console.log(this.modelcodes?.cod)
       this.idcodigocomercial = this.modelcodes?.cod
       this.codigocomercial = this.modelcodes?.namecode
-      console.log(this.idcodigocomercial)
-      console.log(this.codigocomercial)
       this.listarfacturas()
     },
     listartipos () {
@@ -1081,14 +1083,11 @@ export default {
           this.optionscodes.push(obj)
         }
         this.codes = this.optionscodes
-        console.log(this.optionscodes)
       }).catch(error => {
         Notify.create('Problemas al listar Codigos comerciales ' + error)
       })
     },
     buscarDetail (row) {
-      console.log(this.co_rol)
-      console.log(row)
       const body = {
         idserviciosmasivo: row.idserviciosmasivo,
         numerodocumento: row.relacionado
@@ -1153,7 +1152,8 @@ export default {
         Notify.create('Problemas al Buscar factura ' + error)
       })
     },
-    crearbitacora (desde, hasta, idevento) {
+    crearbitacora (desde, hasta, idevento, militime) {
+      const segundos = militime / 1000
       let observacion = ''
       let fechas = ' desde el ' + desde + ' hasta el ' + hasta
       const tipodoc = this.modeltipo.name ? ', ' + this.modeltipo.name : ''
@@ -1174,7 +1174,7 @@ export default {
         idusuario: this.idusuario,
         idevento: idevento,
         ip: this.term,
-        observacion: observacion,
+        observacion: observacion + ' - Duración ' + segundos + ' segs.',
         fecha: moment().format('YYYY-MM-DD HH:mm:ss')
       })
     },
@@ -1219,8 +1219,8 @@ export default {
         impuestoigtf: this.impuestoigtf,
         estatus: 1
       }
-      this.crearbitacora(desde, hasta, 3)
       this.loading = true
+      const time1 = moment().valueOf()
       axios.post(ENDPOINT_PATH_V2 + 'reporte/facturas', body).then(async response => {
         const datos = response.data.data
         this.rows = []
@@ -1313,6 +1313,8 @@ export default {
         this.totalimpuestoigtf = this.completarDecimales(this.totalimpuestoigtf)
 
         this.loading = false
+        const time2 = moment().valueOf()
+        this.crearbitacora(desde, hasta, 3, time2 - time1)
       }).catch(error => {
         Notify.create('Problemas al listar Reporte ' + error)
       })

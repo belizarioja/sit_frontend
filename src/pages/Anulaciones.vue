@@ -711,7 +711,7 @@ export default {
     },
     exportPDF () {
       const vm = this
-      this.crearbitacora(vm.dateFrom, vm.dateTo, 8)
+      const time1 = moment().valueOf()
       const columns = [
         { title: 'Emisor', dataKey: 'razonsocial' },
         { title: 'Rif', dataKey: 'rif' },
@@ -747,7 +747,9 @@ export default {
         margin: { top: 60 }
       })
       addFooters(doc)
-      doc.save('impredigital.pdf')
+      doc.save('smartAnulaciones.pdf')
+      const time2 = moment().valueOf()
+      this.crearbitacora(vm.dateFrom, vm.dateTo, 8, time2 - time1)
     },
     exportXMLDetail (reg) {
       this.rowtempxml.push(this.detailXML(reg))
@@ -1050,7 +1052,8 @@ export default {
         Notify.create('Problemas al Buscar factura ' + error)
       })
     },
-    crearbitacora (desde, hasta, idevento) {
+    crearbitacora (desde, hasta, idevento, militime) {
+      const segundos = militime / 1000
       let observacion = ''
       let fechas = ' desde el ' + desde + ' hasta el ' + hasta
       const tipodoc = this.modeltipo.name ? ', ' + this.modeltipo.name : ''
@@ -1071,7 +1074,7 @@ export default {
         idusuario: this.idusuario,
         idevento: idevento,
         ip: this.term,
-        observacion: observacion,
+        observacion: observacion + ' - Duración ' + segundos + ' segs.',
         fecha: moment().format('YYYY-MM-DD HH:mm:ss')
       })
     },
@@ -1092,8 +1095,8 @@ export default {
         impuestoigtf: this.impuestoigtf,
         estatus: 2
       }
-      this.crearbitacora(desde, hasta, 4)
       this.loading = true
+      const time1 = moment().valueOf()
       axios.post(ENDPOINT_PATH_V2 + 'reporte/facturas', body).then(async response => {
         const datos = response.data.data
         this.rows = []
@@ -1180,6 +1183,8 @@ export default {
         this.totalimpuestog = this.completarDecimales(this.totalimpuestog)
         this.totalimpuestor = this.completarDecimales(this.totalimpuestor)
         this.totalimpuestoigtf = this.completarDecimales(this.totalimpuestoigtf)
+        const time2 = moment().valueOf()
+        this.crearbitacora(desde, hasta, 4, time2 - time1)
       }).catch(error => {
         Notify.create('Problemas al listar Reporte ' + error)
       })

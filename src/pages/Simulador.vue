@@ -199,6 +199,12 @@
             v-model="total"
             label="Total"
           />
+          <q-input
+            class="col-4 q-pa-md"
+            dense
+            v-model="tasacambio"
+            label="Tasa cambio"
+          />
         </q-card-section>
 
         <q-card-actions align="right" class="text-primary">
@@ -242,7 +248,7 @@
             </div>
             <div class="row" style="margin-bottom: 5px;">
               <input id="cod1" class="col-2" style="width: 16%; margin-right: 5px;font-size: 11px;" value="9309"/>
-              <input id="des1" class="col-4" style="width: 24%; margin-right: 5px;font-size: 11px;" value="LIC CLUF"/>
+              <input id="des1" class="col-4" style="width: 24%; margin-right: 5px;font-size: 11px;" value="Producto de prueba 1"/>
               <input id="pre1" class="col-1" style="width: 8%; margin-right: 4px;font-size: 8px;" value="3119.80"/>
               <input id="can1" class="col-1" style="width: 7%; margin-right: 5px;font-size: 8px;" value="2"/>
               <input id="desc1" class="col-1" style="width: 8%; margin-right: 5px;font-size: 8px;" value="0"/>
@@ -255,7 +261,7 @@
             </div>
             <div class="row" style="margin-bottom: 5px;">
               <input id="cod2" class="col-2" style="width: 16%; margin-right: 5px;font-size: 11px;" value="9309"/>
-              <input id="des2" class="col-4" style="width: 24%; margin-right: 5px;font-size: 11px;" value="LIC CLUF"/>
+              <input id="des2" class="col-4" style="width: 24%; margin-right: 5px;font-size: 11px;" value="Producto de prueba 2"/>
               <input id="pre2" class="col-1" style="width: 8%; margin-right: 4px;font-size: 8px;" value="410.50"/>
               <input id="can2" class="col-1" style="width: 7%; margin-right: 5px;font-size: 8px;" value="1"/>
               <input id="desc2" class="col-1" style="width: 8%; margin-right: 5px;font-size: 8px;" value="0"/>
@@ -264,11 +270,11 @@
               <input id="mon2" class="col-1" style="width: 8%;font-size: 8px;" value="410.50"/>
             </div>
             <div class="row" style="margin-bottom: 5px;">
-              <input id="com2" class="col-10" style="font-size: 11px;" value="Com - Servicio de Cluf MES DICIEMBRE 2023"/>
+              <input id="com2" class="col-10" style="font-size: 11px;" value="Comentario Producto de prueba 2"/>
             </div>
             <div class="row" style="margin-bottom: 5px;">
               <input id="cod3" class="col-2" style="width: 16%; margin-right: 5px;font-size: 11px;" value="9309"/>
-              <input id="des3" class="col-4" style="width: 24%; margin-right: 5px;font-size: 11px;" value="LIC CLUF"/>
+              <input id="des3" class="col-4" style="width: 24%; margin-right: 5px;font-size: 11px;" value="Producto de prueba 3"/>
               <input id="pre3" class="col-1" style="width: 8%; margin-right: 4px;font-size: 8px;" value="164.20"/>
               <input id="can3" class="col-1" style="width: 7%; margin-right: 5px;font-size: 8px;" value="2"/>
               <input id="desc3" class="col-1" style="width: 8%; margin-right: 5px;font-size: 8px;" value="0"/>
@@ -277,7 +283,10 @@
               <input id="mon3" class="col-1" style="width: 8%;font-size: 8px;" value="328.40"/>
             </div>
             <div class="row" style="margin-bottom: 5px;">
-              <input id="com3" class="col-10" style="font-size: 11px;" value="Com - Servicio de Cluf MES DICIEMBRE 2023"/>
+              <input id="com3" class="col-10" style="font-size: 11px;" value="Comentario Producto de prueba 3"/>
+            </div>
+            <div class="row" style="margin-bottom: 5px;margin-top: 20px;">
+              <input id="observacion" class="col-10" style="font-size: 11px;" value="Observación de prueba"/>
             </div>
             <!--<div class="row" style="margin-bottom: 5px;">
               <input id="cod2" class="col-2" style="width: 16%; margin-right: 5px;font-size: 11px;" value="000002"/>
@@ -334,7 +343,7 @@
           </div>
           <div style="font-size: 12px;">
             <div class="row" style="margin-bottom: 5px;">
-              <input id="forma2" class="col-6" style="margin-right: 5px;font-size: 11px;" value="Divisa"/>
+              <input id="forma2" class="col-6" style="margin-right: 5px;font-size: 11px;" value="Efectivo"/>
               <input id="valor2" class="col-5" style="margin-right: 5px;font-size: 11px;" value="4105.00"/>
            </div>
           </div>
@@ -408,6 +417,7 @@ export default {
       tasaigtf: ref(3),
       baseigtf: ref(123.15),
       impuestoigtf: ref(3.69),
+      tasacambio: ref(0),
       loading: ref(false),
       dateInicioPrueba: ref(''),
       dateFinPrueba: ref(''),
@@ -546,6 +556,9 @@ export default {
             formasdepago.push(obj2)
           }
         }
+        const obs = document.getElementById('observacion').value
+        console.log('obs')
+        console.log(obs)
         const body = {
           rif: this.rif,
           trackingid: trackingid,
@@ -570,10 +583,12 @@ export default {
           baseigtf: Number(this.baseigtf),
           impuestoigtf: Number(this.impuestoigtf),
           total: Number(this.total),
+          tasacambio: this.tasacambio > 0 ? Number(this.tasacambio) : undefined,
           idtipocedulacliente: Number(this.modelcedula.cod) || 1,
           sendmail: (cuerpofactura.length > 0 && this.sendmail === '1') ? 1 : 0,
           cuerpofactura: cuerpofactura,
-          formasdepago: formasdepago
+          formasdepago: formasdepago,
+          observacion: obs.length > 0 ? obs : undefined
         }
         console.log(this.numerointerno)
         const numeronext = Number(this.numerointerno) + 1
@@ -669,6 +684,11 @@ export default {
             formasdepago.push(obj2)
           }
         }
+        console.log('this.tasacambio')
+        console.log(this.tasacambio)
+        const obs = document.getElementById('observacion').value
+        console.log('obs')
+        console.log(obs)
         const body = {
           rif: this.rif,
           trackingid: trackingid,
@@ -693,12 +713,14 @@ export default {
           baseigtf: Number(this.baseigtf),
           impuestoigtf: Number(this.impuestoigtf),
           total: Number(this.total),
+          tasacambio: this.tasacambio > 0 ? Number(this.tasacambio) : undefined,
           idtipocedulacliente: Number(this.modelcedula.cod) || 1,
           sendmail: (cuerpofactura.length > 0 && this.sendmail === '1') ? 1 : 0,
           cuerpofactura: cuerpofactura,
-          formasdepago: formasdepago
+          formasdepago: formasdepago,
+          observacion: obs.length > 0 ? obs : undefined
         }
-        console.log(body)
+        // console.log(body)
         axios.post(ENDPOINT_PATH_V2 + 'facturacion', body, headersjwt).then(async response => {
           // console.log(response.data)
           if (response.status === 200) {
