@@ -374,7 +374,7 @@
                 </table>
               </q-item-section>
             </q-item>
-            <q-separator />
+            <!-- <q-separator />
             <q-item v-if="(co_rol === '1' || co_rol === '3') && detallesDoc.length > 0">
               <q-table
                 :rows="detallesDoc"
@@ -391,7 +391,7 @@
                   </q-td>
                 </template>
               </q-table>
-            </q-item>
+            </q-item> -->
             <q-separator />
 
             <q-item>
@@ -853,12 +853,12 @@ export default {
       this.exportXML(this.rowtempxml)
     },
     async openDetail (reg) {
-      console.log('reg.fecha')
-      console.log(reg.fecha)
-      // if (this.co_rol === '3') {
-      const anniomes = moment(reg.fecha, 'DD/MM/YYYY HH:mm:ss a').format('YYYY') + '-' + moment(reg.fecha, 'DD/MM/YYYY HH:mm:ss a').format('MM')
-      window.open(ENDPOINT_PATH_V2 + 'archivos/' + reg.rif + '/' + anniomes + '/' + reg.rif + reg.numerodocumento)
-      /* } else {
+      // console.log('reg.fecha')
+      // console.log(reg.fecha)
+      if (this.co_rol === '3') {
+        const anniomes = moment(reg.fecha, 'DD/MM/YYYY HH:mm:ss a').format('YYYY') + '-' + moment(reg.fecha, 'DD/MM/YYYY HH:mm:ss a').format('MM')
+        window.open(ENDPOINT_PATH_V2 + 'archivos/' + reg.rif + '/' + anniomes + '/' + reg.rif + reg.numerodocumento)
+      } else {
         this.rowtempxml = []
         this.detallesDoc = []
         if (reg.cod) {
@@ -937,7 +937,7 @@ export default {
         this.registro.totalimpuestodetail = this.completarDecimales(this.registro.totalimpuestodetail)
         this.registro.subtotaldetail = this.completarDecimales(reg.subtotal)
         this.registro.totaldetail = this.completarDecimales(reg.total)
-      } */
+      }
     },
     searchCliente (val, update, abort) {
       if (val.length < 3) {

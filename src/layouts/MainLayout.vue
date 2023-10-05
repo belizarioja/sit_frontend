@@ -88,15 +88,15 @@
                 <div class="text-secondary">Simulador</div>
               </q-item-section>
             </q-item>
-            <!-- <q-item v-if="co_rol === '1'" clickable v-ripple @click="simulador2" style="font-size: 12px;">
+            <q-item v-if="co_rol === '1'" clickable v-ripple @click="simulador2" style="font-size: 12px;">
               <q-item-section avatar>
                 <q-icon color="secondary" name="print" />
               </q-item-section>
               <q-item-section>
-                <div class="text-secondary">Simulador Anulación</div>
+                <div class="text-secondary">Anular</div>
               </q-item-section>
             </q-item>
-            <q-item v-if="co_rol === '1'" clickable v-ripple @click="simuladorAsignacion" style="font-size: 12px;">
+            <!-- <q-item v-if="co_rol === '1'" clickable v-ripple @click="simuladorAsignacion" style="font-size: 12px;">
               <q-item-section avatar>
                 <q-icon color="secondary" name="print" />
               </q-item-section>

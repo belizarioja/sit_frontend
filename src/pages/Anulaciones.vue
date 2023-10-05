@@ -758,7 +758,8 @@ export default {
     async openDetail (reg) {
       console.log('openDetail')
       if (this.co_rol === '3') {
-        window.open(ENDPOINT_PATH_V2 + 'archivos/' + reg.rif + reg.numerodocumento)
+        const anniomes = moment(reg.fecha, 'DD/MM/YYYY HH:mm:ss a').format('YYYY') + '-' + moment(reg.fecha, 'DD/MM/YYYY HH:mm:ss a').format('MM')
+        window.open(ENDPOINT_PATH_V2 + 'archivos/' + reg.rif + '/' + anniomes + '/' + reg.rif + reg.numerodocumento)
       } else {
         this.rowtempxml = []
         this.detallesDoc = []
