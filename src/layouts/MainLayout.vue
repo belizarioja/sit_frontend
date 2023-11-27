@@ -96,14 +96,14 @@
                 <div class="text-secondary">Anular</div>
               </q-item-section>
             </q-item>
-            <!-- <q-item v-if="co_rol === '1'" clickable v-ripple @click="simuladorAsignacion" style="font-size: 12px;">
+            <q-item v-if="co_rol === '1'" clickable v-ripple @click="simuladorAsignacion" style="font-size: 12px;">
               <q-item-section avatar>
                 <q-icon color="secondary" name="print" />
               </q-item-section>
               <q-item-section>
-                <div class="text-secondary">Simulador Asignación</div>
+                <div class="text-secondary">Asignar</div>
               </q-item-section>
-            </q-item> -->
+            </q-item>
             <q-item clickable v-ripple @click="salir" style="font-size: 12px;">
               <q-item-section avatar>
                 <q-icon color="secondary" name="logout" />

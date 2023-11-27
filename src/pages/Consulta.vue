@@ -231,14 +231,6 @@
             <q-td key="impuestoigtf" :props="props">
               {{ props.row.impuestoigtf }}
             </q-td>
-            <q-td key="relacionado" :props="props">
-              <q-badge v-if="props.row.relacionado"
-                color="green"
-                style="cursor: pointer;padding: 5px 10px;"
-                @click="buscarDetail(props.row)">
-              {{ props.row.relacionado }}
-            </q-badge>
-            </q-td>
             <q-td key="detail" :props="props">
               <q-btn
                 color="primary"
@@ -263,6 +255,14 @@
                 style="padding: 5px 10px;">
                 {{ props.row.enviarcorreo }}
               </q-badge>
+            </q-td>
+            <q-td key="relacionado" :props="props">
+              <q-badge v-if="props.row.relacionado"
+                color="green"
+                style="cursor: pointer;padding: 5px 10px;"
+                @click="buscarDetail(props.row)">
+              {{ props.row.relacionado }}
+            </q-badge>
             </q-td>
             <q-td key="exportar" :props="props">
               <q-btn
@@ -627,9 +627,9 @@ export default {
         { name: 'tasaigtf', label: 'Tasa IGTF', field: 'tasaigtf' },
         { name: 'baseigtf', label: 'Imponible IGTF', field: 'baseigtf' },
         { name: 'impuestoigtf', label: 'Impuesto IGTF', field: 'impuestoigtf' },
-        { name: 'relacionado', label: 'Relacionado', field: 'relacionado' },
         { name: 'detail', label: 'Ver', align: 'center' },
         { name: 'enviarcorreo', label: 'Envío de correo', field: 'enviarcorreo' },
+        { name: 'relacionado', label: 'Relacionado', field: 'relacionado' },
         { name: 'exportar', label: 'Exportar', align: 'center' }
       ],
       columns2: [
@@ -656,9 +656,9 @@ export default {
         { name: 'tasaigtf', label: 'Tasa IGTF', field: 'tasaigtf' },
         { name: 'baseigtf', label: 'Imponible IGTF', field: 'baseigtf' },
         { name: 'impuestoigtf', label: 'Impuesto IGTF', field: 'impuestoigtf' },
-        { name: 'relacionado', label: 'Relacionado', field: 'relacionado' },
         { name: 'detail', label: 'Ver', align: 'center' },
         { name: 'enviarcorreo', label: 'Envío de correo', field: 'enviarcorreo' },
+        { name: 'relacionado', label: 'Relacionado', field: 'relacionado' },
         { name: 'exportar', label: 'Exportar', align: 'center' }
       ],
       columns3: [
@@ -676,9 +676,9 @@ export default {
         { name: 'tasaigtf', label: 'Tasa IGTF', field: 'tasaigtf' },
         { name: 'baseigtf', label: 'Imponible IGTF', field: 'baseigtf' },
         { name: 'impuestoigtf', label: 'Impuesto IGTF', field: 'impuestoigtf' },
-        { name: 'relacionado', label: 'Relacionado', field: 'relacionado' },
         { name: 'detail', label: 'Ver', align: 'center' },
         { name: 'enviarcorreo', label: 'Envío de correo', field: 'enviarcorreo' },
+        { name: 'relacionado', label: 'Relacionado', field: 'relacionado' },
         { name: 'exportar', label: 'Exportar', align: 'center' }
       ],
       rows: [],
