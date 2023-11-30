@@ -1,9 +1,31 @@
 <template>
   <q-page class="q-pa-sm bg-grey-3">
     <div class="row">
-      <div class="col-md-3 col-sm-12 col-xs-12">
-         <span style="margin: 20px;font-size: 20px;font-weight: bolder;">Dashboard</span>
-       </div>
+      <div class="col-md-4 col-sm-12 col-xs-12 q-ma-md">
+         <span style="font-size: 20px;font-weight: bolder;">Dashboard</span>
+      </div>
+      <q-select
+          v-if="co_rol === '1' || co_rol === '2'"
+          label="Buscar por Nombre o RIF del Emisor"
+          dense
+          class="col-md-6 col-sm-12 col-xs-12"
+          filled
+          v-model="modelsede"
+          :disable="disabledSede"
+          use-input
+          hide-selected
+          fill-input
+          clearable
+          options-dense
+          option-label="namerif"
+          option-value="cod"
+          input-debounce="0"
+          :options="optionssede"
+          @update:model-value="changeSede()"
+          @input:="changeSede()"
+          @filter="searchEmisor"
+          style="padding: 5px;margin-left: 20px;"
+        />
     </div>
     <div class="row">
       <q-card class="col-4" style="margin: 20px;">
@@ -256,7 +278,10 @@ export default defineComponent({
   },
   methods: {
     getDocProcesados () {
-      axios.post(ENDPOINT_PATH_V2 + 'reporte/totaldocumentos').then(async response => {
+      const body = {
+        idserviciosmasivo: this.idserviciosmasivo
+      }
+      axios.post(ENDPOINT_PATH_V2 + 'reporte/totaldocumentos', body).then(async response => {
         const datos = response.data.data
         this.totalfacturas = datos[0].totaldoc
         this.sumafacturas = this.completarDecimales(Number(datos[0].sumadocg) + Number(datos[0].sumadocigtf))
@@ -269,7 +294,10 @@ export default defineComponent({
       })
     },
     getUltimaSemana () {
-      axios.post(ENDPOINT_PATH_V2 + 'reporte/ultimasemana').then(async response => {
+      const body = {
+        idserviciosmasivo: this.idserviciosmasivo
+      }
+      axios.post(ENDPOINT_PATH_V2 + 'reporte/ultimasemana', body).then(async response => {
         const datos = response.data.data
         console.log(datos)
         this.rowssemana = []
@@ -291,9 +319,7 @@ export default defineComponent({
     },
     totalImp () {
       const body = {
-        idtipodocumento: this.idtipodochijo || undefined,
-        idserviciosmasivo: this.idserviciohijo || undefined,
-        idcodigocomercial: this.idcodecomercialhijo || undefined,
+        idserviciosmasivo: this.idserviciosmasivo,
         desde: moment(this.dateFrom, 'YYYY/MM/DD').format('YYYY-MM-DD'),
         hasta: moment(this.dateTo, 'YYYY/MM/DD').format('YYYY-MM-DD')
       }
@@ -396,6 +422,7 @@ export default defineComponent({
     changeSede () {
       this.idserviciosmasivo = this.modelsede?.cod
       this.serviciosmasivo = this.modelsede?.namerif
+      this.listarReportes()
       // this.listarfacturas()
     },
     changeTipo () {
@@ -472,15 +499,17 @@ export default defineComponent({
       }).catch(error => {
         Notify.create('Problemas al listar Sedes ' + error)
       })
+    },
+    listarReportes () {
+      this.totalImp()
+      this.getDocProcesados()
+      this.getUltimaSemana()
     }
   },
   mounted () {
     // this.listartipos()
-    // this.listarsedes()
+    this.listarsedes()
     // this.getCodes()
-    this.totalImp()
-    this.getDocProcesados()
-    this.getUltimaSemana()
     this.idserviciosmasivo = this.co_rol === '3' ? this.co_sede : undefined
 
     console.log('Mounted')
@@ -497,6 +526,7 @@ export default defineComponent({
       this.modelsede = obj
       this.disabledSede = true
     }
+    this.listarReportes()
   }
 })
 </script>

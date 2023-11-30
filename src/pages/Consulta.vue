@@ -1,205 +1,143 @@
 <template>
   <div class="q-pa-md">
     <div class="row">
-      <span style="margin: 0 20px;font-size: 25px;font-weight: bolder;">Consulta</span>
+      <span style="margin: 0 20px; font-size: 25px; font-weight: bolder">Consulta</span>
     </div>
     <div class="row">
-        <q-select
-          v-if="co_rol === '1' || co_rol === '2'"
-          label="Buscar por Nombre o RIF del Emisor"
-          dense
-          class="col-md-3 col-sm-12 col-xs-12"
-          filled
-          v-model="modelsede"
-          :disable="disabledSede"
-          use-input
-          hide-selected
-          fill-input
-          clearable
-          options-dense
-          option-label="namerif"
-          option-value="cod"
-          input-debounce="0"
-          :options="optionssede"
-          @update:model-value="changeSede()"
-          @input:="changeSede()"
-          @filter="searchEmisor"
-          style="padding: 5px;"
-        />
-        <q-select
-          v-if="co_rol === '1' || co_rol === '2'"
-          class="col-md-3 col-sm-12 col-xs-12"
-          label="Buscar Código de Operación"
-          dense
-          filled
-          v-model="modelcodes"
-          use-input
-          hide-selected
-          fill-input
-          clearable
-          options-dense
-          option-label="namecode"
-          option-value="cod"
-          input-debounce="0"
-          :options="optionscodes"
-          @update:model-value="changeCodes()"
-          @input:="changeCodes()"
-          @filter="searchCodes"
-          style="padding: 5px;"
-        />
-        <q-select
-          dense
-          class="col-md-3 col-sm-6 col-xs-12"
-          filled
-          options-dense
-          v-model="modeltipo"
-          :options="optionstipo"
-          option-label="name"
-          option-value="cod"
-          label="Tipo de Documento"
-          @update:model-value="changeTipo()"
-          style="padding: 5px;"
-        />
-        <q-input
-          filled
-          class="col-md-3 col-sm-6 col-xs-12"
-          label="Buscar por N° Control"
-          v-model="numerodocumento"
-          @input:="listarfacturas"
-          style="padding: 5px;"
-          :disable="disable"
-          dense
-        >
-          <template v-slot:append>
-            <q-icon
-             v-if="numerodocumento.length > 0"
-             name="close"
-             @click="numerodocumento = '', listarfacturas()"
-             class="cursor-pointer"
-            />
-          </template>
-          <template v-slot:after>
-            <q-btn dense color="primary" icon="search" @click="listarfacturas" :disable="disable"/>
-          </template>
-        </q-input>
+      <q-select v-if="co_rol === '1' || co_rol === '2'" label="Buscar por Nombre o RIF del Emisor" dense
+        class="col-md-3 col-sm-12 col-xs-12" filled v-model="modelsede" :disable="disabledSede" use-input hide-selected
+        fill-input clearable options-dense option-label="namerif" option-value="cod" input-debounce="0"
+        :options="optionssede" @update:model-value="changeSede()" @input:="changeSede()" @filter="searchEmisor"
+        style="padding: 5px" />
+      <q-select v-if="co_rol === '1' || co_rol === '2'" class="col-md-3 col-sm-12 col-xs-12"
+        label="Buscar Código de Operación" dense filled v-model="modelcodes" use-input hide-selected fill-input clearable
+        options-dense option-label="namecode" option-value="cod" input-debounce="0" :options="optionscodes"
+        @update:model-value="changeCodes()" @input:="changeCodes()" @filter="searchCodes" style="padding: 5px" />
+      <q-select dense class="col-md-3 col-sm-6 col-xs-12" filled options-dense v-model="modeltipo" :options="optionstipo"
+        option-label="name" option-value="cod" label="Tipo de Documento" @update:model-value="changeTipo()"
+        style="padding: 5px" />
+      <q-input filled class="col-md-3 col-sm-6 col-xs-12" label="Buscar por N° Control" v-model="numerodocumento"
+        @input:="listarfacturas" style="padding: 5px" :disable="disable" dense>
+        <template v-slot:append>
+          <q-icon v-if="numerodocumento.length > 0" name="close" @click="(numerodocumento = ''), listarfacturas()"
+            class="cursor-pointer" />
+        </template>
+        <template v-slot:after>
+          <q-btn dense color="primary" icon="search" @click="listarfacturas" :disable="disable" />
+        </template>
+      </q-input>
     </div>
     <div class="row">
-      <q-select
-          label="Buscar por Nombre o RIF del cliente"
-          dense
-          class="col-md-3 col-sm-6 col-xs-12"
-          filled
-          v-model="modelcliente"
-          use-input
-          :disable="disable"
-          hide-selected
-          fill-input
-          clearable
-          options-dense
-          option-label="namerif"
-          option-value="rif"
-          input-debounce="0"
-          :options="optionscliente"
-          @update:model-value="changeCliente()"
-          @input:="changeCliente()"
-          @filter="searchCliente"
-          style="padding: 5px;"
-        />
-        <q-input
-          dense
-          filled
-          label="Desde"
-          mask="date"
-          v-model="dateFrom"
-          class="col-md-3 col-sm-6 col-xs-6"
-          style="padding: 5px;">
-          <template v-slot:append>
-            <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                <q-date v-model="dateFrom" :locale="myLocale">
-                  <div class="row items-center justify-end">
-                    <q-btn v-close-popup label="Close" color="primary" flat />
-                  </div>
-                </q-date>
-              </q-popup-proxy>
-            </q-icon>
-          </template>
-        </q-input>
-        <q-input
-          dense
-          filled
-          label="Hasta"
-          v-model="dateTo"
-          class="col-md-3 col-sm-6 col-xs-6"
-          style="padding: 5px;"
-          mask="date">
-          <template v-slot:append>
-            <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                <q-date v-model="dateTo" :locale="myLocale">
-                  <div class="row items-center justify-end">
-                    <q-btn v-close-popup label="Close" color="primary" flat />
-                  </div>
-                </q-date>
-              </q-popup-proxy>
-            </q-icon>
-          </template>
-        </q-input>
-        <q-select
-          dense
-          class="col-md-3 col-sm-6 col-xs-12"
-          filled
-          options-dense
-          v-model="modelimpuesto"
-          :options="optionsimpuesto"
-          option-label="name"
-          option-value="cod"
-          label="Tipo de Impuesto"
-          @update:model-value="changeImpuesto()"
-          style="padding: 5px;"
-        />
+      <q-select label="Buscar por Nombre o RIF del cliente" dense class="col-md-3 col-sm-6 col-xs-12" filled
+        v-model="modelcliente" use-input :disable="disable" hide-selected fill-input clearable options-dense
+        option-label="namerif" option-value="rif" input-debounce="0" :options="optionscliente"
+        @update:model-value="changeCliente()" @input:="changeCliente()" @filter="searchCliente" style="padding: 5px" />
+      <q-input dense filled label="Desde" mask="date" v-model="dateFrom" class="col-md-3 col-sm-6 col-xs-6"
+        style="padding: 5px">
+        <template v-slot:append>
+          <q-icon name="event" class="cursor-pointer">
+            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+              <q-date v-model="dateFrom" :locale="myLocale">
+                <div class="row items-center justify-end">
+                  <q-btn v-close-popup label="Close" color="primary" flat />
+                </div>
+              </q-date>
+            </q-popup-proxy>
+          </q-icon>
+        </template>
+      </q-input>
+      <q-input dense filled label="Hasta" v-model="dateTo" class="col-md-3 col-sm-6 col-xs-6" style="padding: 5px"
+        mask="date">
+        <template v-slot:append>
+          <q-icon name="event" class="cursor-pointer">
+            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+              <q-date v-model="dateTo" :locale="myLocale">
+                <div class="row items-center justify-end">
+                  <q-btn v-close-popup label="Close" color="primary" flat />
+                </div>
+              </q-date>
+            </q-popup-proxy>
+          </q-icon>
+        </template>
+      </q-input>
+      <q-select dense class="col-md-3 col-sm-6 col-xs-12" filled options-dense v-model="modelimpuesto"
+        :options="optionsimpuesto" option-label="name" option-value="cod" label="Tipo de Impuesto"
+        @update:model-value="changeImpuesto()" style="padding: 5px" />
     </div>
     <div class="row q-pa-md" style="">
       <q-table
         class="my-sticky-header-table"
-        :title="modeltipo.cod ? modeltipo.name : titulotabla"
-        :rows="rows"
+        :title="modeltipo.cod ? modeltipo.name : titulotabla" :rows="rows"
         :columns="columnseleted"
         row-key="name"
         :pagination="initialPagination"
         style="overflow: auto;"
         :loading="loading"
-        no-data-label="No hay registros!"
-      >
-       <template v-slot:top-right>
-        <div class="row">
-          <span class="col-md-4 col-sm-4 col-xs-12" style="font-size: 20px;">Exportar:</span>
-          <q-btn class="q-ml-sm col-md-2 col-sm-2 col-xs-3" color="primary" label="PDF" @click="exportPDF" />
-          <q-btn class="q-ml-sm col-md-2 col-sm-2 col-xs-3" color="secondary" label="CSV" @click="exportTable"/>
-          <q-btn class="q-ml-sm col-md-2 col-sm-2 col-xs-3" color="info" label="XML" @click="exportXML(tempxml)"/>
-        </div>
+        no-data-label="No hay registros!">
+        <template v-slot:top-right>
+          <div class="row">
+            <span class="col-md-4 col-sm-4 col-xs-12" style="font-size: 20px;">Exportar:</span>
+            <!-- <q-btn class="q-ml-sm col-md-2 col-sm-2 col-xs-3" color="primary" label="PDF" @click="exportPDF" /> -->
+            <q-btn-dropdown class="q-ml-sm col-md-3 col-sm-3 col-xs-3" color="primary" label="PDF" :disable="btnDisable">
+              <q-list>
+                <q-item clickable v-close-popup @click="exportPDF">
+                  <q-item-section>
+                    <q-item-label>Registros</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item v-if="co_rol === '1' && co_sede_seleted" clickable v-close-popup @click="redistribuir">
+                  <q-item-section>
+                    <q-item-label>Redistribuir</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item v-if="co_rol === '3'" clickable v-close-popup @click="exportarLotes">
+                  <q-item-section>
+                    <q-item-label>Documentos</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
+            <q-btn class="q-ml-sm col-md-2 col-sm-2 col-xs-3" color="secondary" label="CSV" @click="exportTable" :disable="btnDisable"/>
+            <q-btn class="q-ml-sm col-md-2 col-sm-2 col-xs-3" color="info" label="XML" @click="exportXML(tempxml)" :disable="btnDisable"/>
+          </div>
         </template>
         <template v-slot:body="props">
           <q-tr :props="props">
-            <q-td v-if="(co_rol === '1' || co_rol === '3') || (co_rol === '2' && !co_sede_seleted)" key="rif" :props="props" style="display: grid;text-align:left;height: 51px;">
-              <span style="font-weight: bolder; width: 200px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">{{ props.row.razonsocial }}</span>
-              <span style="font-style: italic;">RIF: {{ props.row.rif }}</span>
+            <q-td v-if="co_rol === '1' ||
+              co_rol === '3' ||
+              (co_rol === '2' && !co_sede_seleted)
+              " key="rif" :props="props" style="display: grid; text-align: left; height: 51px">
+              <span style="
+                  font-weight: bolder;
+                  width: 200px;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
+                  overflow: hidden;
+                ">{{ props.row.razonsocial }}</span>
+              <span style="font-style: italic">RIF: {{ props.row.rif }}</span>
             </q-td>
-            <q-td v-if="co_rol === '1' || co_rol === '3'"  key="numerointerno" :props="props">
+            <q-td v-if="co_rol === '1' || co_rol === '3'" key="numerointerno" :props="props">
               {{ props.row.numerointerno }}
             </q-td>
             <q-td key="tipodocumento" :props="props">
               {{ props.row.tipodocumento }}
             </q-td>
             <q-td key="numerodocumento" :props="props">
-              <span style="font-weight: bolder;"> {{ props.row.numerodocumento }}</span>
+              <span style="font-weight: bolder">
+                {{ props.row.numerodocumento }}</span>
             </q-td>
             <q-td key="fecha" :props="props">
               {{ props.row.fecha }}
             </q-td>
-            <q-td key="nombrecliente" :props="props" style="display: grid;text-align:left;height: 51px;">
-              <span style="font-weight: bolder; width: 180px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">{{ props.row.nombrecliente }}</span>
-              <span style="font-style: italic;">{{ props.row.abrev }}: {{ props.row.cedulacliente }}</span>
+            <q-td key="nombrecliente" :props="props" style="display: grid; text-align: left; height: 51px">
+              <span style="
+                  font-weight: bolder;
+                  width: 180px;
+                  white-space: nowrap;
+                  text-overflow: ellipsis;
+                  overflow: hidden;
+                ">{{ props.row.nombrecliente }}</span>
+              <span style="font-style: italic">{{ props.row.abrev }}: {{ props.row.cedulacliente }}</span>
             </q-td>
             <q-td key="exento" :props="props">
               {{ props.row.exento }}
@@ -231,108 +169,69 @@
             <q-td key="impuestoigtf" :props="props">
               {{ props.row.impuestoigtf }}
             </q-td>
+            <q-td key="anulado" :props="props">
+              <q-badge v-if="isAnulado(props.row)" color="red" style="padding: 5px 10px">
+                Anulado
+              </q-badge>
+            </q-td>
             <q-td key="detail" :props="props">
-              <q-btn
-                color="primary"
-                icon="receipt_long"
-                @click="openDetail(props.row)" />
+              <q-btn color="primary" icon="receipt_long" @click="openDetail(props.row)" />
             </q-td>
             <q-td key="enviarcorreo" :props="props">
-              <q-badge v-if="props.row.estatuscorreo === '1' && props.row.enviocorreo === '1'"
-                color="blue"
-                style="cursor: pointer;padding: 5px 10px;"
-                @click="enviarCorreo(props.row)">
+              <q-badge :color="props.row.colorEmailStatus" style="cursor: pointer; padding: 5px 10px"
+                @click="renderWindownRedirectEmail(props.row)">
                 {{ props.row.enviarcorreo }}
               </q-badge>
-              <q-badge v-if="props.row.estatuscorreo === '0' && props.row.enviocorreo === '1'"
-                color="red"
-                style="cursor: pointer;padding: 5px 10px;"
-                @click="enviarCorreo(props.row)">
-                {{ props.row.enviarcorreo }}
-              </q-badge>
-              <q-badge v-if="props.row.enviocorreo === '0'"
-                color="orange"
-                style="padding: 5px 10px;">
+              <q-badge v-if="props.row.enviocorreo === '0'" color="orange" style="padding: 5px 10px">
                 {{ props.row.enviarcorreo }}
               </q-badge>
             </q-td>
             <q-td key="relacionado" :props="props">
-              <q-badge v-if="props.row.relacionado"
-                color="green"
-                style="cursor: pointer;padding: 5px 10px;"
+              <q-badge v-if="props.row.relacionado" color="green" style="cursor: pointer; padding: 5px 10px"
                 @click="buscarDetail(props.row)">
-              {{ props.row.relacionado }}
-            </q-badge>
+                {{ props.row.relacionado }}
+              </q-badge>
             </q-td>
             <q-td key="exportar" :props="props">
-              <q-btn
-                color="info"
-                label="XML"
-                @click="exportXMLDetail(props.row)" />
+              <q-btn color="info" label="XML" @click="exportXMLDetail(props.row)" />
             </q-td>
           </q-tr>
         </template>
-        <!-- <template v-slot:bottom-row>
-          <q-tr>
-            <q-td :colspan="colspan" class="totales">
-              Totales
-            </q-td>
-            <q-td style="text-align: right;"  class="totales">
-              {{totalbaseg}}
-            </q-td>
-            <q-td style="text-align: right;" class="totales">
-              {{totalimpuestog}}
-            </q-td>
-            <q-td  class="totales">
-            </q-td>
-            <q-td style="text-align: right;" class="totales">
-              {{totalbaser}}
-            </q-td>
-            <q-td style="text-align: right;" class="totales">
-              {{totalimpuestor}}
-            </q-td>
-            <q-td  class="totales">
-            </q-td>
-            <q-td style="text-align: right;" class="totales">
-              {{totalbaseigtf}}
-            </q-td>
-            <q-td style="text-align: right;" class="totales">
-              {{totalimpuestoigtf}}
-            </q-td>
-            <q-td  class="totales">
-            </q-td>
-            <q-td  class="totales">
-            </q-td>
-            <q-td  class="totales">
-            </q-td>
-          </q-tr>
-        </template> -->
       </q-table>
       <q-dialog v-model="viewdetail" persistent>
         <q-card style="max-width: inherit; width: auto">
           <div id="detailid">
             <q-item>
-              <q-item-section style="flex: auto;">
-                <img width="100" :src="registro.logo" onerror="this.src='logo_nophoto.png'"/>
+              <q-item-section style="flex: auto">
+                <img width="100" :src="registro.logo" onerror="this.src='logo_nophoto.png'" />
               </q-item-section>
 
               <q-item-section>
                 <table>
                   <tr>
-                    <td style="width: 300px;">
-                      <span>{{registro.razonsocialdetail}}</span>
-                      <br><span style="font-size: 10px;">
-                        {{registro.direcciondetail}}
+                    <td style="width: 300px">
+                      <span>{{ registro.razonsocialdetail }}</span>
+                      <br /><span style="font-size: 10px">
+                        {{ registro.direcciondetail }}
                       </span>
-                      <br><span style="font-size: 10px;">
-                        RIF: {{registro.rifdetail}}
+                      <br /><span style="font-size: 10px">
+                        RIF: {{ registro.rifdetail }}
                       </span>
                     </td>
-                    <td style="display:grid">
-                      <span>N° DE CONTROL: <span style="font-size: 18px;color: #e00303;font-weight: bolder;">{{registro.numerodocumento}}</span></span>
-                      <span>{{registro.tipodocumentodetail}}: {{registro.numerointerno}}</span>
-                      <span v-if="numeroafectado.length > 0" style="font-size: 10px;">Afecta a: {{tipodocafectado}} <span style="color: #e00303;font-weight: bolder;">{{numeroafectado}}</span></span>
-                      <span v-if="numeroafectado.length > 0" style="font-size: 10px;">Fecha: {{fechaafectado}}</span>
+                    <td style="display: grid">
+                      <span>N° DE CONTROL:
+                        <span style="
+                            font-size: 18px;
+                            color: #e00303;
+                            font-weight: bolder;
+                          ">{{ registro.numerodocumento }}</span></span>
+                      <span>{{ registro.tipodocumentodetail }}:
+                        {{ registro.numerointerno }}</span>
+                      <span v-if="numeroafectado.length > 0" style="font-size: 10px">Afecta a: {{ tipodocafectado }}
+                        <span style="color: #e00303; font-weight: bolder">{{
+                          numeroafectado
+                        }}</span></span>
+                      <span v-if="numeroafectado.length > 0" style="font-size: 10px">Fecha: {{ fechaafectado }}</span>
                     </td>
                   </tr>
                 </table>
@@ -340,196 +239,118 @@
             </q-item>
             <q-item>
               <q-item-section>
-                <table >
+                <table>
                   <tr>
-                    <td style="width: 409px;">
-                      Cliente: {{registro.nombreclientedetail}}
+                    <td style="width: 409px">
+                      Cliente: {{ registro.nombreclientedetail }}
                     </td>
-                    <td>
-                      Fecha de Emisión: {{registro.fechadetail}}
-                    </td>
+                    <td>Fecha de Emisión: {{ registro.fechadetail }}</td>
                   </tr>
                   <tr>
                     <td>
-                      {{" " + registro.abrevdetail}}: {{registro.cedulaclientedetail}}
+                      {{ " " + registro.abrevdetail }}:
+                      {{ registro.cedulaclientedetail }}
                     </td>
-                    <td>
-                      Hora de Emisión: {{registro.horadetail}}
-                    </td>
+                    <td>Hora de Emisión: {{ registro.horadetail }}</td>
                   </tr>
                   <tr>
-                    <td>
-                      Teléfono: {{registro.telefonoclientedetail}}
-                    </td>
-                    <td>
-                    </td>
+                    <td>Teléfono: {{ registro.telefonoclientedetail }}</td>
+                    <td></td>
                   </tr>
                   <tr>
-                    <td>
-                      Dirección: {{registro.direccionclientedetail}}
-                    </td>
-                    <td>
-                    </td>
+                    <td>Dirección: {{ registro.direccionclientedetail }}</td>
+                    <td></td>
                   </tr>
                 </table>
               </q-item-section>
             </q-item>
-            <!-- <q-separator />
-            <q-item v-if="(co_rol === '1' || co_rol === '3') && detallesDoc.length > 0">
-              <q-table
-                :rows="detallesDoc"
-                :columns="columnsDetallesDoc"
-                row-key="codigo"
-                hide-pagination
-                dense
-                style="width: 100%;"
-              >
+            <q-separator />
+            <q-item v-if="(co_rol === '1' || co_rol === '3') && detallesDoc.length > 0
+              ">
+              <q-table :rows="detallesDoc" :columns="columnsDetallesDoc" row-key="codigo" hide-pagination dense
+                style="width: 100%">
                 <template v-slot:body-cell-descripcion="props">
-                  <q-td :props="props" style="display:grid;height: fit-content;white-space: pre-wrap; width: 400px;">
-                    <span>{{props.row.descripcion}}</span>
-                    <span>{{props.row.comentario}}</span>
+                  <q-td :props="props" style="
+                      display: grid;
+                      height: fit-content;
+                      white-space: pre-wrap;
+                      width: 400px;
+                    ">
+                    <span>{{ props.row.descripcion }}</span>
+                    <span>{{ props.row.comentario }}</span>
                   </q-td>
                 </template>
               </q-table>
-            </q-item> -->
+            </q-item>
             <q-separator />
 
             <q-item>
               <q-item-section side top>
-                <table style="width: 656px;">
+                <table style="width: 656px">
                   <tr>
-                    <td style="width: 525px;text-align: right;">Subtotal Bs.:</td><td style="text-align: right;">{{registro.subtotaldetail}}</td>
+                    <td style="width: 525px; text-align: right">
+                      Subtotal Bs.:
+                    </td>
+                    <td style="text-align: right">
+                      {{ registro.subtotaldetail }}
+                    </td>
                   </tr>
                   <tr v-if="registro.impuestogdetail !== '0,00'">
-                    <td style="text-align: right;">IVA 16% Bs.:</td><td style="text-align: right;">{{registro.impuestogdetail}}</td>
+                    <td style="text-align: right">IVA 16% Bs.:</td>
+                    <td style="text-align: right">
+                      {{ registro.impuestogdetail }}
+                    </td>
                   </tr>
                   <tr v-if="registro.impuestordetail !== '0,00'">
-                    <td style="text-align: right;">IVA 8% Bs.:</td><td style="text-align: right;">{{registro.impuestordetail}}</td>
+                    <td style="text-align: right">IVA 8% Bs.:</td>
+                    <td style="text-align: right">
+                      {{ registro.impuestordetail }}
+                    </td>
                   </tr>
                   <tr v-if="registro.impuestoigtfdetail !== '0,00'">
-                    <td style="text-align: right;">IGTF 3% Bs.:</td><td style="text-align: right;">{{registro.impuestoigtfdetail}}</td>
+                    <td style="text-align: right">IGTF 3% Bs.:</td>
+                    <td style="text-align: right">
+                      {{ registro.impuestoigtfdetail }}
+                    </td>
                   </tr>
                   <tr>
-                    <td style="text-align: right;">Total Bs.:</td><td style="text-align: right;">{{registro.totaldetail}}</td>
+                    <td style="text-align: right">Total Bs.:</td>
+                    <td style="text-align: right">
+                      {{ registro.totaldetail }}
+                    </td>
                   </tr>
                 </table>
               </q-item-section>
             </q-item>
-            <q-item style="display: grid;justify-content: center;">
-              <div style="font-size: 8px;max-width: 458px;text-align: center;min-width: 458px;">
-                {{registro.piedepagina}}
+            <q-item style="display: grid; justify-content: center">
+              <div style="
+                  font-size: 8px;
+                  max-width: 458px;
+                  text-align: center;
+                  min-width: 458px;
+                ">
+                {{ registro.piedepagina }}
               </div>
-              <div style="text-align: center;font-size: 8px; color: red">
+              <div style="text-align: center; font-size: 8px; color: red">
                 ORIGINAL
               </div>
             </q-item>
           </div>
           <q-separator spaced inset="item" />
           <q-card-actions align="right">
-            <q-btn
-                color="info"
-                label="PDF"
-                style="margin-right: 10px;"
-                @click="exportDetailToPDF" />
-            <q-btn label="Cerrar" color="negative" v-close-popup/>
+            <q-btn color="info" label="PDF" style="margin-right: 10px" @click="exportDetailToPDF" />
+            <q-btn label="Cerrar" color="negative" v-close-popup />
           </q-card-actions>
         </q-card>
       </q-dialog>
-      <!-- CARD DE PDF DETAIL
-      <q-card style="max-width: inherit; width: auto; display: none;">
-          <div id="">
-          <q-item>
-            <q-item-section avatar>
-              <q-avatar>
-                <img :src="registro.logo" onerror="this.src='default.svg'">
-              </q-avatar>
-            </q-item-section>
-
-            <q-item-section>
-              <table>
-                <tr>
-                  <td style="width: 333px;">
-                    {{registro.razonsocialdetail}}
-                  </td>
-                  <td>
-                    RIF Nuevo: {{registro.rifdetail}}
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                   {{registro.direcciondetail}}
-                  </td>
-                  <td>
-                   {{registro.tipodocumentodetail}}
-                  </td>
-                </tr>
-              </table>
-            </q-item-section>
-          </q-item>
-          <q-item>
-            <q-item-section>
-              <table style="width: 625px;">
-                <tr>
-                  <td style="width: 390px;">
-                    Razón&nbsp;social:&nbsp;{{registro.nombreclientedetail}}&nbsp; RIF:&nbsp;{{registro.cedulaclientedetail}}
-                  </td>
-                  <td>
-                    N° DE CONTROL&nbsp;:&nbsp;<span style="font-size: 18px;color: #e00303;font-weight: bolder;"> {{registro.numerodocumento}}</span>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    Dirección: {{registro.direccionclientedetail}} Caracas
-                  </td>
-                  <td>
-                   Fecha de Emisión: {{registro.fechadetail}}
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    Teléfono: {{registro.telefonoclientedetail}} 04125558877
-                  </td>
-                  <td>
-                    Hora de Emisión: {{registro.horadetail}}
-                  </td>
-                </tr>
-              </table>
-            </q-item-section>
-          </q-item>
-          <q-separator />
-
-          <q-item style="width: 65%;">
-
-            <q-item-section>
-              <q-item-label>Base imponible Bs. Gravable 16%:</q-item-label>
-              <q-item-label>Base imponible Bs. Gravable 8%:</q-item-label>
-              <q-item-label>Base imponible Bs. Exento 0%:</q-item-label>
-              <q-item-label>Base imponible Bs. IGTF 3%:</q-item-label>
-              <q-item-label>IVA 16%%:</q-item-label>
-              <q-item-label>IVA Reducido 8%:</q-item-label>
-              <q-item-label>IGTF 3%:</q-item-label>
-              <q-item-label>Total:</q-item-label>
-            </q-item-section>
-
-            <q-item-section side top>
-              <q-item-label caption>{{registro.basegdetail}}</q-item-label>
-              <q-item-label caption>{{registro.baserdetail}}</q-item-label>
-              <q-item-label caption>{{registro.exentodetail}}</q-item-label>
-              <q-item-label caption>{{registro.baseigtfdetail}}</q-item-label>
-              <q-item-label caption>{{registro.impuestogdetail}}</q-item-label>
-              <q-item-label caption>{{registro.impuestordetail}}</q-item-label>
-              <q-item-label caption>{{registro.impuestoigtfdetail}}</q-item-label>
-              <q-item-label caption>{{registro.totaldetail}}</q-item-label>
-            </q-item-section>
-          </q-item>
-        </div>
-       </q-card>-->
     </div>
   </div>
 </template>
 
 <script>
 import { ref } from 'vue'
+
+import ModalRedirectEmail from '../components/modals/ModalRedirectEmail.vue'
 import { exportFile, Notify } from 'quasar'
 import axios from 'axios'
 import moment from 'moment'
@@ -538,13 +359,10 @@ import 'jspdf-autotable'
 const config = require('../config/endpoints.js')
 const ENDPOINT_PATH_V2 = config.endpoint_path_v2
 function wrapCsvValue (val, formatFn, row) {
-  let formatted = formatFn !== void 0
-    ? formatFn(val, row)
-    : val
+  let formatted = formatFn !== void 0 ? formatFn(val, row) : val
 
-  formatted = formatted === void 0 || formatted === null
-    ? ''
-    : String(formatted)
+  formatted =
+    formatted === void 0 || formatted === null ? '' : String(formatted)
 
   formatted = formatted.split('"').join('""')
   /**
@@ -563,8 +381,13 @@ export default {
         /* starting with Sunday */
         days: 'Domingo_Lunes_Martes_Miércoles_Jueves_Viernes_Sábado'.split('_'),
         daysShort: 'Dom_Lun_Mar_Mié_Jue_Vie_Sáb'.split('_'),
-        months: 'Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre'.split('_'),
-        monthsShort: 'Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Sep_Oct_Nov_Dic'.split('_'),
+        months:
+          'Enero_Febrero_Marzo_Abril_Mayo_Junio_Julio_Agosto_Septiembre_Octubre_Noviembre_Diciembre'.split(
+            '_'
+          ),
+        monthsShort: 'Ene_Feb_Mar_Abr_May_Jun_Jul_Ago_Sep_Oct_Nov_Dic'.split(
+          '_'
+        ),
         firstDayOfWeek: 1, // 0-6, 0 - Sunday, 1 Monday, ...
         format24h: true,
         pluralDay: 'dias'
@@ -589,6 +412,7 @@ export default {
       numerodocumento: ref(''),
       titulotabla: ref('Documentos'),
       disable: ref(true),
+      btnDisable: ref(true),
       dateFrom: ref(moment().format('YYYY-MM-DD')),
       dateTo: ref(moment().format('YYYY-MM-DD')),
       co_rol: sessionStorage.getItem('co_rol'),
@@ -608,15 +432,37 @@ export default {
           required: true,
           label: 'Cliente emisor',
           align: 'left',
-          field: row => row.razonsocial,
-          format: val => `${val}`,
+          field: (row) => row.razonsocial,
+          format: (val) => `${val}`,
           sortable: true
         },
-        { name: 'numerointerno', align: 'left', label: 'N° Interno', field: 'numerointerno', sortable: true },
-        { name: 'tipodocumento', align: 'left', label: 'Documento', sortable: true },
-        { name: 'numerodocumento', align: 'left', label: 'Número de Control', field: 'numerodocumento', sortable: true },
+        {
+          name: 'numerointerno',
+          align: 'left',
+          label: 'N° Interno',
+          field: 'numerointerno',
+          sortable: true
+        },
+        {
+          name: 'tipodocumento',
+          align: 'left',
+          label: 'Documento',
+          sortable: true
+        },
+        {
+          name: 'numerodocumento',
+          align: 'left',
+          label: 'Número de Control',
+          field: 'numerodocumento',
+          sortable: true
+        },
         { name: 'fecha', align: 'left', label: 'Fecha y Hora', field: 'fecha' },
-        { name: 'nombrecliente', align: 'left', label: 'Nombre Cliente', field: 'nombrecliente' },
+        {
+          name: 'nombrecliente',
+          align: 'left',
+          label: 'Nombre Cliente',
+          field: 'nombrecliente'
+        },
         { name: 'exento', label: 'Exento', field: 'exento' },
         { name: 'tasag', label: 'Tasa IVA', field: 'tasag' },
         { name: 'baseg', label: 'Imponible IVA', field: 'baseg' },
@@ -627,8 +473,13 @@ export default {
         { name: 'tasaigtf', label: 'Tasa IGTF', field: 'tasaigtf' },
         { name: 'baseigtf', label: 'Imponible IGTF', field: 'baseigtf' },
         { name: 'impuestoigtf', label: 'Impuesto IGTF', field: 'impuestoigtf' },
+        { name: 'anulado', label: 'Anulado', field: 'status' },
         { name: 'detail', label: 'Ver', align: 'center' },
-        { name: 'enviarcorreo', label: 'Envío de correo', field: 'enviarcorreo' },
+        {
+          name: 'enviarcorreo',
+          label: 'Envío de correo',
+          field: 'enviarcorreo'
+        },
         { name: 'relacionado', label: 'Relacionado', field: 'relacionado' },
         { name: 'exportar', label: 'Exportar', align: 'center' }
       ],
@@ -638,14 +489,31 @@ export default {
           required: true,
           label: 'Cliente emisor',
           align: 'left',
-          field: row => row.razonsocial,
-          format: val => `${val}`,
+          field: (row) => row.razonsocial,
+          format: (val) => `${val}`,
           sortable: true
         },
-        { name: 'tipodocumento', align: 'left', label: 'Documento', field: 'tipodocumento', sortable: true },
-        { name: 'numerodocumento', align: 'left', label: 'Número de Control', field: 'numerodocumento', sortable: true },
+        {
+          name: 'tipodocumento',
+          align: 'left',
+          label: 'Documento',
+          field: 'tipodocumento',
+          sortable: true
+        },
+        {
+          name: 'numerodocumento',
+          align: 'left',
+          label: 'Número de Control',
+          field: 'numerodocumento',
+          sortable: true
+        },
         { name: 'fecha', align: 'left', label: 'Fecha y Hora', field: 'fecha' },
-        { name: 'nombrecliente', align: 'left', label: 'Nombre Cliente', field: 'nombrecliente' },
+        {
+          name: 'nombrecliente',
+          align: 'left',
+          label: 'Nombre Cliente',
+          field: 'nombrecliente'
+        },
         { name: 'exento', label: 'Exento', field: 'exento' },
         { name: 'tasag', label: 'Tasa IVA', field: 'tasag' },
         { name: 'baseg', label: 'Imponible IVA', field: 'baseg' },
@@ -657,15 +525,36 @@ export default {
         { name: 'baseigtf', label: 'Imponible IGTF', field: 'baseigtf' },
         { name: 'impuestoigtf', label: 'Impuesto IGTF', field: 'impuestoigtf' },
         { name: 'detail', label: 'Ver', align: 'center' },
-        { name: 'enviarcorreo', label: 'Envío de correo', field: 'enviarcorreo' },
+        {
+          name: 'enviarcorreo',
+          label: 'Envío de correo',
+          field: 'enviarcorreo'
+        },
         { name: 'relacionado', label: 'Relacionado', field: 'relacionado' },
         { name: 'exportar', label: 'Exportar', align: 'center' }
       ],
       columns3: [
-        { name: 'tipodocumento', align: 'left', label: 'Documento', field: 'tipodocumento', sortable: true },
-        { name: 'numerodocumento', align: 'left', label: 'Número de Control', field: 'numerodocumento', sortable: true },
+        {
+          name: 'tipodocumento',
+          align: 'left',
+          label: 'Documento',
+          field: 'tipodocumento',
+          sortable: true
+        },
+        {
+          name: 'numerodocumento',
+          align: 'left',
+          label: 'Número de Control',
+          field: 'numerodocumento',
+          sortable: true
+        },
         { name: 'fecha', align: 'left', label: 'Fecha y Hora', field: 'fecha' },
-        { name: 'nombrecliente', align: 'left', label: 'Nombre Cliente', field: 'nombrecliente' },
+        {
+          name: 'nombrecliente',
+          align: 'left',
+          label: 'Nombre Cliente',
+          field: 'nombrecliente'
+        },
         { name: 'exento', label: 'Exento', field: 'exento' },
         { name: 'tasag', label: 'Tasa IVA', field: 'tasag' },
         { name: 'baseg', label: 'Imponible IVA', field: 'baseg' },
@@ -677,7 +566,11 @@ export default {
         { name: 'baseigtf', label: 'Imponible IGTF', field: 'baseigtf' },
         { name: 'impuestoigtf', label: 'Impuesto IGTF', field: 'impuestoigtf' },
         { name: 'detail', label: 'Ver', align: 'center' },
-        { name: 'enviarcorreo', label: 'Envío de correo', field: 'enviarcorreo' },
+        {
+          name: 'enviarcorreo',
+          label: 'Envío de correo',
+          field: 'enviarcorreo'
+        },
         { name: 'relacionado', label: 'Relacionado', field: 'relacionado' },
         { name: 'exportar', label: 'Exportar', align: 'center' }
       ],
@@ -689,9 +582,19 @@ export default {
           align: 'left',
           field: 'codigo'
         }, */
-        { name: 'descripcion', align: 'left', label: 'Descripción', field: 'descripcion' },
+        {
+          name: 'descripcion',
+          align: 'left',
+          label: 'Descripción',
+          field: 'descripcion'
+        },
         { name: 'precio', align: 'left', label: 'Precio', field: 'precio' },
-        { name: 'cantidad', align: 'left', label: 'Cantidad', field: 'cantidad' },
+        {
+          name: 'cantidad',
+          align: 'left',
+          label: 'Cantidad',
+          field: 'cantidad'
+        },
         { name: 'tasa', align: 'left', label: 'Tasa', field: 'tasa' },
         { name: 'descuento', label: 'Descuento', field: 'descuento' },
         { name: 'monto', label: 'Monto', field: 'monto' }
@@ -709,6 +612,7 @@ export default {
         { cod: 4, name: 'Impuesto IGTF' }
       ],
       optionstipo: [],
+      dataEmail: {},
       modelsede: null,
       modelcodes: [],
       optionssede: [],
@@ -723,24 +627,31 @@ export default {
       tipodocafectado: '',
       fechaafectado: '',
       numeroafectado: '',
+      selected: [],
       idusuario: sessionStorage.getItem('id_usuario'),
       co_sede_seleted: sessionStorage.getItem('co_sede_seleted'),
       tx_sede_seleted: sessionStorage.getItem('tx_sede_seleted'),
-      rif_sede_seleted: sessionStorage.getItem('rif_sede_seleted')
+      rif_sede_seleted: sessionStorage.getItem('rif_sede_seleted'),
+      rif_sede: sessionStorage.getItem('rif_sede')
     }
   },
   methods: {
+    getColorEmailStatus (obj) {
+      if (obj.estatuscorreo === '1' && obj.enviocorreo === '1') {
+        return 'blue'
+      }
+      return 'red'
+    },
     exportDetailToPDF () {
       // eslint-disable-next-line new-cap
       const doc = new jsPDF('l', 'pt', 'a4')
       console.log(document.getElementById('detailid'))
       doc.html(document.getElementById('detailid'), {
         callback: function (doc) {
-          doc.save('impredigitalDetalle.pdf')
+          doc.save('smartdigitalDetalle.pdf')
         },
         x: 60,
         y: 60
-
       })
     },
     JSONtoXML (obj) {
@@ -765,7 +676,8 @@ export default {
     },
     exportXML (arreglo) {
       let header = '<?xml version="1.0"?>\n'
-      header += '<root xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n\n'
+      header +=
+        '<root xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n\n'
       header += '<IsOriginal>true</IsOriginal>\n'
       header += '<IsOriginalMessage>ORIGINAL</IsOriginalMessage>\n\n'
       header += '<Documents>\n'
@@ -776,7 +688,7 @@ export default {
 
       // console.log(header + xml + footer)
       const status = exportFile(
-        'impredigital-export.xml',
+        'smartdigital' + moment().format('YYYYMMDDHmmss') + '.xml',
         header + xml + footer,
         'txt'
       )
@@ -787,21 +699,25 @@ export default {
     },
     exportTable () {
       // naive encoding to csv format
-      const content = [this.columns.map(col => wrapCsvValue(col.label))].concat(
-        this.rows.map(row => this.columns.map(col => wrapCsvValue(
-          typeof col.field === 'function'
-            ? col.field(row)
-            : row[col.field === void 0 ? col.name : col.field],
-          col.format,
-          row
-        )).join(','))
-      ).join('\r\n')
+      const content = [this.columns.map((col) => wrapCsvValue(col.label))]
+        .concat(
+          this.rows.map((row) =>
+            this.columns
+              .map((col) =>
+                wrapCsvValue(
+                  typeof col.field === 'function'
+                    ? col.field(row)
+                    : row[col.field === void 0 ? col.name : col.field],
+                  col.format,
+                  row
+                )
+              )
+              .join(',')
+          )
+        )
+        .join('\r\n')
 
-      const status = exportFile(
-        'impredigital-export.csv',
-        content,
-        'text/csv'
-      )
+      const status = exportFile('smartdigital-export.csv', content, 'text/csv')
 
       if (status !== true) {
         Notify.create('Browser denied file download...')
@@ -809,7 +725,7 @@ export default {
     },
     exportPDF () {
       const vm = this
-      const time1 = moment().valueOf()
+      this.crearbitacora(vm.dateFrom, vm.dateTo, 7)
       const columns = [
         { title: 'Emisor', dataKey: 'razonsocial' },
         { title: 'Rif', dataKey: 'rif' },
@@ -823,41 +739,73 @@ export default {
         { title: 'Reducido', dataKey: 'impuestor' },
         { title: 'IGTF', dataKey: 'impuestoigtf' }
       ]
-      const addFooters = doc => {
+      const addFooters = (doc) => {
         const pageCount = doc.internal.getNumberOfPages()
 
         doc.setFont('helvetica', 'italic')
         doc.setFontSize(11)
         doc.setPage(pageCount)
-        doc.text('Imprenta Digital', 40, doc.internal.pageSize.height - 40)
-        doc.text('Fecha de Exportación ' + vm.dateHoy, 600, doc.internal.pageSize.height - 40)
-        doc.text('Usuario: ' + vm.tx_nombre, 600, doc.internal.pageSize.height - 20)
+        doc.text('Smart Digital', 40, doc.internal.pageSize.height - 40)
+        doc.text(
+          'Fecha de Exportación ' + vm.dateHoy,
+          600,
+          doc.internal.pageSize.height - 40
+        )
+        doc.text(
+          'Usuario: ' + vm.tx_nombre,
+          600,
+          doc.internal.pageSize.height - 20
+        )
       }
       const tipodoc = vm.idtipodocumento ? vm.tipodocumento : 'Documentos'
-      const emisor = vm.idserviciosmasivo ? ' Emisor ' + vm.serviciosmasivo : ''
+      const emisor = vm.idserviciosmasivo
+        ? ' Emisor ' + vm.serviciosmasivo
+        : ''
       // eslint-disable-next-line new-cap
       const doc = new jsPDF('l', 'pt')
       doc.setFont('helvetica', 'italic')
       doc.setFontSize(13)
-      doc.text('Reporte de ' + tipodoc + '       Desde ' + moment(vm.dateFrom).format('DD/MM/YYYY') + ' Hasta ' + moment(vm.dateTo).format('DD/MM/YYYY') + '       ' + emisor, 40, 40)
+      doc.text(
+        'Reporte de ' +
+        tipodoc +
+        '       Desde ' +
+        moment(vm.dateFrom).format('DD/MM/YYYY') +
+        ' Hasta ' +
+        moment(vm.dateTo).format('DD/MM/YYYY') +
+        '       ' +
+        emisor,
+        40,
+        40
+      )
       doc.autoTable(columns, vm.rows, {
         margin: { top: 60 }
       })
       addFooters(doc)
-      doc.save('smartRegistros.pdf')
-      const time2 = moment().valueOf()
-      this.crearbitacora(vm.dateFrom, vm.dateTo, 7, time2 - time1)
+      doc.save('smartdigitalRegistros.pdf')
     },
     exportXMLDetail (reg) {
+      this.rowtempxml = []
       this.rowtempxml.push(this.detailXML(reg))
+      // console.log(this.rowtempxml)
       this.exportXML(this.rowtempxml)
     },
     async openDetail (reg) {
-      // console.log('reg.fecha')
-      // console.log(reg.fecha)
+      //  console.log('openDetail')
       if (this.co_rol === '3') {
-        const anniomes = moment(reg.fecha, 'DD/MM/YYYY HH:mm:ss a').format('YYYY') + '-' + moment(reg.fecha, 'DD/MM/YYYY HH:mm:ss a').format('MM')
-        window.open(ENDPOINT_PATH_V2 + 'archivos/' + reg.rif + '/' + anniomes + '/' + reg.rif + reg.numerodocumento)
+        const anniomes =
+        moment(reg.fecha, 'DD/MM/YYYY HH:mm:ss a').format('YYYY') +
+        '-' +
+        moment(reg.fecha, 'DD/MM/YYYY HH:mm:ss a').format('MM')
+        window.open(
+          ENDPOINT_PATH_V2 +
+        'archivos/' +
+        reg.rif +
+        '/' +
+        anniomes +
+        '/' +
+        reg.rif +
+        reg.numerodocumento
+        )
       } else {
         this.rowtempxml = []
         this.detallesDoc = []
@@ -904,8 +852,8 @@ export default {
           reg.subtotal = detalles.data.data.length > 0 ? subtotaldetalle : reg.subtotal
         }
         // console.log(this.detallesDoc)
-        reg.fecha = moment(reg.fecha, 'DD/MM/YYYY HH:mm:ss')
-        this.rowtempxml.push(await this.detailXML(reg))
+        reg.fecha = moment(reg.fecha, 'DD/MM/YYYY hh:mm:ss a')
+        this.rowtempxml.push(this.detailXML(reg))
         this.viewdetail = true
         this.registro.logo = reg.logo
         this.registro.razonsocialdetail = reg.razonsocial
@@ -949,7 +897,9 @@ export default {
           this.optionscliente = this.clientes
         } else {
           const needle = val.toLowerCase()
-          this.optionscliente = this.clientes.filter(v => v.namerif.toLowerCase().indexOf(needle) > -1)
+          this.optionscliente = this.clientes.filter(
+            (v) => v.namerif.toLowerCase().indexOf(needle) > -1
+          )
         }
       })
     },
@@ -963,7 +913,9 @@ export default {
           this.optionssede = this.emisores
         } else {
           const needle = val.toLowerCase()
-          this.optionssede = this.emisores.filter(v => v.namerif.toLowerCase().indexOf(needle) > -1)
+          this.optionssede = this.emisores.filter(
+            (v) => v.namerif.toLowerCase().indexOf(needle) > -1
+          )
         }
       })
     },
@@ -977,7 +929,9 @@ export default {
           this.optionscodes = this.codes
         } else {
           const needle = val.toLowerCase()
-          this.optionscodes = this.codes.filter(v => v.namecode.toLowerCase().indexOf(needle) > -1)
+          this.optionscodes = this.codes.filter(
+            (v) => v.namecode.toLowerCase().indexOf(needle) > -1
+          )
         }
       })
     },
@@ -1031,138 +985,241 @@ export default {
       console.log(this.modelcodes?.cod)
       this.idcodigocomercial = this.modelcodes?.cod
       this.codigocomercial = this.modelcodes?.namecode
+      console.log(this.idcodigocomercial)
+      console.log(this.codigocomercial)
       this.listarfacturas()
     },
-    listartipos () {
-      axios.get(ENDPOINT_PATH_V2 + 'tipodocumento').then(async response => {
-        const datos = response.data.data
-        this.optionstipo = []
-        const obj = {}
-        obj.cod = undefined
-        obj.name = 'Todos'
-        this.optionstipo.push(obj)
-        for (const i in datos) {
-          const obj = {}
-          obj.cod = datos[i].id
-          obj.name = datos[i].tipodocumento
-          this.optionstipo.push(obj)
-        }
+    redistribuir () {
+      const body = {
+        rif: this.rif_sede_seleted
+      }
+      const url = ENDPOINT_PATH_V2 + 'archivos/redistribuir'
+      axios.post(
+        url,
+        body
+      ).then(async response => {
+        Notify.create('Documentos redidtribuidos con exito ')
       }).catch(error => {
         Notify.create('Problemas al listar Tipos de documentos ' + error)
       })
     },
-    listarsedes () {
-      axios.get(ENDPOINT_PATH_V2 + 'sede').then(async response => {
-        const datos = response.data.data
-        this.optionssede = []
-        for (const i in datos) {
-          if (datos[i].razonsocial.length > 0) {
+    exportarLotes () {
+      const $this = this
+      /* const arregloOriginal = this.rows.map(item => ({
+        correlativo: item.numerodocumento,
+        annio: moment(item.fecha, 'DD/MM/YYYY hh:mm:ss a').format('YYYY'),
+        mes: moment(item.fecha, 'DD/MM/YYYY hh:mm:ss a').format('MM')
+      })) */
+      // console.log('Arreglo de arreglos: ', arregloDeArreglos)
+      const desde =
+        this.numerodocumento.length > 0
+          ? undefined
+          : moment(this.dateFrom, 'YYYY/MM/DD').format('YYYY-MM-DD')
+      const hasta =
+        this.numerodocumento.length > 0
+          ? undefined
+          : moment(this.dateTo, 'YYYY/MM/DD').format('YYYY-MM-DD')
+
+      const body = {
+        idserviciosmasivo: this.modelsede?.cod
+          ? this.modelsede.cod
+          : this.co_rol === '3'
+            ? this.co_sede
+            : undefined,
+        idtipodocumento: this.modeltipo?.cod,
+        idcodigocomercial: this.modelcodes?.cod,
+        cedulacliente: this.modelcliente?.rif,
+        numerodocumento:
+          this.numerodocumento.length > 0 ? this.numerodocumento : undefined,
+        desde: desde,
+        hasta: hasta,
+        exento: this.exento,
+        impuestog: this.impuestog,
+        impuestor: this.impuestor,
+        impuestoigtf: this.impuestoigtf,
+        rif: $this.rif_sede,
+        estatus: 4
+      }
+      const url = ENDPOINT_PATH_V2 + 'archivos/exportarlote'
+      // console.log('2 Segundo INDICE: ', indice)
+      // console.log(body)
+      axios.post(
+        url,
+        body,
+        { responseType: 'arraybuffer' }
+      ).then(async response => {
+        const blob = new Blob([response.data])
+        const link = document.createElement('a')
+        link.style.display = 'none'
+        link.href = window.URL.createObjectURL(blob)
+        link.download = $this.rif_sede + '-' + moment().format('YYYYMMDDhhmmss') + '.zip'
+        link.click()
+        window.URL.revokeObjectURL(link.href)
+        // Notify.create('Documentos exportados con exito ')
+      }).catch(error => {
+        Notify.create('Problemas al listar Tipos de documentos ' + error)
+      })
+    },
+    listartipos () {
+      axios
+        .get(ENDPOINT_PATH_V2 + 'tipodocumento')
+        .then(async (response) => {
+          const datos = response.data.data
+          this.optionstipo = []
+          const obj = {}
+          obj.cod = undefined
+          obj.name = 'Todos'
+          this.optionstipo.push(obj)
+          for (const i in datos) {
             const obj = {}
             obj.cod = datos[i].id
-            obj.name = datos[i].razonsocial
-            obj.rif = datos[i].rif
-            obj.namerif = datos[i].razonsocial + ' ' + datos[i].rif
-            obj.tokenservicios = datos[i].tokenservicios
-            this.optionssede.push(obj)
+            obj.name = datos[i].tipodocumento
+            this.optionstipo.push(obj)
           }
-        }
-        this.emisores = this.optionssede
-        // this.rifs = this.optionssede
-      }).catch(error => {
-        Notify.create('Problemas al listar Sedes ' + error)
-      })
+        })
+        .catch((error) => {
+          Notify.create('Problemas al listar Tipos de documentos ' + error)
+        })
+    },
+    listarsedes () {
+      axios
+        .get(ENDPOINT_PATH_V2 + 'sede')
+        .then(async (response) => {
+          const datos = response.data.data
+          this.optionssede = []
+          for (const i in datos) {
+            if (datos[i].razonsocial.length > 0) {
+              const obj = {}
+              obj.cod = datos[i].id
+              obj.name = datos[i].razonsocial
+              obj.rif = datos[i].rif
+              obj.namerif = datos[i].razonsocial + ' ' + datos[i].rif
+              obj.tokenservicios = datos[i].tokenservicios
+              if (datos[i].estatus === '0' && this.co_rol === '1') {
+                this.optionssede.push(obj)
+              }
+              if (datos[i].estatus === '1') {
+                this.optionssede.push(obj)
+              }
+              // this.optionssede.push(obj)
+            }
+          }
+          this.emisores = this.optionssede
+          // this.rifs = this.optionssede
+        })
+        .catch((error) => {
+          Notify.create('Problemas al listar Sedes ' + error)
+        })
     },
     getCodes () {
-      axios.get(ENDPOINT_PATH_V2 + 'sede/codes').then(async response => {
-        const datos = response.data.data
-        this.optionscodes = []
-        for (const i in datos) {
-          const obj = {}
-          obj.cod = datos[i].id
-          obj.namecode = datos[i].codigocomercial + '-' + datos[i].descripcion
-          this.optionscodes.push(obj)
-        }
-        this.codes = this.optionscodes
-      }).catch(error => {
-        Notify.create('Problemas al listar Codigos comerciales ' + error)
-      })
+      axios
+        .get(ENDPOINT_PATH_V2 + 'sede/codes')
+        .then(async (response) => {
+          const datos = response.data.data
+          this.optionscodes = []
+          for (const i in datos) {
+            const obj = {}
+            obj.cod = datos[i].id
+            obj.namecode =
+              datos[i].codigocomercial + '-' + datos[i].descripcion
+            this.optionscodes.push(obj)
+          }
+          this.codes = this.optionscodes
+        })
+        .catch((error) => {
+          Notify.create('Problemas al listar Codigos comerciales ' + error)
+        })
     },
     buscarDetail (row) {
+      // console.log(this.co_rol)
+      // console.log(row)
       const body = {
         idserviciosmasivo: row.idserviciosmasivo,
         numerodocumento: row.relacionado
       }
-      axios.post(ENDPOINT_PATH_V2 + 'reporte/facturas/relacionado', body).then(async response => {
-        const datos = response.data.data
-        const obj = {}
-        obj.cod = datos[0].id
-        obj.logo = ENDPOINT_PATH_V2 + 'imagen/' + datos[0].rif + '.png'
-        obj.idserviciosmasivo = datos[0].idserviciosmasivo
-        obj.razonsocial = datos[0].razonsocial
-        obj.rif = datos[0].rif
-        obj.relacionado = datos[0].relacionado
-        obj.piedepagina = datos[0].piedepagina
-        obj.direccion = datos[0].direccion
-        obj.telefono = datos[0].telefono
-        obj.trackingid = datos[0].trackingid
-        obj.numerodocumento = datos[0].numerodocumento
-        obj.tipodocumento = datos[0].tipodocumento
-        obj.abrev = datos[0].abrev
-        obj.cedulacliente = datos[0].cedulacliente
-        obj.nombrecliente = datos[0].nombrecliente
-        obj.direccioncliente = datos[0].direccioncliente
-        obj.telefonocliente = datos[0].telefonocliente
-        obj.estatus = datos[0].estatus
-        obj.observacion = datos[0].observacion
-        obj.fecha = moment(datos[0].fecha).format('DD/MM/YYYY hh:mm:ss a')
-        obj.fechasolo = moment(datos[0].fecha).format('DD/MM/YYYY')
-        obj.hora = moment(datos[0].fecha).format('hh:mm:ss a')
-        obj.subtotal = datos[0].subtotal
-        obj.total = datos[0].total
+      axios
+        .post(ENDPOINT_PATH_V2 + 'reporte/facturas/relacionado', body)
+        .then(async (response) => {
+          const datos = response.data.data
+          const obj = {}
+          obj.cod = datos[0].id
+          obj.logo = ENDPOINT_PATH_V2 + 'imagen/' + datos[0].rif + '.png'
+          obj.idserviciosmasivo = datos[0].idserviciosmasivo
+          obj.razonsocial = datos[0].razonsocial
+          obj.rif = datos[0].rif
+          obj.relacionado = datos[0].relacionado
+          obj.piedepagina = datos[0].piedepagina
+          obj.direccion = datos[0].direccion
+          obj.telefono = datos[0].telefono
+          obj.trackingid = datos[0].trackingid
+          obj.numerodocumento = datos[0].numerodocumento
+          obj.tipodocumento = datos[0].tipodocumento
+          obj.abrev = datos[0].abrev
+          obj.cedulacliente = datos[0].cedulacliente
+          obj.nombrecliente = datos[0].nombrecliente
+          obj.direccioncliente = datos[0].direccioncliente
+          obj.telefonocliente = datos[0].telefonocliente
+          obj.estatus = datos[0].estatus
+          obj.observacion = datos[0].observacion
+          obj.fecha = moment(datos[0].fecha).format('DD/MM/YYYY hh:mm:ss a')
+          obj.fechasolo = moment(datos[0].fecha).format('DD/MM/YYYY')
+          obj.hora = moment(datos[0].fecha).format('hh:mm:ss a')
+          obj.subtotal = datos[0].subtotal
+          obj.total = datos[0].total
 
-        obj.tasag = datos[0].tasag ? datos[0].tasag + '%' : '0%'
-        obj.tasar = datos[0].tasar ? datos[0].tasar + '%' : '0%'
-        obj.tasaigtf = datos[0].tasaigtf ? datos[0].tasaigtf + '%' : '0%'
+          obj.tasag = datos[0].tasag ? datos[0].tasag + '%' : '0%'
+          obj.tasar = datos[0].tasar ? datos[0].tasar + '%' : '0%'
+          obj.tasaigtf = datos[0].tasaigtf ? datos[0].tasaigtf + '%' : '0%'
 
-        obj.exento = datos[0].exento || 0
-        obj.exentoN = datos[0].exento || 0
-        obj.baseg = datos[0].baseg || 0
-        obj.basegN = datos[0].baseg || 0
-        obj.impuestogN = datos[0].impuestog || 0
-        obj.baser = datos[0].baser || 0
-        obj.impuestorN = datos[0].impuestor || 0
-        obj.baseigtf = datos[0].baseigtf || 0
-        obj.baseigtfN = datos[0].baseigtf || 0
-        obj.impuestoigtfN = datos[0].impuestoigtf || 0
+          obj.exento = datos[0].exento || 0
+          obj.exentoN = datos[0].exento || 0
+          obj.baseg = datos[0].baseg || 0
+          obj.basegN = datos[0].baseg || 0
+          obj.impuestogN = datos[0].impuestog || 0
+          obj.baser = datos[0].baser || 0
+          obj.impuestorN = datos[0].impuestor || 0
+          obj.baseigtf = datos[0].baseigtf || 0
+          obj.baseigtfN = datos[0].baseigtf || 0
+          obj.impuestoigtfN = datos[0].impuestoigtf || 0
 
-        datos[0].totalxml = Number(obj.exentoN) + Number(obj.basegN) + Number(obj.impuestogN)
-        datos[0].grandtotalxml = Number(datos[0].totalxml) + Number(obj.baseigtfN) + Number(obj.impuestoigtfN)
-        obj.totalxml = datos[0].totalxml
-        obj.grandtotalxml = datos[0].grandtotalxml
+          datos[0].totalxml =
+            Number(obj.exentoN) + Number(obj.basegN) + Number(obj.impuestogN)
+          datos[0].grandtotalxml =
+            Number(datos[0].totalxml) +
+            Number(obj.baseigtfN) +
+            Number(obj.impuestoigtfN)
+          obj.totalxml = datos[0].totalxml
+          obj.grandtotalxml = datos[0].grandtotalxml
 
-        obj.exento = this.completarDecimales(obj.exento)
-        obj.baseg = this.completarDecimales(obj.baseg)
-        obj.impuestog = this.completarDecimales(obj.impuestogN)
-        obj.baser = this.completarDecimales(obj.baser)
-        obj.impuestor = this.completarDecimales(obj.impuestorN)
-        obj.baseigtf = this.completarDecimales(obj.baseigtf)
-        obj.impuestoigtf = this.completarDecimales(obj.impuestoigtfN)
-        this.openDetail(obj)
-      }).catch(error => {
-        Notify.create('Problemas al Buscar factura ' + error)
-      })
+          obj.exento = this.completarDecimales(obj.exento)
+          obj.baseg = this.completarDecimales(obj.baseg)
+          obj.impuestog = this.completarDecimales(obj.impuestogN)
+          obj.baser = this.completarDecimales(obj.baser)
+          obj.impuestor = this.completarDecimales(obj.impuestorN)
+          obj.baseigtf = this.completarDecimales(obj.baseigtf)
+          obj.impuestoigtf = this.completarDecimales(obj.impuestoigtfN)
+          this.openDetail(obj)
+        })
+        .catch((error) => {
+          Notify.create('Problemas al Buscar factura ' + error)
+        })
     },
-    crearbitacora (desde, hasta, idevento, militime) {
-      const segundos = militime / 1000
+    crearbitacora (desde, hasta, idevento) {
       let observacion = ''
       let fechas = ' desde el ' + desde + ' hasta el ' + hasta
       const tipodoc = this.modeltipo.name ? ', ' + this.modeltipo.name : ''
       observacion += tipodoc
-      const cliente = this.modelsede?.name ? ', cliente emisor ' + this.modelsede.namerif : ''
+      const cliente = this.modelsede?.name
+        ? ', cliente emisor ' + this.modelsede.namerif
+        : ''
       observacion += cliente
-      const tipoimpuesto = this.modelimpuesto.name ? ', tipo de impuesto ' + this.modelimpuesto.name : ''
+      const tipoimpuesto = this.modelimpuesto.name
+        ? ', tipo de impuesto ' + this.modelimpuesto.name
+        : ''
       observacion += tipoimpuesto
-      const clientefinal = this.modelcliente?.rif ? ', cliente consumidor ' + this.modelcliente.namerif : ''
+      const clientefinal = this.modelcliente?.rif
+        ? ', cliente consumidor ' + this.modelcliente.namerif
+        : ''
       observacion += clientefinal
 
       if (this.numerodocumento.length > 0) {
@@ -1174,150 +1231,188 @@ export default {
         idusuario: this.idusuario,
         idevento: idevento,
         ip: this.term,
-        observacion: observacion + ' - Duración ' + segundos + ' segs.',
+        observacion: observacion,
         fecha: moment().format('YYYY-MM-DD HH:mm:ss')
       })
     },
-
-    enviarCorreo (row) {
-      this.$q.dialog({
-        title: 'Confirmación!',
-        message: '¿Está seguro de enviar este documento al correo del cliente?',
-        ok: {
-          color: 'primary',
-          label: 'Sí'
-        },
-        cancel: {
-          color: 'secondary',
-          label: 'No'
-        },
-        persistent: true
-      }).onOk(async () => {
-        await axios.post(ENDPOINT_PATH_V2 + 'email', {
+    async onSendEmail (row) {
+      await axios
+        .post(ENDPOINT_PATH_V2 + 'email', {
           numerodocumento: row.numerodocumento,
           rif: row.rif,
           email: row.emailcliente
-        }).then(() => {
+        })
+        .then(() => {
           Notify.create('Correo enviado sin problema ')
         })
+    },
+    renderWindownRedirectEmail (data) {
+      this.dataEmail = data
+      this.$q
+        .dialog({
+          component: ModalRedirectEmail,
+          componentProps: {
+            email: this.dataEmail
+          }
+        })
+        .onOk(() => {
+          this.updateEmailState(this.dataEmail)
+        })
+    },
+    updateEmailState (record) {
+      const { trackingid } = record
+      const lista = this.rows.map((row) => {
+        if (row.trackingid === trackingid) {
+          row.enviarcorreo = 'Enviado'
+          row.colorEmailStatus = 'blue'
+        }
+        return row
       })
+      this.rows = lista
     },
     listarfacturas () {
-      const desde = this.numerodocumento.length > 0 ? undefined : moment(this.dateFrom, 'YYYY/MM/DD').format('YYYY-MM-DD')
-      const hasta = this.numerodocumento.length > 0 ? undefined : moment(this.dateTo, 'YYYY/MM/DD').format('YYYY-MM-DD')
+      const desde =
+        this.numerodocumento.length > 0
+          ? undefined
+          : moment(this.dateFrom, 'YYYY/MM/DD').format('YYYY-MM-DD')
+      const hasta =
+        this.numerodocumento.length > 0
+          ? undefined
+          : moment(this.dateTo, 'YYYY/MM/DD').format('YYYY-MM-DD')
       const body = {
-        idserviciosmasivo: this.modelsede?.cod ? this.modelsede.cod : this.co_rol === '3' ? this.co_sede : undefined,
+        idserviciosmasivo: this.modelsede?.cod
+          ? this.modelsede.cod
+          : this.co_rol === '3'
+            ? this.co_sede
+            : undefined,
         idtipodocumento: this.modeltipo?.cod,
         idcodigocomercial: this.modelcodes?.cod,
         cedulacliente: this.modelcliente?.rif,
-        numerodocumento: this.numerodocumento.length > 0 ? this.numerodocumento : undefined,
+        numerodocumento:
+          this.numerodocumento.length > 0 ? this.numerodocumento : undefined,
         desde: desde,
         hasta: hasta,
         exento: this.exento,
         impuestog: this.impuestog,
         impuestor: this.impuestor,
         impuestoigtf: this.impuestoigtf,
-        estatus: 1
+        estatus: 4
       }
+      this.crearbitacora(desde, hasta, 3)
       this.loading = true
-      const time1 = moment().valueOf()
-      axios.post(ENDPOINT_PATH_V2 + 'reporte/facturas', body).then(async response => {
-        const datos = response.data.data
-        this.rows = []
-        this.tempxml = []
-        this.clientes = []
-        this.totalbaseg = 0
-        this.totalbaser = 0
-        this.totalbaseigtf = 0
-        this.totalimpuestog = 0
-        this.totalimpuestor = 0
-        this.totalimpuestoigtf = 0
-        for (const i in datos) {
-          const obj = {}
-          obj.cod = datos[i].id
-          obj.logo = ENDPOINT_PATH_V2 + 'imagen/' + datos[i].rif + '.png'
-          obj.idserviciosmasivo = datos[i].idserviciosmasivo
-          obj.razonsocial = datos[i].razonsocial
-          obj.rif = datos[i].rif
-          obj.piedepagina = datos[i].piedepagina
-          obj.relacionado = datos[i].relacionado
-          obj.direccion = datos[i].direccion
-          obj.telefono = datos[i].telefono
-          obj.trackingid = datos[i].trackingid
-          obj.numerodocumento = datos[i].numerodocumento
-          obj.numerointerno = datos[i].numerointerno
-          obj.tipodocumento = datos[i].tipodocumento
-          obj.abrev = datos[i].abrev
-          obj.cedulacliente = datos[i].cedulacliente
-          obj.nombrecliente = datos[i].nombrecliente
-          obj.direccioncliente = datos[i].direccioncliente
-          obj.emailcliente = datos[i].emailcliente
-          obj.telefonocliente = datos[i].telefonocliente
-          obj.estatus = datos[i].estatus
-          obj.estatuscorreo = datos[i].estatuscorreo
-          obj.enviocorreo = datos[i].enviocorreo
-          obj.enviarcorreo = datos[i].enviocorreo === '0' ? 'N/A' : datos[i].estatuscorreo === '1' ? 'Enviado' : 'No enviado'
+      this.btnDisable = true
+      axios
+        .post(ENDPOINT_PATH_V2 + 'reporte/facturas', body)
+        .then(async (response) => {
+          const datos = response.data.data
+          this.rows = []
+          this.tempxml = []
+          this.clientes = []
+          this.totalbaseg = 0
+          this.totalbaser = 0
+          this.totalbaseigtf = 0
+          this.totalimpuestog = 0
+          this.totalimpuestor = 0
+          this.totalimpuestoigtf = 0
+          for (const i in datos) {
+            const obj = {}
+            obj.cod = datos[i].id
+            obj.logo = ENDPOINT_PATH_V2 + 'imagen/' + datos[i].rif + '.png'
+            obj.idserviciosmasivo = datos[i].idserviciosmasivo
+            obj.razonsocial = datos[i].razonsocial
+            obj.rif = datos[i].rif
+            obj.piedepagina = datos[i].piedepagina
+            obj.relacionado = datos[i].relacionado
+            obj.direccion = datos[i].direccion
+            obj.telefono = datos[i].telefono
+            obj.trackingid = datos[i].trackingid
+            obj.numerodocumento = datos[i].numerodocumento
+            obj.numerointerno = datos[i].numerointerno
+            obj.tipodocumento = datos[i].tipodocumento
+            obj.abrev = datos[i].abrev
+            obj.cedulacliente = datos[i].cedulacliente
+            obj.nombrecliente = datos[i].nombrecliente
+            obj.direccioncliente = datos[i].direccioncliente
+            obj.emailcliente = datos[i].emailcliente
+            obj.telefonocliente = datos[i].telefonocliente
+            obj.estatus = datos[i].estatus
+            obj.estatuscorreo = datos[i].estatuscorreo
+            obj.enviocorreo = datos[i].enviocorreo
+            obj.enviarcorreo =
+              datos[i].enviocorreo === '0'
+                ? 'N/A'
+                : datos[i].estatuscorreo === '1'
+                  ? 'Enviado'
+                  : 'No enviado'
 
-          obj.observacion = datos[i].observacion
-          obj.fecha = moment(datos[i].fecha).format('DD/MM/YYYY hh:mm:ss a')
-          obj.fechasolo = moment(datos[i].fecha).format('DD/MM/YYYY')
-          obj.hora = moment(datos[i].fecha).format('hh:mm:ss a')
-          obj.subtotal = datos[i].subtotal
-          obj.total = datos[i].total
+            obj.observacion = datos[i].observacion
+            obj.fecha = moment(datos[i].fecha).format('DD/MM/YYYY hh:mm:ss a')
+            obj.fechasolo = moment(datos[i].fecha).format('DD/MM/YYYY')
+            obj.hora = moment(datos[i].fecha).format('hh:mm:ss a')
+            datos[i].fecha = obj.fecha
+            obj.subtotal = datos[i].subtotal
+            obj.total = datos[i].total
 
-          obj.tasag = datos[i].tasag ? datos[i].tasag + '%' : '0%'
-          obj.tasar = datos[i].tasar ? datos[i].tasar + '%' : '0%'
-          obj.tasaigtf = datos[i].tasaigtf ? datos[i].tasaigtf + '%' : '0%'
+            obj.tasag = datos[i].tasag ? datos[i].tasag + '%' : '0%'
+            obj.tasar = datos[i].tasar ? datos[i].tasar + '%' : '0%'
+            obj.tasaigtf = datos[i].tasaigtf ? datos[i].tasaigtf + '%' : '0%'
 
-          obj.exento = datos[i].exento || 0
-          obj.exentoN = datos[i].exento || 0
-          obj.baseg = datos[i].baseg || 0
-          obj.basegN = datos[i].baseg || 0
-          obj.impuestogN = datos[i].impuestog || 0
-          obj.baser = datos[i].baser || 0
-          obj.baserN = datos[i].baser || 0
-          obj.impuestorN = datos[i].impuestor || 0
-          obj.baseigtf = datos[i].baseigtf || 0
-          obj.baseigtfN = datos[i].baseigtf || 0
-          obj.impuestoigtfN = datos[i].impuestoigtf || 0
+            obj.exento = datos[i].exento || 0
+            obj.exentoN = datos[i].exento || 0
+            obj.baseg = datos[i].baseg || 0
+            obj.basegN = datos[i].baseg || 0
+            obj.impuestogN = datos[i].impuestog || 0
+            obj.baser = datos[i].baser || 0
+            obj.baserN = datos[i].baser || 0
+            obj.impuestorN = datos[i].impuestor || 0
+            obj.baseigtf = datos[i].baseigtf || 0
+            obj.baseigtfN = datos[i].baseigtf || 0
+            obj.impuestoigtfN = datos[i].impuestoigtf || 0
 
-          this.totalbaseg += Number(obj.basegN)
-          this.totalbaser += Number(obj.baserN)
-          this.totalbaseigtf += Number(obj.baseigtfN)
-          this.totalimpuestog += Number(obj.impuestogN)
-          this.totalimpuestor += Number(obj.impuestorN)
-          this.totalimpuestoigtf += Number(obj.impuestoigtfN)
+            this.totalbaseg += Number(obj.basegN)
+            this.totalbaser += Number(obj.baserN)
+            this.totalbaseigtf += Number(obj.baseigtfN)
+            this.totalimpuestog += Number(obj.impuestogN)
+            this.totalimpuestor += Number(obj.impuestorN)
+            this.totalimpuestoigtf += Number(obj.impuestoigtfN)
 
-          datos[i].totalxml = Number(obj.exentoN) + Number(obj.basegN) + Number(obj.impuestogN)
-          datos[i].grandtotalxml = Number(datos[i].totalxml) + Number(obj.baseigtfN) + Number(obj.impuestoigtfN)
-          obj.totalxml = datos[i].totalxml
-          obj.grandtotalxml = datos[i].grandtotalxml
+            datos[i].totalxml =
+              Number(obj.exentoN) + Number(obj.basegN) + Number(obj.impuestogN)
+            datos[i].grandtotalxml =
+              Number(datos[i].totalxml) +
+              Number(obj.baseigtfN) +
+              Number(obj.impuestoigtfN)
+            obj.totalxml = datos[i].totalxml
+            obj.grandtotalxml = datos[i].grandtotalxml
 
-          obj.exento = this.completarDecimales(obj.exento)
-          obj.baseg = this.completarDecimales(obj.baseg)
-          obj.impuestog = this.completarDecimales(obj.impuestogN)
-          obj.baser = this.completarDecimales(obj.baser)
-          obj.impuestor = this.completarDecimales(obj.impuestorN)
-          obj.baseigtf = this.completarDecimales(obj.baseigtf)
-          obj.impuestoigtf = this.completarDecimales(obj.impuestoigtfN)
-          this.rows.push(obj)
-          this.tempxml.push(this.detailXML(datos[i]))
-          this.crearClientes(obj)
-        }
-        this.totalbaseg = this.completarDecimales(this.totalbaseg)
-        this.totalbaser = this.completarDecimales(this.totalbaser)
-        this.totalbaseigtf = this.completarDecimales(this.totalbaseigtf)
+            obj.exento = this.completarDecimales(obj.exento)
+            obj.baseg = this.completarDecimales(obj.baseg)
+            obj.impuestog = this.completarDecimales(obj.impuestogN)
+            obj.baser = this.completarDecimales(obj.baser)
+            obj.impuestor = this.completarDecimales(obj.impuestorN)
+            obj.baseigtf = this.completarDecimales(obj.baseigtf)
+            obj.impuestoigtf = this.completarDecimales(obj.impuestoigtfN)
+            obj.colorEmailStatus = this.getColorEmailStatus(datos[i])
+            this.rows.push(obj)
+            this.tempxml.push(this.detailXML(datos[i]))
+            this.crearClientes(obj)
+          }
+          this.totalbaseg = this.completarDecimales(this.totalbaseg)
+          this.totalbaser = this.completarDecimales(this.totalbaser)
+          this.totalbaseigtf = this.completarDecimales(this.totalbaseigtf)
 
-        this.totalimpuestog = this.completarDecimales(this.totalimpuestog)
-        this.totalimpuestor = this.completarDecimales(this.totalimpuestor)
-        this.totalimpuestoigtf = this.completarDecimales(this.totalimpuestoigtf)
+          this.totalimpuestog = this.completarDecimales(this.totalimpuestog)
+          this.totalimpuestor = this.completarDecimales(this.totalimpuestor)
+          this.totalimpuestoigtf = this.completarDecimales(
+            this.totalimpuestoigtf
+          )
 
-        this.loading = false
-        const time2 = moment().valueOf()
-        this.crearbitacora(desde, hasta, 3, time2 - time1)
-      }).catch(error => {
-        Notify.create('Problemas al listar Reporte ' + error)
-      })
+          this.loading = false
+          this.btnDisable = this.rows.length === 0 || false
+        })
+        .catch((error) => {
+          Notify.create('Problemas al listar Reporte ' + error)
+        })
     },
     detailXML (row) {
       const objxml = {}
@@ -1326,16 +1421,29 @@ export default {
       objxml.DocumentDto.CompanyName = row.razonsocial
       objxml.DocumentDto.CompanyAddressOne = row.direccion
       objxml.DocumentDto.CompanyAddressFour = row.telefono
-      objxml.DocumentDto.id = row.trackingid
+      objxml.DocumentDto.id = row.numerointerno
       objxml.DocumentDto.Currency = 'VES'
 
       objxml.DocumentDto.ProductLiteral = row.tipodocumento
       objxml.DocumentDto.SerieLiteral = row.numerodocumento
-      objxml.DocumentDto.DayDate = moment(row.fecha).format('DD')
-      objxml.DocumentDto.tMonthDate = moment(row.fecha).format('MM')
-      objxml.DocumentDto.YearDate = moment(row.fecha).format('YYYY')
+      // console.log(row.fecha)
+      objxml.DocumentDto.DayDate = moment(
+        row.fecha,
+        'DD/MM/YYYY hh:mm:ss a'
+      ).format('DD')
+      objxml.DocumentDto.tMonthDate = moment(
+        row.fecha,
+        'DD/MM/YYYY hh:mm:ss a'
+      ).format('MM')
+      objxml.DocumentDto.YearDate = moment(
+        row.fecha,
+        'DD/MM/YYYY hh:mm:ss a'
+      ).format('YYYY')
 
-      objxml.DocumentDto.EmissionTimeFormatted = moment(row.fecha).format('hh:mm:ss')
+      objxml.DocumentDto.EmissionTimeFormatted = moment(
+        row.fecha,
+        'DD/MM/YYYY hh:mm:ss a'
+      ).format('hh:mm:ss a')
       objxml.DocumentDto.Name = row.nombrecliente
       objxml.DocumentDto.FiscalRegistry = row.cedulacliente
       objxml.DocumentDto.Address = row.direccioncliente
@@ -1353,24 +1461,34 @@ export default {
       objxml.DocumentDto.IGTFPercentage = row.tasaigtf
       objxml.DocumentDto.IGTFBaseAmountVES = row.baseigtf
       objxml.DocumentDto.IGTFAmountVES = row.impuestoigtf
-      objxml.DocumentDto.GrandTotalVES = this.completarDecimales(row.grandtotalxml)
+      objxml.DocumentDto.GrandTotalVES = this.completarDecimales(
+        row.grandtotalxml
+      )
 
       return objxml
     },
     completarDecimales (cadena) {
       cadena = Intl.NumberFormat('de-DE').format(cadena.toFixed(2))
       const arreglo = cadena.split(',')
-      cadena = arreglo.length === 1 ? cadena + ',00' : arreglo[1].length === 1 ? cadena + '0' : cadena
+      cadena =
+        arreglo.length === 1
+          ? cadena + ',00'
+          : arreglo[1].length === 1
+            ? cadena + '0'
+            : cadena
       return cadena
     },
     crearClientes (row) {
       const obj = {}
       const namerif = row.cedulacliente + ' ' + row.nombrecliente
-      if (this.clientes.findIndex(item => item.namerif === namerif) === -1) {
+      if (this.clientes.findIndex((item) => item.namerif === namerif) === -1) {
         obj.rif = row.cedulacliente
         obj.namerif = namerif
         this.clientes.push(obj)
       }
+    },
+    isAnulado (row) {
+      return row.estatus === '2' ? 'true' : false
     }
   },
   watch: {
@@ -1384,53 +1502,75 @@ export default {
     }
   },
   mounted () {
-    fetch('https://api.ipify.org?format=json').then(x => x.json()).then(({ ip }) => {
-      this.term = ip
-      console.log('Mounted')
-      console.log(this.tx_sede_seleted)
-      this.colspan = this.co_rol === '1' ? 8 : this.co_rol === '2' ? 7 : 6
-      if (this.co_sede_seleted) {
-        if (this.co_rol !== '1') {
-          this.colspan = 6
+    fetch('https://api.ipify.org?format=json')
+      .then((x) => x.json())
+      .then(({ ip }) => {
+        this.term = ip
+        this.colspan = this.co_rol === '1' ? 8 : this.co_rol === '2' ? 7 : 6
+        if (this.co_sede_seleted) {
+          if (this.co_rol !== '1') {
+            this.colspan = 6
+          }
+          const obj = {}
+          obj.cod = this.co_sede_seleted
+          obj.rif = this.rif_sede_seleted
+          obj.razonsocial = this.tx_sede_seleted
+          this.idserviciosmasivo = this.co_sede_seleted
+          obj.namerif = obj.razonsocial + ' ' + obj.rif
+          this.serviciosmasivo = obj.namerif
+          this.modelsede = obj
+          this.disabledSede = true
+          this.disable = false
         }
-        const obj = {}
-        obj.cod = this.co_sede_seleted
-        obj.rif = this.rif_sede_seleted
-        obj.razonsocial = this.tx_sede_seleted
-        this.idserviciosmasivo = this.co_sede_seleted
-        obj.namerif = obj.razonsocial + ' ' + obj.rif
-        this.serviciosmasivo = obj.namerif
-        this.modelsede = obj
-        this.disabledSede = true
-        this.disable = false
-      }
-      console.log(this.co_rol)
-      if (this.co_rol === '3') {
-        this.disable = false
-      }
-      this.listarsedes()
-      this.listartipos()
-      this.listarfacturas()
-      this.getCodes()
-      // console.log((this.co_rol === '3' || this.co_rol === '4') || (this.co_rol === '2' && this.co_sede_seleted))
-      this.columnseleted = (this.co_rol === '2' && !this.co_sede_seleted)
-        ? this.columns2 : (this.co_rol === '1' || this.co_rol === '3') ? this.columns : this.columns3
-      /* setInterval(() => {
+        if (this.co_rol === '3') {
+          this.disable = false
+        }
+        this.listarsedes()
+        this.listartipos()
+        this.listarfacturas()
+        this.getCodes()
+        // console.log((this.co_rol === '3' || this.co_rol === '4') || (this.co_rol === '2' && this.co_sede_seleted))
+        this.columnseleted =
+          this.co_rol === '2' && !this.co_sede_seleted
+            ? this.columns2
+            : this.co_rol === '1' || this.co_rol === '3'
+              ? this.columns
+              : this.columns3
+        /* setInterval(() => {
         this.listarfacturas()
       }, 3000) */
-    })
+      })
   }
 }
 </script>
 
 <style>
-  .text-caption {
-      font-size: inherit;
-  }
-  .totales{
-    font-weight: bolder;
-    color: blue;
-  }
+.text-caption {
+  font-size: inherit;
+}
+
+.totales {
+  font-weight: bolder;
+  color: blue;
+}
+
+.redirectEmail-wrapper {
+  padding: 2rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.redirectEmail-header {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.redicrectEmail-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+}
 </style>
 <style lang="sass">
 .my-sticky-header-table

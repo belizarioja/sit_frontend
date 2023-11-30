@@ -97,7 +97,8 @@ export default {
               sessionStorage.setItem('co_sede', response.data.resp.idserviciosmasivo || 0)
               sessionStorage.setItem('tx_sede', response.data.resp.razonsocial || '')
               if (response.data.resp.idrol === '3') {
-                this.$router.push('/consulta')
+                // this.$router.push('/consulta')
+                this.$router.push('/dashboard')
               } else {
                 // this.$router.push('/dashboard')
                 this.$router.push('/emisores')

@@ -16,7 +16,7 @@
       >
         <q-scroll-area style="height: calc(100% - 150px); margin-top: 95px; border-right: 1px solid #ddd">
           <q-list padding>
-            <q-item v-if="co_rol === '1'" clickable v-ripple @click="listado" style="font-size: 12px;">
+            <q-item v-if="co_rol === '1' || co_rol === '3'" clickable v-ripple @click="listado" style="font-size: 12px;">
               <q-item-section avatar>
                 <q-icon color="secondary" name="dashboard" />
               </q-item-section>
