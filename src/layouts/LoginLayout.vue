@@ -5,7 +5,7 @@
           <img src="logo_sit.jpg" style="max-width: 180px;" />
         </div>
     </div>
-    <div class="col-3 bg-white">
+    <div class="col-3 my-fondo">
       <div class="row justify-center">
         <img src="login_sid.png" style="max-width: 180px;margin-top: 20px;" />
       </div>
@@ -32,7 +32,7 @@
             <q-card-actions class="q-px-md">
               <q-btn unelevated color="primary" type="submit"  :loading="loading"  size="lg" class="full-width" label="Ingresar" >
                 <template v-slot:loading>
-                  <q-spinner-facebook />
+                  <q-spinner-dots />
                 </template>
               </q-btn>
             </q-card-actions>
@@ -121,7 +121,7 @@ export default {
 
 <style>
 .q-card {
-  width: 360px;
+  width: auto;
 }
 .fondoimg {
     background: url("../assets/fondo_home.jpg") no-repeat center center fixed;

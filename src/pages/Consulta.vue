@@ -295,34 +295,10 @@
           </div>
           <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;">
             <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Fechas:</span>
-            <q-input dense filled label="Desde" mask="date" v-model="dateFrom" class="col-md-3 col-sm-6 col-xs-6"
-              style="padding: 5px">
-              <template v-slot:append>
-                <q-icon name="event" class="cursor-pointer">
-                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                    <q-date v-model="dateFrom" :locale="myLocale">
-                      <div class="row items-center justify-end">
-                        <q-btn v-close-popup label="Close" color="primary" flat />
-                      </div>
-                    </q-date>
-                  </q-popup-proxy>
-                </q-icon>
-              </template>
-            </q-input>
-            <q-input dense filled label="Hasta" v-model="dateTo" class="" style="padding: 5px"
-              mask="date">
-              <template v-slot:append>
-                <q-icon name="event" class="cursor-pointer">
-                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                    <q-date v-model="dateTo" :locale="myLocale">
-                      <div class="row items-center justify-end">
-                        <q-btn v-close-popup label="Close" color="primary" flat />
-                      </div>
-                    </q-date>
-                  </q-popup-proxy>
-                </q-icon>
-              </template>
-            </q-input>
+            <div style="display: flex;justify-content: space-around;">
+              <input type="date" name="desde" :value="dateFrom" style="width: 110px;">
+              <input type="date" name="desde" :value="dateTo" style="width: 110px;">
+            </div>
           </div>
           <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;">
             <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">N° Control:</span>
@@ -1648,10 +1624,11 @@ export default {
 }
 .filtros {
   padding: 3px 7px;
-  background: #eee;
+  background: #ECF6FF;
   border: solid 1px #5a8f89;
   margin: 5px;
   border-radius: 8px;
+  font-size: 13px;
 }
 .totales {
   font-weight: bolder;

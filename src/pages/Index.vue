@@ -23,27 +23,27 @@
               <q-card class="my-card tarjetaMain">
                 <q-card-section class="dash_card_main">
                   <div style="display: flex;margin-bottom: 20px;">
-                    <q-icon name="fact_check" style="color:blue;font-size: xx-large;"/>
+                    <q-icon name="fact_check" class="text-secondary" style="font-size: xx-large;"/>
                     <span class="itemsCardMain">
-                      De <span style="color: blue;font-weight: bold;padding: 3px;">{{ totalClientes }}</span> emisores con <span style="color: blue;font-weight: bold;padding: 3px;">{{ totalAsignados }}</span> documentos asignados.
+                      Tiene <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalClientes }}</span> emisores con <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalAsignados }}</span> documentos asignados.
                     </span>
                   </div>
                   <div style="display: flex;margin-bottom: 20px;">
-                    <q-icon name="warning" style="color:orange;font-size: xx-large;"/>
+                    <q-icon name="warning" class="text-secondary" style="font-size: xx-large;"/>
                     <span class="itemsCardMain">
-                      Se han procesado <span style="color: orange;font-weight: bold;padding: 3px;">{{ totaldoc }}</span> documentos y quedan <span style="color: #74ac44;font-weight: bold;padding: 3px;">{{ totalDisponible }}</span> disponibles.
+                      Se han procesado <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totaldoc }}</span> documentos y quedan <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalDisponible }}</span> disponibles.
                     </span>
                   </div>
                   <div style="display: flex;margin-bottom: 20px;">
-                    <q-icon name="date_range" style="color: #03df5e;font-size: xx-large;"/>
+                    <q-icon name="date_range" class="text-secondary" style="font-size: xx-large;"/>
                     <span class="itemsCardMain">
-                      Tiene promedio de <span style="color: #03df5e;font-weight: bold;padding: 3px;">{{ avg7Days }}</span> documentos procesados por semana.
+                      Tiene promedio de <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ avg7Days }}</span> documentos procesados por semana.
                     </span>
                   </div>
                   <div style="display: flex;margin-bottom: 20px;">
-                    <q-icon name="segment" style="color: red;font-size: xx-large;"/>
+                    <q-icon name="segment" class="text-secondary" style="font-size: xx-large;"/>
                     <span class="itemsCardMain">
-                      Se usaron <span style="color: red;font-weight: bold;padding: 3px;">{{ totalAnulados }}</span> entre Anulados y Notas de Créditos.
+                      Se usaron <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalAnulados }}</span> entre Anulados y Notas de Créditos.
                     </span>
                   </div>
                 </q-card-section>
@@ -82,17 +82,24 @@
       </div>
     </div>
     <div class="row">
-      <q-card class="col-4" style="margin: 20px;">
+      <q-card class="col-4" style="margin: 15px">
         <q-card-section >
-          <img src="formasdepago.png" style="max-width: 375px;" />
-        </q-card-section>
-      </q-card>
-      <q-card class="col-3" style="margin: 15px">
-        <q-card-section >
+          <q-list>
+            <q-item>
+              <q-item-section>
+                <div style="margin: 5px;border: solid 1px #ccc;border-radius: 5px;padding: 12px;position: relative;">
+                  <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Filtrado por:</span>
+                  <span class="filtros">Desde: {{ dateFrom }}</span>
+                  <span class="filtros">Hasta: {{ dateTo }}</span>
+                  <q-icon name="date_range" style="color: #0999ff;font-size: larger;cursor: pointer;" @click="openFechas"/>
+                </div>
+              </q-item-section>
+            </q-item>
+          </q-list>
           <q-list>
             <q-item class="dash_welcome_long">
               <q-item-section>
-                <q-item-label>IGTF 3%</q-item-label>
+                <q-item-label>Total gravado</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
@@ -108,34 +115,128 @@
           <q-list>
             <q-item class="dash_welcome_small">
               <q-item-section>
-                <q-item-label>Monto gravado en 45 documentos</q-item-label>
+                <q-item-label>Monto obtenido de 45 documentos procesados</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
         </q-card-section>
       </q-card>
-      <q-card class="col-3" style="margin: 15px">
+      <q-card class="col-7" style="margin: 20px;">
         <q-card-section >
-          <q-list>
-            <q-item class="dash_welcome_long">
-              <q-item-section>
-                <q-item-label>EXENTOS</q-item-label>
+          <q-list bordered class="rounded-borders" style="max-width: 600px">
+            <q-item-label class="dash_welcome_long">Impuestos por tipos</q-item-label>
+            <q-item class="text-dark">
+              <q-item-section avatar top>
+                <q-avatar color="white"></q-avatar>
+              </q-item-section>
+              <q-item-section top class="col-2 gt-sm">
+                <q-item-label class="q-mt-sm">Decripción</q-item-label>
+              </q-item-section>
+              <q-item-section top>
+                <q-item-label class="q-mt-sm">Base</q-item-label>
+              </q-item-section>
+              <q-item-section top>
+                <q-item-label class="q-mt-sm">Impuesto</q-item-label>
+              </q-item-section>
+              <q-item-section top>
+                <q-item-label class="q-mt-sm">% Proporción</q-item-label>
+              </q-item-section>
+              <q-item-section top>
+                <q-item-label class="q-mt-sm">&nbsp;</q-item-label>
               </q-item-section>
             </q-item>
-          </q-list>
-          <q-separator spaced inset />
-          <q-list>
-            <q-item class="dash_welcome_exentos">
-              <q-item-section>
-                <q-item-label>Bs. {{totalimpigtf}}</q-item-label>
+            <q-item>
+              <q-item-section avatar top>
+                <q-avatar color="secondary"></q-avatar>
+              </q-item-section>
+              <q-item-section top class="col-2 gt-sm">
+                <q-item-label class="q-mt-sm">IVA 16%</q-item-label>
+              </q-item-section>
+
+              <q-item-section top>
+                <q-item-label class="q-mt-sm">Bs 1234,88</q-item-label>
+              </q-item-section>
+              <q-item-section top>
+                <q-item-label class="q-mt-sm">Bs 234,88</q-item-label>
+              </q-item-section>
+              <q-item-section top>
+                <q-item-label class="q-mt-sm">70%</q-item-label>
+              </q-item-section>
+              <q-item-section top side style="width: 100px;display: block;" class="q-mt-sm">
+                <div class="barraporc" style="width: 70%;">
+                  &nbsp;
+                </div>
               </q-item-section>
             </q-item>
-          </q-list>
-          <q-separator spaced inset />
-          <q-list>
-            <q-item class="dash_welcome_small">
-              <q-item-section>
-                <q-item-label>Monto exento en 455 productos</q-item-label>
+            <q-item>
+              <q-item-section avatar top>
+                <q-avatar color="accent">
+                </q-avatar>
+              </q-item-section>
+              <q-item-section top class="col-2 gt-sm">
+                <q-item-label class="q-mt-sm">Reducido 8%</q-item-label>
+              </q-item-section>
+              <q-item-section top>
+                <q-item-label class="q-mt-sm">Bs 1234,88</q-item-label>
+              </q-item-section>
+              <q-item-section top>
+                <q-item-label class="q-mt-sm">Bs 234,88</q-item-label>
+              </q-item-section>
+              <q-item-section top>
+                <q-item-label class="q-mt-sm">80%</q-item-label>
+              </q-item-section>
+              <q-item-section top side style="width: 100px;display: block;" class="q-mt-sm">
+                <div class="barraporc" style="width: 10%;">
+                  &nbsp;
+                </div>
+              </q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section avatar top>
+                <q-avatar color="info">
+                </q-avatar>
+              </q-item-section>
+              <q-item-section top class="col-2 gt-sm">
+                <q-item-label class="q-mt-sm">Al lujo 30%</q-item-label>
+              </q-item-section>
+
+              <q-item-section top>
+                <q-item-label class="q-mt-sm">Bs 0,00</q-item-label>
+              </q-item-section>
+              <q-item-section top>
+                <q-item-label class="q-mt-sm">Bs 0,00</q-item-label>
+              </q-item-section>
+              <q-item-section top>
+                <q-item-label class="q-mt-sm">0%</q-item-label>
+              </q-item-section>
+              <q-item-section top side style="width: 100px;display: block;" class="q-mt-sm">
+                <div class="barraporc" style="width: 0%;">
+                  &nbsp;
+                </div>
+              </q-item-section>
+            </q-item>
+            <q-item>
+              <q-item-section avatar top>
+                <q-avatar color="positive">
+                </q-avatar>
+              </q-item-section>
+              <q-item-section top class="col-2 gt-sm">
+                <q-item-label class="q-mt-sm">IGTF 3%</q-item-label>
+              </q-item-section>
+
+              <q-item-section top>
+                <q-item-label class="q-mt-sm">Bs 1234,88</q-item-label>
+              </q-item-section>
+              <q-item-section top>
+                <q-item-label class="q-mt-sm">Bs 234,88</q-item-label>
+              </q-item-section>
+              <q-item-section top>
+                <q-item-label class="q-mt-sm">20%</q-item-label>
+              </q-item-section>
+              <q-item-section top side style="width: 100px;display: block;" class="q-mt-sm">
+                <div class="barraporc" style="width: 20%;">
+                  &nbsp;
+                </div>
               </q-item-section>
             </q-item>
           </q-list>
@@ -159,6 +260,59 @@
           />
         </q-card-section>
       </q-card>
+      <q-dialog v-model="modalFechas" persistent transition-show="scale" transition-hide="scale">
+        <q-card class="bg-primary text-white" style="width: auto;">
+          <q-card-section>
+            <div class="text-h6">Fechas</div>
+          </q-card-section>
+          <q-separator />
+          <q-card-section class="bg-white text-secondary">
+            <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;display: grid;">
+              <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Rango de fecha:</span>
+              <q-radio
+                label="Hoy"
+                v-model="fechacustom"
+                val="1"
+                checked-icon="task_alt"
+                unchecked-icon="highlight_off"
+              />
+              <q-radio
+                label="Ayer"
+                v-model="fechacustom"
+                val="2"
+                checked-icon="task_alt"
+                unchecked-icon="highlight_off"
+              />
+              <q-radio
+                label="En 1 semana"
+                v-model="fechacustom"
+                val="3"
+                checked-icon="task_alt"
+                unchecked-icon="highlight_off"
+              />
+              <q-radio
+                label="En 1 mes"
+                v-model="fechacustom"
+                val="4"
+                checked-icon="task_alt"
+                unchecked-icon="highlight_off"
+              />
+              <q-radio
+                label="Escojer fechas"
+                v-model="fechacustom"
+                val="5"
+                checked-icon="task_alt"
+                unchecked-icon="highlight_off"
+              />
+              <div style="width: 280px;display: flex;justify-content: space-around;"><input disabled type="date" name="desde" :value="dateFrom"><input disabled type="date" name="desde" :value="dateTo"></div>
+            </div>
+          </q-card-section>
+
+          <q-card-actions align="right" class="bg-white text-teal">
+            <q-btn color="secondary" label="Aceptar" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </div>
   </q-page>
 </template>
@@ -218,6 +372,7 @@ export default defineComponent({
         { name: 'hace5dia', label: 'Hace 5 día', field: 'hace5dia' },
         { name: 'hace6dia', label: 'Hace 6 día', field: 'hace6dia' }
       ],
+      fechacustom: ref('1'),
       disabledSede: ref(false),
       disabledCodes: ref(false),
       dateFrom: ref(moment().format('YYYY-MM-DD')),
@@ -249,11 +404,15 @@ export default defineComponent({
       docproc: [],
       tab: 'grafica',
       saludo: 'Buenos días',
+      modalFechas: false,
       displayName: sessionStorage.getItem('tx_nombre'),
       rowssemana: []
     }
   },
   methods: {
+    openFechas () {
+      this.modalFechas = true
+    },
     getDocProcesados () {
       const body = {
         idserviciosmasivo: this.idserviciosmasivo
@@ -510,9 +669,9 @@ export default defineComponent({
 
 <style>
 .dash_welcome_long {
-  font-size: 20px;
+  font-size: 24px;
   margin: 20px 0px;
-  color: #65778D;
+  color: #6283AE;
   font-weight: bold;
 }
 .dash_welcome_small {
@@ -531,7 +690,7 @@ export default defineComponent({
   color: #98A7BA;
 }
 .dash_welcome_igtf {
-  font-size: 40px;
+  font-size: 50px;
   margin: 0px 0px 20px;
   color: #0999FF;
   font-weight: bold;
@@ -552,5 +711,20 @@ export default defineComponent({
   font-size: 11px;
   display: flex;
   align-items: center;
+  padding-left: 10px;
+}
+.barraporc {
+  background: #0999FF;
+  border-radius: 5px;
+  height: 12px;
+}
+
+.filtros {
+  padding: 3px 7px;
+  background: #ECF6FF;
+  border: solid 1px #5a8f89;
+  margin: 5px;
+  border-radius: 8px;
+  font-size: 13px;
 }
 </style>
