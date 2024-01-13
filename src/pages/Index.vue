@@ -1,10 +1,58 @@
 <template>
-  <q-page class="q-pa-sm bg-grey-3">
+  <q-page class="q-pa-sm my-fondo">
     <div class="row">
-      <div class="col-md-4 col-sm-12 col-xs-12 q-ma-md">
-         <span style="font-size: 20px;font-weight: bolder;">Dashboard</span>
+      <div class="col-md-4 col-sm-12 col-xs-12">
+        <div class="row">
+            <div class="col">
+              <img src="dashboard.png" alt="" style="margin-bottom: -6px;">
+            </div>
+            <div class="col">
+              <div class="dash_welcome_long">
+                  Hola {{ displayName }},
+              </div>
+              <div class="dash_welcome_blue">
+                  {{ saludo }}.
+              </div>
+              <div class="dash_welcome_small">
+                Esto es lo que está pasando con tu facturación en este momento…
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <q-card class="my-card tarjetaMain">
+                <q-card-section class="dash_card_main">
+                  <div style="display: flex;margin-bottom: 20px;">
+                    <q-icon name="fact_check" style="color:blue;font-size: xx-large;"/>
+                    <span class="itemsCardMain">
+                      De <span style="color: blue;font-weight: bold;padding: 3px;">{{ totalClientes }}</span> emisores con <span style="color: blue;font-weight: bold;padding: 3px;">{{ totalAsignados }}</span> documentos asignados.
+                    </span>
+                  </div>
+                  <div style="display: flex;margin-bottom: 20px;">
+                    <q-icon name="warning" style="color:orange;font-size: xx-large;"/>
+                    <span class="itemsCardMain">
+                      Se han procesado <span style="color: orange;font-weight: bold;padding: 3px;">{{ totaldoc }}</span> documentos y quedan <span style="color: #74ac44;font-weight: bold;padding: 3px;">{{ totalDisponible }}</span> disponibles.
+                    </span>
+                  </div>
+                  <div style="display: flex;margin-bottom: 20px;">
+                    <q-icon name="date_range" style="color: #03df5e;font-size: xx-large;"/>
+                    <span class="itemsCardMain">
+                      Tiene promedio de <span style="color: #03df5e;font-weight: bold;padding: 3px;">{{ avg7Days }}</span> documentos procesados por semana.
+                    </span>
+                  </div>
+                  <div style="display: flex;margin-bottom: 20px;">
+                    <q-icon name="segment" style="color: red;font-size: xx-large;"/>
+                    <span class="itemsCardMain">
+                      Se usaron <span style="color: red;font-weight: bold;padding: 3px;">{{ totalAnulados }}</span> entre Anulados y Notas de Créditos.
+                    </span>
+                  </div>
+                </q-card-section>
+              </q-card>
+            </div>
+          </div>
       </div>
-      <q-select
+      <div class="col-8">
+        <q-select
           v-if="co_rol === '1' || co_rol === '2'"
           label="Buscar por Nombre o RIF del Emisor"
           dense
@@ -26,89 +74,23 @@
           @filter="searchEmisor"
           style="padding: 5px;margin-left: 20px;"
         />
+        <q-card style="margin: 10px 50px;">
+          <q-card-section >
+            <bar-chart/>
+          </q-card-section>
+        </q-card>
+      </div>
     </div>
     <div class="row">
       <q-card class="col-4" style="margin: 20px;">
         <q-card-section >
-          <q-list>
-            <q-item>
-              <q-item-section>
-                <q-item-label style="color: #03df5e;font-weight: bolder;">Procesados</q-item-label>
-              </q-item-section>
-
-              <q-item-section side top>
-                <q-item-label caption>{{totaldoc}}</q-item-label>
-                <q-icon name="trending_up" color="orange" />
-              </q-item-section>
-            </q-item>
-          </q-list>
-          <q-separator spaced inset />
-          <q-list>
-            <q-item>
-              <q-item-section>
-                <q-item-label style="color: #f70202;font-weight: bolder;">Anulados</q-item-label>
-              </q-item-section>
-
-              <q-item-section side top>
-                <q-item-label caption>{{totalanu}}</q-item-label>
-                <q-icon name="trending_down" color="orange" />
-              </q-item-section>
-            </q-item>
-          </q-list>
-          <q-separator spaced inset />
-          <q-list>
-            <q-item>
-              <q-item-section>
-                <q-item-label style="color: #0263f7;font-weight: bolder;">Periodo</q-item-label>
-              </q-item-section>
-
-              <q-item-section side top>
-                <q-item-label caption>Hoy</q-item-label>
-                <q-item-label caption>{{dateTo}}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
+          <img src="formasdepago.png" style="max-width: 375px;" />
         </q-card-section>
       </q-card>
-      <q-card class="col-3" style="margin: 20px;">
+      <q-card class="col-3" style="margin: 15px">
         <q-card-section >
           <q-list>
-            <q-item>
-              <q-item-section>
-                <q-item-label>IVA 16%</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-          <q-separator spaced inset />
-          <q-list>
-            <q-item>
-              <q-item-section>
-                <q-item-label>Impuesto</q-item-label>
-              </q-item-section>
-
-              <q-item-section side top>
-                <q-item-label caption>Bs. {{totalimpg}}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-          <q-separator spaced inset />
-          <q-list>
-            <q-item>
-              <q-item-section>
-                <q-item-label>Base</q-item-label>
-              </q-item-section>
-
-              <q-item-section side top>
-                <q-item-label caption>Bs. {{totalbaseg}}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-        </q-card-section>
-      </q-card>
-      <q-card class="col-3" style="margin: 20px">
-        <q-card-section >
-          <q-list>
-            <q-item>
+            <q-item class="dash_welcome_long">
               <q-item-section>
                 <q-item-label>IGTF 3%</q-item-label>
               </q-item-section>
@@ -116,25 +98,44 @@
           </q-list>
           <q-separator spaced inset />
           <q-list>
-            <q-item>
+            <q-item class="dash_welcome_igtf">
               <q-item-section>
-                <q-item-label>Impuesto</q-item-label>
-              </q-item-section>
-
-              <q-item-section side top>
-                <q-item-label caption>Bs. {{totalimpigtf}}</q-item-label>
+                <q-item-label>Bs. {{totalimpigtf}}</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
           <q-separator spaced inset />
           <q-list>
-            <q-item>
+            <q-item class="dash_welcome_small">
               <q-item-section>
-                <q-item-label>Base</q-item-label>
+                <q-item-label>Monto gravado en 45 documentos</q-item-label>
               </q-item-section>
-
-              <q-item-section side top>
-                <q-item-label caption>Bs. {{totalbaseigtf}}</q-item-label>
+            </q-item>
+          </q-list>
+        </q-card-section>
+      </q-card>
+      <q-card class="col-3" style="margin: 15px">
+        <q-card-section >
+          <q-list>
+            <q-item class="dash_welcome_long">
+              <q-item-section>
+                <q-item-label>EXENTOS</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+          <q-separator spaced inset />
+          <q-list>
+            <q-item class="dash_welcome_exentos">
+              <q-item-section>
+                <q-item-label>Bs. {{totalimpigtf}}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </q-list>
+          <q-separator spaced inset />
+          <q-list>
+            <q-item class="dash_welcome_small">
+              <q-item-section>
+                <q-item-label>Monto exento en 455 productos</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
@@ -145,48 +146,12 @@
     <div class="row">
       <q-card class="col-4" style="margin: 20px">
         <q-card-section >
-          <q-list>
-            <q-item>
-              <q-item-section>
-                <q-item-label>Facturas</q-item-label>
-              </q-item-section>
-              <q-item-section side top>
-                <q-item-label caption>{{totalfacturas}}</q-item-label>
-                <q-item-label caption>Bs. {{sumafacturas}}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-          <q-separator spaced inset />
-          <q-list>
-            <q-item>
-              <q-item-section>
-                <q-item-label>Notas de Credito</q-item-label>
-              </q-item-section>
-              <q-item-section side top>
-                <q-item-label caption>{{totalcreditos}}</q-item-label>
-                <q-item-label caption>Bs. {{sumacreditos}}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
-          <q-separator spaced inset />
-          <q-list>
-            <q-item>
-              <q-item-section>
-                <q-item-label>Notas de Debitos</q-item-label>
-              </q-item-section>
-
-              <q-item-section side top>
-                <q-item-label caption>{{totaldebitos}}</q-item-label>
-                <q-item-label caption>Bs. {{sumadebitos}}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </q-list>
+          <img src="formasdepago.png" style="max-width: 375px;" />
         </q-card-section>
       </q-card>
       <q-card class="col-7" style="margin: 20px">
         <q-card-section >
           <q-table
-            title="Ultima semana"
             :rows="rowssemana"
             :columns="columnssemana"
             row-key="razonsocial"
@@ -200,7 +165,9 @@
 
 <script>
 import { defineComponent, ref } from 'vue'
-// import BarChart from '../components/charts/BarChart.ts'
+// import LineChart from '../components/charts/LineChart.ts'
+
+import BarChart from '../components/charts/BarChart.ts'
 
 import { Notify } from 'quasar'
 import axios from 'axios'
@@ -212,10 +179,17 @@ const ENDPOINT_PATH_V2 = config.endpoint_path_v2
 export default defineComponent({
   name: 'Dashboard',
   components: {
+    // LineChart,
+    BarChart
   },
   setup () {
     return {
-      totaldoc: ref(0),
+      totalAnulados: ref(34),
+      totalAsignados: ref(340),
+      totalDisponible: ref(240),
+      totalClientes: ref(40),
+      avg7Days: ref(22.8),
+      totaldoc: ref(46),
       totalanu: ref(0),
       totalimpg: ref(0),
       totalimpr: ref(0),
@@ -273,6 +247,9 @@ export default defineComponent({
   data () {
     return {
       docproc: [],
+      tab: 'grafica',
+      saludo: 'Buenos días',
+      displayName: sessionStorage.getItem('tx_nombre'),
       rowssemana: []
     }
   },
@@ -530,3 +507,50 @@ export default defineComponent({
   }
 })
 </script>
+
+<style>
+.dash_welcome_long {
+  font-size: 20px;
+  margin: 20px 0px;
+  color: #65778D;
+  font-weight: bold;
+}
+.dash_welcome_small {
+  margin: 0px 20px 20px 0px;
+  color: #98A7BA;
+  font-weight: bold;
+  font-size: 12px;
+}
+.dash_welcome_blue {
+  font-size: 22px;
+  margin: 0px 0px 20px;
+  color: #0999FF;
+  font-weight: bold;
+}
+.dash_card_main {
+  color: #98A7BA;
+}
+.dash_welcome_igtf {
+  font-size: 40px;
+  margin: 0px 0px 20px;
+  color: #0999FF;
+  font-weight: bold;
+}
+.dash_welcome_exentos {
+  font-size: 40px;
+  margin: 0px 0px 20px;
+  color: #71CCB5;
+  font-weight: bold;
+}
+.tarjetaMain {
+  margin: -8px 0 0 20px;
+  width: 100%;
+  height: 230px;
+  background: radial-gradient(circle, rgb(250 250 250) 0%, rgb(250 250 250) 100%);
+}
+.itemsCardMain {
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+}
+</style>

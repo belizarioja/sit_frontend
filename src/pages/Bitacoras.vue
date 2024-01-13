@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md">
+  <div class="my-font q-pa-md">
     <div class="row">
       <span style="margin: 0 20px;font-size: 25px;font-weight: bolder;">Auditoría</span>
     </div>

@@ -1,5 +1,5 @@
 <template>
- <div class="bg-primary window-height window-width row justify-center">
+ <div class="my-font bg-primary window-height window-width row justify-center">
   <div class="bg-white col-3">
     <div class="" style="text-align: center; padding: 20px;">
       <img src="logo_sit.jpg" style="max-width: 180px;" />

@@ -1,1 +1,13 @@
 // app global css in SCSS form
+@font-face {
+  font-family: avenir;
+  src: url(./fonts/Avenir-Roman.woff);
+}
+
+// declare a class which applies it
+.my-font {
+  font-family: 'avenir';
+}
+.my-fondo {
+  background: #fafbfc;
+}

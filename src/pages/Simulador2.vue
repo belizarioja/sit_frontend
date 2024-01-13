@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md">
+  <div class="my-font q-pa-md">
     <div class="row">
         <q-select
           dense

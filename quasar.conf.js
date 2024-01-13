@@ -39,7 +39,7 @@ module.exports = configure(function (ctx) {
       // 'line-awesome',
       // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
 
-      'roboto-font', // optional, you are not bound to it
+      // 'roboto-font', // optional, you are not bound to it
       'material-icons' // optional, you are not bound to it
     ],
 
@@ -140,9 +140,9 @@ module.exports = configure(function (ctx) {
       },
 
       manifest: {
-        name: 'Privados App',
-        short_name: 'Privados App',
-        description: 'App Web de Privados de Libertad',
+        name: 'Smart App',
+        short_name: 'Smart App',
+        description: 'App Web de Smart Facturación',
         display: 'standalone',
         orientation: 'portrait',
         background_color: '#ffffff',
@@ -207,7 +207,7 @@ module.exports = configure(function (ctx) {
       builder: {
         // https://www.electron.build/configuration/configuration
 
-        appId: 'privados_frontend'
+        appId: 'sit_frontend'
       },
 
       // "chain" is a webpack-chain object https://github.com/neutrinojs/webpack-chain

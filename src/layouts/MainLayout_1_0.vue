@@ -18,7 +18,7 @@
           <q-list padding>
             <q-item v-if="co_rol === '1' || co_rol === '3'" clickable v-ripple @click="listado" style="font-size: 12px;">
               <q-item-section avatar>
-                <q-icon color="secondary" name="view_quilt" />
+                <q-icon color="secondary" name="dashboard" />
               </q-item-section>
               <q-item-section>
                 <div class="text-secondary">Dashboard</div>

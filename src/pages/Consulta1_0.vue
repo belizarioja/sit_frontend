@@ -1,17 +1,68 @@
 <template>
-  <div class="my-font my-fondo q-pa-md">
+  <div class="my-font q-pa-md">
     <div class="row">
-      <span class="text-secondary" style="margin: 0 20px; font-size: 25px; font-weight: bolder;">Consulta</span>
+      <span style="margin: 0 20px; font-size: 25px; font-weight: bolder">Consulta</span>
     </div>
     <div class="row">
-      <div class="col" style="position: relative;">
-        <div style="margin-top: 20px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;">
-          <span class="filtros">Desde: {{ dateFrom }}</span>
-          <span class="filtros">Hasta: {{ dateTo }}</span>
-          <span class="filtros">Tipo documento: {{ tipodocumentofilter }}</span>
-        </div>
-        <span class="my-fondo" style="position: absolute;top: 9px; left: 20px; color: #ccc;">Filtrado por:</span>
-      </div>
+      <q-select v-if="co_rol === '1' || co_rol === '2'" label="Buscar por Nombre o RIF del Emisor" dense
+        class="col-md-3 col-sm-12 col-xs-12" filled v-model="modelsede" :disable="disabledSede" use-input hide-selected
+        fill-input clearable options-dense option-label="namerif" option-value="cod" input-debounce="0"
+        :options="optionssede" @update:model-value="changeSede()" @input:="changeSede()" @filter="searchEmisor"
+        style="padding: 5px" />
+      <q-select v-if="co_rol === '1' || co_rol === '2'" class="col-md-3 col-sm-12 col-xs-12"
+        label="Buscar Código de Operación" dense filled v-model="modelcodes" use-input hide-selected fill-input clearable
+        options-dense option-label="namecode" option-value="cod" input-debounce="0" :options="optionscodes"
+        @update:model-value="changeCodes()" @input:="changeCodes()" @filter="searchCodes" style="padding: 5px" />
+      <q-select dense class="col-md-3 col-sm-6 col-xs-12" filled options-dense v-model="modeltipo" :options="optionstipo"
+        option-label="name" option-value="cod" label="Tipo de Documento" @update:model-value="changeTipo()"
+        style="padding: 5px" />
+      <q-input filled class="col-md-3 col-sm-6 col-xs-12" label="Buscar por N° Control" v-model="numerodocumento"
+        @input:="listarfacturas" style="padding: 5px" :disable="disable" dense>
+        <template v-slot:append>
+          <q-icon v-if="numerodocumento.length > 0" name="close" @click="(numerodocumento = ''), listarfacturas()"
+            class="cursor-pointer" />
+        </template>
+        <template v-slot:after>
+          <q-btn dense color="primary" icon="search" @click="listarfacturas" :disable="disable" />
+        </template>
+      </q-input>
+    </div>
+    <div class="row">
+      <q-select label="Buscar por Nombre o RIF del cliente" dense class="col-md-3 col-sm-6 col-xs-12" filled
+        v-model="modelcliente" use-input :disable="disable" hide-selected fill-input clearable options-dense
+        option-label="namerif" option-value="rif" input-debounce="0" :options="optionscliente"
+        @update:model-value="changeCliente()" @input:="changeCliente()" @filter="searchCliente" style="padding: 5px" />
+      <q-input dense filled label="Desde" mask="date" v-model="dateFrom" class="col-md-3 col-sm-6 col-xs-6"
+        style="padding: 5px">
+        <template v-slot:append>
+          <q-icon name="event" class="cursor-pointer">
+            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+              <q-date v-model="dateFrom" :locale="myLocale">
+                <div class="row items-center justify-end">
+                  <q-btn v-close-popup label="Close" color="primary" flat />
+                </div>
+              </q-date>
+            </q-popup-proxy>
+          </q-icon>
+        </template>
+      </q-input>
+      <q-input dense filled label="Hasta" v-model="dateTo" class="col-md-3 col-sm-6 col-xs-6" style="padding: 5px"
+        mask="date">
+        <template v-slot:append>
+          <q-icon name="event" class="cursor-pointer">
+            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+              <q-date v-model="dateTo" :locale="myLocale">
+                <div class="row items-center justify-end">
+                  <q-btn v-close-popup label="Close" color="primary" flat />
+                </div>
+              </q-date>
+            </q-popup-proxy>
+          </q-icon>
+        </template>
+      </q-input>
+      <q-select dense class="col-md-3 col-sm-6 col-xs-12" filled options-dense v-model="modelimpuesto"
+        :options="optionsimpuesto" option-label="name" option-value="cod" label="Tipo de Impuesto"
+        @update:model-value="changeImpuesto()" style="padding: 5px" />
     </div>
     <div class="row q-pa-md" style="">
       <q-table
@@ -24,10 +75,30 @@
         :loading="loading"
         no-data-label="No hay registros!">
         <template v-slot:top-right>
-          <div style="display: inline;">
-            <q-btn icon-right="print" class="q-ml-sm col-md-4 col-sm-3 col-xs-3" color="secondary" label="Imprimir" @click="exportTable" :disable="btnDisable"/>
-            <q-btn icon-right="file_download" class="q-ml-sm col-md-4 col-sm-3 col-xs-3" color="secondary" label="Exportar" @click="exportTable" :disable="btnDisable"/>
-            <q-btn icon-right="filter_alt" class="q-ml-sm col-md-4 col-sm-3 col-xs-3" color="secondary" label="Filtrar" @click="drawerFilters = true" />
+          <div class="row">
+            <span class="col-md-4 col-sm-4 col-xs-12" style="font-size: 20px;">Exportar:</span>
+            <!-- <q-btn class="q-ml-sm col-md-2 col-sm-2 col-xs-3" color="primary" label="PDF" @click="exportPDF" /> -->
+            <q-btn-dropdown class="q-ml-sm col-md-3 col-sm-3 col-xs-3" color="primary" label="PDF" :disable="btnDisable">
+              <q-list>
+                <q-item clickable v-close-popup @click="exportPDF">
+                  <q-item-section>
+                    <q-item-label>Registros</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item v-if="co_rol === '1' && co_sede_seleted" clickable v-close-popup @click="redistribuir">
+                  <q-item-section>
+                    <q-item-label>Redistribuir</q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item v-if="co_rol === '3'" clickable v-close-popup @click="exportarLotes">
+                  <q-item-section>
+                    <q-item-label>Documentos</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-btn-dropdown>
+            <q-btn class="q-ml-sm col-md-2 col-sm-2 col-xs-3" color="secondary" label="CSV" @click="exportTable" :disable="btnDisable"/>
+            <q-btn class="q-ml-sm col-md-2 col-sm-2 col-xs-3" color="info" label="XML" @click="exportXML(tempxml)" :disable="btnDisable"/>
           </div>
         </template>
         <template v-slot:body="props">
@@ -273,117 +344,6 @@
         </q-card>
       </q-dialog>
     </div>
-    <q-drawer
-      v-model="drawerFilters"
-      side="right"
-      :width="300"
-      :breakpoint="700"
-      overlay
-      elevated
-      class="bg-white text-secondary"
-    >
-      <q-scroll-area class="fit">
-        <div class="q-pa-sm">
-          <div style="margin: 0 20px; font-size: 25px; font-weight: bolder">Filtros</div>
-          <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;">
-            <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Cliente emisor:</span>
-            <q-select v-if="co_rol === '1' || co_rol === '2'" label="Agregue Nombre o RIF" dense
-              class="col-md-3 col-sm-12 col-xs-12" filled v-model="modelsede" :disable="disabledSede" use-input hide-selected
-              fill-input clearable options-dense option-label="namerif" option-value="cod" input-debounce="0"
-              :options="optionssede" @update:model-value="changeSede()" @input:="changeSede()" @filter="searchEmisor"
-              style="padding: 5px" />
-          </div>
-          <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;">
-            <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Fechas:</span>
-            <q-input dense filled label="Desde" mask="date" v-model="dateFrom" class="col-md-3 col-sm-6 col-xs-6"
-              style="padding: 5px">
-              <template v-slot:append>
-                <q-icon name="event" class="cursor-pointer">
-                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                    <q-date v-model="dateFrom" :locale="myLocale">
-                      <div class="row items-center justify-end">
-                        <q-btn v-close-popup label="Close" color="primary" flat />
-                      </div>
-                    </q-date>
-                  </q-popup-proxy>
-                </q-icon>
-              </template>
-            </q-input>
-            <q-input dense filled label="Hasta" v-model="dateTo" class="" style="padding: 5px"
-              mask="date">
-              <template v-slot:append>
-                <q-icon name="event" class="cursor-pointer">
-                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                    <q-date v-model="dateTo" :locale="myLocale">
-                      <div class="row items-center justify-end">
-                        <q-btn v-close-popup label="Close" color="primary" flat />
-                      </div>
-                    </q-date>
-                  </q-popup-proxy>
-                </q-icon>
-              </template>
-            </q-input>
-          </div>
-          <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;">
-            <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">N° Control:</span>
-            <q-input filled label="Agregue N° Control" v-model="numerodocumento"
-              @input:="listarfacturas" style="padding: 5px" :disable="disable" dense>
-              <template v-slot:append>
-                <q-icon v-if="numerodocumento.length > 0" name="close" @click="(numerodocumento = ''), listarfacturas()"
-                  class="cursor-pointer" />
-              </template>
-              <template v-slot:after>
-                <q-btn dense color="primary" icon="search" @click="listarfacturas" :disable="disable" />
-              </template>
-            </q-input>
-          </div>
-          <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;display: grid;">
-            <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Tipo documento:</span>
-            <q-checkbox
-              v-model="tipotodos"
-              label="Todos"
-              checked-icon="task_alt"
-              unchecked-icon="highlight_off"
-              :disable="disabletipo"
-            />
-            <q-separator />
-            <q-checkbox
-              v-model="tipofactura"
-              label="Factura"
-              checked-icon="task_alt"
-              unchecked-icon="highlight_off"
-            />
-            <q-checkbox
-              v-model="tipocredito"
-              label="Nota de crédito"
-              checked-icon="task_alt"
-              unchecked-icon="highlight_off"
-            />
-            <q-checkbox
-              v-model="tipodebito"
-              label="Nota de débito"
-              checked-icon="task_alt"
-              unchecked-icon="highlight_off"
-            />
-            <q-checkbox
-              v-model="tipoorden"
-              label="Orden de entrega"
-              checked-icon="task_alt"
-              unchecked-icon="highlight_off"
-            />
-            <q-checkbox
-              v-model="tipoguia"
-              label="Guía de despacho"
-              checked-icon="task_alt"
-              unchecked-icon="highlight_off"
-            />
-          </div>
-          <div class="text-center">
-            <q-btn label="Cerrar" color="negative" @click="drawerFilters = false" />
-          </div>
-        </div>
-      </q-scroll-area>
-    </q-drawer>
   </div>
 </template>
 
@@ -433,15 +393,6 @@ export default {
         pluralDay: 'dias'
       },
       term: ref(''),
-      disabletipo: ref(true),
-      tipodocumentofilter: ref('Todos'),
-      tipotodos: ref(true),
-      tipofactura: ref(false),
-      tipocredito: ref(false),
-      tipodebito: ref(false),
-      tipoorden: ref(false),
-      tipoguia: ref(false),
-      drawerFilters: ref(false),
       totalbaseg: ref('0,00'),
       totalbaser: ref('0,00'),
       totalbaseigtf: ref('0,00'),
@@ -1538,65 +1489,16 @@ export default {
     },
     isAnulado (row) {
       return row.estatus === '2' ? 'true' : false
-    },
-    changeTipos (valor) {
-      this.tipofactura = valor
-      this.tipocredito = valor
-      this.tipodebito = valor
-      this.tipoorden = valor
-      this.tipoguia = valor
     }
   },
   watch: {
     dateFrom: function (val) {
+      console.log(val)
       this.listarfacturas()
     },
     dateTo: function (val) {
+      console.log(val)
       this.listarfacturas()
-    },
-    tipofactura: function (val) {
-      this.tipotodos = ((!val && !this.tipocredito && !this.tipodebito && !this.tipoorden && !this.tipoguia) ||
-      (val && this.tipocredito && this.tipodebito && this.tipoorden && this.tipoguia)) || false
-      if (this.tipotodos) {
-        this.changeTipos(false)
-      }
-      // this.listarfacturas()
-    },
-    tipocredito: function (val) {
-      console.log(val)
-      this.tipotodos = ((!val && !this.tipofactura && !this.tipodebito && !this.tipoorden && !this.tipoguia) ||
-      (val && this.tipofactura && this.tipodebito && this.tipoorden && this.tipoguia)) || false
-      if (this.tipotodos) {
-        this.changeTipos(false)
-      }
-      // this.listarfacturas()
-    },
-    tipodebito: function (val) {
-      console.log(val)
-      this.tipotodos = ((!val && !this.tipocredito && !this.tipocredito && !this.tipoorden && !this.tipoguia) ||
-      (val && this.tipocredito && this.tipocredito && this.tipoorden && this.tipoguia)) || false
-      if (this.tipotodos) {
-        this.changeTipos(false)
-      }
-      // this.listarfacturas()
-    },
-    tipoorden: function (val) {
-      console.log(val)
-      this.tipotodos = ((!val && !this.tipocredito && !this.tipodebito && !this.tipodebito && !this.tipoguia) ||
-      (val && this.tipocredito && this.tipodebito && this.tipodebito && this.tipoguia)) || false
-      if (this.tipotodos) {
-        this.changeTipos(false)
-      }
-      // this.listarfacturas()
-    },
-    tipoguia: function (val) {
-      console.log(val)
-      this.tipotodos = ((!val && !this.tipocredito && !this.tipodebito && !this.tipoorden && !this.tipoorden) ||
-      (val && this.tipocredito && this.tipodebito && this.tipoorden && this.tipoorden)) || false
-      if (this.tipotodos) {
-        this.changeTipos(false)
-      }
-      // this.listarfacturas()
     }
   },
   mounted () {
@@ -1646,13 +1548,7 @@ export default {
 .text-caption {
   font-size: inherit;
 }
-.filtros {
-  padding: 3px 7px;
-  background: #eee;
-  border: solid 1px #5a8f89;
-  margin: 5px;
-  border-radius: 8px;
-}
+
 .totales {
   font-weight: bolder;
   color: blue;
@@ -1674,9 +1570,6 @@ export default {
   display: flex;
   justify-content: center;
   gap: 1.5rem;
-}
-.q-card {
-    width: auto;
 }
 </style>
 <style lang="sass">

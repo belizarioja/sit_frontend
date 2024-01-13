@@ -1,5 +1,5 @@
 <template>
-  <div class="q-pa-md">
+  <div class="my-font q-pa-md">
     <div class="text-h6">Cliente Emisor</div>
     <q-table
       title="Secciones"
@@ -637,6 +637,7 @@ export default {
           obj.cod = datos[i].id
           obj.rif = datos[i].rif
           obj.logo = ENDPOINT_PATH_V2 + 'imagen/' + datos[i].rif + '.png'
+          console.log(obj.logo)
           obj.width = 40
           obj.razonsocial = datos[i].razonsocial
           obj.direccion = datos[i].direccion

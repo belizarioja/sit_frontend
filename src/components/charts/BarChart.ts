@@ -29,11 +29,11 @@ export default defineComponent({
     },
     width: {
       type: Number,
-      default: 400
+      default: 650
     },
     height: {
       type: Number,
-      default: 400
+      default: 330
     },
     cssClasses: {
       default: '',
@@ -69,7 +69,7 @@ export default defineComponent({
       chartData.value.datasets = [
         {
           label: 'Base Imponible por mes',
-          backgroundColor: '#5096b6',
+          backgroundColor: '#0999FF',
           data: datagrafica
         }
       ]
