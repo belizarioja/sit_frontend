@@ -9,6 +9,7 @@
           <span class="filtros">Desde: {{ dateFrom }}</span>
           <span class="filtros">Hasta: {{ dateTo }}</span>
           <span class="filtros">Tipo documento: {{ tipodocumentofilter }}</span>
+          <span class="filtros">Cliente emisor: {{ clienteEmisorfilter }}</span>
         </div>
         <span class="my-fondo" style="position: absolute;top: 9px; left: 20px; color: #ccc;">Filtrado por:</span>
       </div>
@@ -25,8 +26,8 @@
         no-data-label="No hay registros!">
         <template v-slot:top-right>
           <div style="display: inline;">
-            <q-btn icon-right="print" class="q-ml-sm col-md-4 col-sm-3 col-xs-3" color="secondary" label="Imprimir" @click="exportTable" :disable="btnDisable"/>
-            <q-btn icon-right="file_download" class="q-ml-sm col-md-4 col-sm-3 col-xs-3" color="secondary" label="Exportar" @click="exportTable" :disable="btnDisable"/>
+            <q-btn icon-right="print" class="q-ml-sm col-md-4 col-sm-3 col-xs-3" color="secondary" label="Imprimir" @click="openImprimir" :disable="btnDisable"/>
+            <q-btn icon-right="file_download" class="q-ml-sm col-md-4 col-sm-3 col-xs-3" color="secondary" label="Exportar" @click="drawerFilters" :disable="btnDisable"/>
             <q-btn icon-right="filter_alt" class="q-ml-sm col-md-4 col-sm-3 col-xs-3" color="secondary" label="Filtrar" @click="drawerFilters = true" />
           </div>
         </template>
@@ -272,6 +273,101 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
+      <q-dialog v-model="viewPrint" persistent>
+        <q-card style="width: 1050px; max-width: 80vw;">
+          <q-card-actions align="right">
+              <q-btn label="Cerrar" color="secondary" v-close-popup />
+              <q-btn color="primary" icon="print" label="Imprimir" @click="imprimir" />
+            </q-card-actions>
+          <div id="areaImprimir"  style="width: 100%;">
+            <table style="width: 99%;margin: 7px;">
+              <thead>
+                <tr>
+                  <td style="width: 80%;">Smart Innovación Tecnológica RIF: J-50375790-6</td>
+                  <td style="width: 20%;text-align: right;">Usuario: {{tx_nombre}}</td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="2" style="text-align: center;height: 40px;font-weight: bolder;">REPORTE DOCUMENTOS PROCESADOS</td>
+                </tr>
+                <tr>
+                  <td style="height: 20px;">Filtrado por:</td>
+                  <td style="text-align: right;">Fecha reporte: {{dateHoy}}</td>
+                </tr>
+                <tr>
+                  <td style="height: 20px; font-size: 12px;">
+                    {{filtroDesde}}{{filtroHasta}}{{filtroEmisor}}
+                    {{filtroTipo}}
+                  </td>
+                  <td style="text-align: right;">Hora reporte: {{hourHoy}}</td>
+                </tr>
+                <tr>
+                  <td colspan="2" style="height: 20px; font-size: 12px;">
+                    {{filtroImpuesto}}{{filtroCliente}}{{filtroNumero}}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <table style="width: 99%;margin: 5px;border: 1px solid #666666;border-collapse: collapse;">
+              <thead>
+                <tr>
+                  <template v-for="col in columnsPrintf"  :key="col.name">
+                    <td
+                      style="border: 1px solid #666666;border-collapse: collapse;text-align: center;font-weight: bolder;"
+                      :style="col.name === 'baser' || col.name === 'baseg' || col.name === 'baseigtf' ? 'width: 95px;' : 'width: auto;'"
+                    >{{col.label}}</td>
+                  </template>
+                </tr>
+              </thead>
+              <tbody>
+                <template v-for="row in rows" :key="row.name">
+                  <tr>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;padding: 0 0 0 5px;">{{row.tipodocumento}}</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;padding: 0 0 0 5px;">{{row.numerodocumento}}</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;padding: 0 0 0 5px;">{{row.fecha}}</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;padding: 0 0 0 5px;">{{row.nombrecliente}}</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;">{{row.exento}}</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;">{{row.baseg}}</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;">{{row.impuestog}}</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;">{{row.baser}}</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;">{{row.impuestor}}</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;">{{row.baseigtf}}</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;">{{row.impuestoigtf}}</td>
+                  </tr>
+                </template>
+                <tr>
+                  <td colspan="5" style="border: 1px solid #666666;border-collapse: collapse;padding: 0 0 0 5px;font-weight: bolder;"> Totales</td>
+                  <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;font-weight: bolder;">{{totalbaseg}}</td>
+                  <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;font-weight: bolder;">{{totalimpuestog}}</td>
+                  <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;font-weight: bolder;">{{totalbaser}}</td>
+                  <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;font-weight: bolder;">{{totalimpuestor}}</td>
+                  <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;font-weight: bolder;">{{totalbaseigtf}}</td>
+                  <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;font-weight: bolder;">{{totalimpuestoigtf}}</td>
+                </tr>
+              </tbody>
+            </table>
+            <!--<q-card-section class="row items-center">
+              <q-table
+                dense
+                :rows="rows"
+                :columns="columnsPrintf"
+                row-key="num"
+                :rows-per-page-options="[0]"
+                separator="cell"
+                v-model:pagination="paginationPrint"
+                style="width: 100%;"
+              >
+            </q-table>
+            </q-card-section> -->
+          </div>
+            <iframe name="print_frame" width="0" height="0" frameborder="0" src="about:blank"></iframe>
+            <q-card-actions align="right">
+              <q-btn label="Cerrar" color="secondary" v-close-popup />
+              <q-btn color="primary" icon="print" label="Imprimir" @click="imprimir" />
+            </q-card-actions>
+          </q-card>
+      </q-dialog>
     </div>
     <q-drawer
       v-model="drawerFilters"
@@ -284,7 +380,10 @@
     >
       <q-scroll-area class="fit">
         <div class="q-pa-sm">
-          <div style="margin: 0 20px; font-size: 25px; font-weight: bolder">Filtros</div>
+          <div class="tituloDrawer">
+            <div style="margin: 0 20px; font-size: 25px; font-weight: bolder">Filtros</div>
+            <q-icon color="red" name="close" @click="drawerFilters = false" class="cursor-pointer" style="font-size: x-large;" />
+          </div>
           <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;">
             <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Cliente emisor:</span>
             <q-select v-if="co_rol === '1' || co_rol === '2'" label="Agregue Nombre o RIF" dense
@@ -296,8 +395,8 @@
           <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;">
             <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Fechas:</span>
             <div style="display: flex;justify-content: space-around;">
-              <input type="date" name="desde" :value="dateFrom" style="width: 110px;">
-              <input type="date" name="desde" :value="dateTo" style="width: 110px;">
+              <input class="inputDate fecha1" type="date" id="desde" :value="dateFrom">
+              <input class="inputDate fecha2" type="date" id="hasta" :value="dateTo">
             </div>
           </div>
           <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;">
@@ -409,8 +508,11 @@ export default {
         pluralDay: 'dias'
       },
       term: ref(''),
+      arregloFiltroTipos: ref([]),
+      arregloidtipodocumento: ref([]),
       disabletipo: ref(true),
       tipodocumentofilter: ref('Todos'),
+      clienteEmisorfilter: ref('Todos'),
       tipotodos: ref(true),
       tipofactura: ref(false),
       tipocredito: ref(false),
@@ -426,6 +528,8 @@ export default {
       totalimpuestoigtf: ref('0,00'),
       disabledSede: ref(false),
       viewdetail: ref(false),
+      viewPrint: ref(false),
+      viewPrint2: ref(false),
       idserviciosmasivo: ref(undefined),
       idtipodocumento: ref(undefined),
       serviciosmasivo: ref(undefined),
@@ -661,6 +765,15 @@ export default {
     }
   },
   methods: {
+    openImprimir () {
+      this.viewPrint = true
+    },
+    imprimir () {
+      window.frames.print_frame.document.body.innerHTML = document.getElementById('areaImprimir').innerHTML
+      window.frames.print_frame.window.focus()
+      window.frames.print_frame.window.print()
+      this.viewPrint = false
+    },
     getColorEmailStatus (obj) {
       if (obj.estatuscorreo === '1' && obj.enviocorreo === '1') {
         return 'blue'
@@ -992,22 +1105,17 @@ export default {
     changeSede () {
       this.disable = true
       this.numerodocumento = ''
+      // console.log(this.modelsede)
       this.idserviciosmasivo = this.modelsede?.cod
       this.serviciosmasivo = this.modelsede?.namerif
+      this.clienteEmisorfilter = 'Todos'
       if (this.modelsede?.cod) {
         this.disable = false
+        this.clienteEmisorfilter = this.modelsede?.name
       }
       this.listarfacturas()
     },
-    changeTipo () {
-      // this.disable = true
-      this.idtipodocumento = this.modeltipo.cod
-      this.tipodocumento = this.modeltipo.name
-      // this.numerodocumento = ''
-      this.listarfacturas()
-    },
     changeCodes () {
-      console.log(this.modelcodes?.cod)
       this.idcodigocomercial = this.modelcodes?.cod
       this.codigocomercial = this.modelcodes?.namecode
       console.log(this.idcodigocomercial)
@@ -1051,7 +1159,7 @@ export default {
           : this.co_rol === '3'
             ? this.co_sede
             : undefined,
-        idtipodocumento: this.modeltipo?.cod,
+        idtipodocumento: this.idtipodocumento,
         idcodigocomercial: this.modelcodes?.cod,
         cedulacliente: this.modelcliente?.rif,
         numerodocumento:
@@ -1304,13 +1412,14 @@ export default {
         this.numerodocumento.length > 0
           ? undefined
           : moment(this.dateTo, 'YYYY/MM/DD').format('YYYY-MM-DD')
+      console.log(this.idtipodocumento)
       const body = {
         idserviciosmasivo: this.modelsede?.cod
           ? this.modelsede.cod
           : this.co_rol === '3'
             ? this.co_sede
             : undefined,
-        idtipodocumento: this.modeltipo?.cod,
+        idtipodocumento: this.idtipodocumento,
         idcodigocomercial: this.modelcodes?.cod,
         cedulacliente: this.modelcliente?.rif,
         numerodocumento:
@@ -1521,6 +1630,21 @@ export default {
       this.tipodebito = valor
       this.tipoorden = valor
       this.tipoguia = valor
+      this.arregloFiltroTipos = []
+      this.tipodocumentofilter = 'Todos'
+      this.arregloidtipodocumento = []
+      this.idtipodocumento = undefined
+    },
+    updateArregloFiltroTipos (val, tipo, id) {
+      if (val) {
+        this.arregloidtipodocumento.push(id)
+        this.arregloFiltroTipos.push(tipo)
+      } else {
+        this.arregloidtipodocumento = this.arregloidtipodocumento.filter(item => item !== id)
+        this.arregloFiltroTipos = this.arregloFiltroTipos.filter(item => item !== tipo)
+      }
+      this.tipodocumentofilter = this.arregloFiltroTipos.join(' | ')
+      this.idtipodocumento = this.arregloidtipodocumento.join(', ')
     }
   },
   watch: {
@@ -1535,44 +1659,51 @@ export default {
       (val && this.tipocredito && this.tipodebito && this.tipoorden && this.tipoguia)) || false
       if (this.tipotodos) {
         this.changeTipos(false)
+      } else {
+        this.updateArregloFiltroTipos(val, 'Factura', 1)
       }
-      // this.listarfacturas()
+      this.listarfacturas()
     },
     tipocredito: function (val) {
-      console.log(val)
+      // console.log(val)
       this.tipotodos = ((!val && !this.tipofactura && !this.tipodebito && !this.tipoorden && !this.tipoguia) ||
       (val && this.tipofactura && this.tipodebito && this.tipoorden && this.tipoguia)) || false
       if (this.tipotodos) {
         this.changeTipos(false)
+      } else {
+        this.updateArregloFiltroTipos(val, 'Nota de crédito', 3)
       }
-      // this.listarfacturas()
+      this.listarfacturas()
     },
     tipodebito: function (val) {
-      console.log(val)
       this.tipotodos = ((!val && !this.tipocredito && !this.tipocredito && !this.tipoorden && !this.tipoguia) ||
       (val && this.tipocredito && this.tipocredito && this.tipoorden && this.tipoguia)) || false
       if (this.tipotodos) {
         this.changeTipos(false)
+      } else {
+        this.updateArregloFiltroTipos(val, 'Nota de débito', 2)
       }
-      // this.listarfacturas()
+      this.listarfacturas()
     },
     tipoorden: function (val) {
-      console.log(val)
       this.tipotodos = ((!val && !this.tipocredito && !this.tipodebito && !this.tipodebito && !this.tipoguia) ||
       (val && this.tipocredito && this.tipodebito && this.tipodebito && this.tipoguia)) || false
       if (this.tipotodos) {
         this.changeTipos(false)
+      } else {
+        this.updateArregloFiltroTipos(val, 'Orden de entrega', 4)
       }
-      // this.listarfacturas()
+      this.listarfacturas()
     },
     tipoguia: function (val) {
-      console.log(val)
       this.tipotodos = ((!val && !this.tipocredito && !this.tipodebito && !this.tipoorden && !this.tipoorden) ||
       (val && this.tipocredito && this.tipodebito && this.tipoorden && this.tipoorden)) || false
       if (this.tipotodos) {
         this.changeTipos(false)
+      } else {
+        this.updateArregloFiltroTipos(val, 'Guía de despacho', 5)
       }
-      // this.listarfacturas()
+      this.listarfacturas()
     }
   },
   mounted () {
@@ -1610,9 +1741,19 @@ export default {
             : this.co_rol === '1' || this.co_rol === '3'
               ? this.columns
               : this.columns3
-        /* setInterval(() => {
-        this.listarfacturas()
-      }, 3000) */
+        const selectElementDesde = document.querySelector('.fecha1')
+        const selectElementHasta = document.querySelector('.fecha2')
+
+        selectElementDesde.addEventListener('change', (event) => {
+          console.log('Cambiando fechas Desde: ', selectElementDesde.value)
+          this.dateFrom = selectElementDesde.value
+          this.listarfacturas()
+        })
+        selectElementHasta.addEventListener('change', (event) => {
+          console.log('Cambiando fechas Hasta: ', selectElementHasta.value)
+          this.dateTo = selectElementHasta.value
+          this.listarfacturas()
+        })
       })
   }
 }
@@ -1652,8 +1793,19 @@ export default {
   justify-content: center;
   gap: 1.5rem;
 }
-.q-card {
-    width: auto;
+.inputDate {
+  font-family: 'avenir';
+  width: 116px;
+  padding: 7px;
+  height: 36px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  background: #f2f2f2;
+}
+.tituloDrawer {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
 }
 </style>
 <style lang="sass">
