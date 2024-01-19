@@ -14,7 +14,7 @@
                   {{ saludo }}.
               </div>
               <div class="dash_welcome_small">
-                Esto es lo que está pasando con tu facturación en este momento…
+                Esto es lo que está pasando con tu facturación en este momento.
               </div>
             </div>
           </div>
@@ -29,18 +29,24 @@
                     </span>
                   </div>
                   <div style="display: flex;margin-bottom: 20px;">
+                    <q-icon name="format_list_bulleted" class="text-secondary" style="font-size: xx-large;"/>
+                    <span class="itemsCardMain">
+                      Se han procesado <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalUtilizados }}</span> documentos y quedan <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalDisponible }}</span> disponibles.
+                    </span>
+                  </div>
+                  <div style="display: flex;margin-bottom: 20px;">
                     <q-icon name="warning" class="text-secondary" style="font-size: xx-large;"/>
                     <span class="itemsCardMain">
-                      Se han procesado <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totaldoc }}</span> documentos y quedan <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalDisponible }}</span> disponibles.
+                      Existe(n) <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ clientesTerminando }}</span> emisores con cantidad crítica de asignación de lotes.
                     </span>
                   </div>
                   <div style="display: flex;margin-bottom: 20px;">
-                    <q-icon name="date_range" class="text-secondary" style="font-size: xx-large;"/>
+                    <q-icon name="done_all" class="text-secondary" style="font-size: xx-large;"/>
                     <span class="itemsCardMain">
-                      Tiene promedio de <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ avg7Days }}</span> documentos procesados por semana.
+                      Todos los clientes emisores sin problemas de asignación.
                     </span>
                   </div>
-                  <div style="display: flex;margin-bottom: 20px;">
+                  <div v-if="idserviciosmasivo" style="display: flex;margin-bottom: 20px;">
                     <q-icon name="segment" class="text-secondary" style="font-size: xx-large;"/>
                     <span class="itemsCardMain">
                       Se usaron <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalAnulados }}</span> entre Anulados y Notas de Créditos.
@@ -107,7 +113,7 @@
           <q-list>
             <q-item class="dash_welcome_igtf">
               <q-item-section>
-                <q-item-label>Bs. {{totalimpigtf}}</q-item-label>
+                <q-item-label>Bs. {{totalimp}}</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
@@ -154,10 +160,10 @@
               </q-item-section>
 
               <q-item-section top>
-                <q-item-label class="q-mt-sm">Bs 1234,88</q-item-label>
+                <q-item-label class="q-mt-sm">Bs {{ totalbaseg }}</q-item-label>
               </q-item-section>
               <q-item-section top>
-                <q-item-label class="q-mt-sm">Bs 234,88</q-item-label>
+                <q-item-label class="q-mt-sm">Bs {{ totalimpg }}</q-item-label>
               </q-item-section>
               <q-item-section top>
                 <q-item-label class="q-mt-sm">70%</q-item-label>
@@ -177,10 +183,10 @@
                 <q-item-label class="q-mt-sm">Reducido 8%</q-item-label>
               </q-item-section>
               <q-item-section top>
-                <q-item-label class="q-mt-sm">Bs 1234,88</q-item-label>
+                <q-item-label class="q-mt-sm">Bs {{ totalbaser }}</q-item-label>
               </q-item-section>
               <q-item-section top>
-                <q-item-label class="q-mt-sm">Bs 234,88</q-item-label>
+                <q-item-label class="q-mt-sm">Bs {{ totalimpr }}</q-item-label>
               </q-item-section>
               <q-item-section top>
                 <q-item-label class="q-mt-sm">80%</q-item-label>
@@ -201,10 +207,10 @@
               </q-item-section>
 
               <q-item-section top>
-                <q-item-label class="q-mt-sm">Bs 0,00</q-item-label>
+                <q-item-label class="q-mt-sm">Bs {{ totalbasea }}</q-item-label>
               </q-item-section>
               <q-item-section top>
-                <q-item-label class="q-mt-sm">Bs 0,00</q-item-label>
+                <q-item-label class="q-mt-sm">Bs {{ totalimpa }}</q-item-label>
               </q-item-section>
               <q-item-section top>
                 <q-item-label class="q-mt-sm">0%</q-item-label>
@@ -225,10 +231,10 @@
               </q-item-section>
 
               <q-item-section top>
-                <q-item-label class="q-mt-sm">Bs 1234,88</q-item-label>
+                <q-item-label class="q-mt-sm">Bs {{ totalbaseigtf }}</q-item-label>
               </q-item-section>
               <q-item-section top>
-                <q-item-label class="q-mt-sm">Bs 234,88</q-item-label>
+                <q-item-label class="q-mt-sm">Bs {{ totalimpigtf }}</q-item-label>
               </q-item-section>
               <q-item-section top>
                 <q-item-label class="q-mt-sm">20%</q-item-label>
@@ -244,7 +250,7 @@
       </q-card>
     </div>
 
-    <div class="row">
+    <!-- <div class="row">
       <q-card class="col-4" style="margin: 20px">
         <q-card-section >
           <img src="formasdepago.png" style="max-width: 375px;" />
@@ -313,13 +319,12 @@
           </q-card-actions>
         </q-card>
       </q-dialog>
-    </div>
+    </div> -->
   </q-page>
 </template>
 
 <script>
 import { defineComponent, ref } from 'vue'
-// import LineChart from '../components/charts/LineChart.ts'
 
 import BarChart from '../components/charts/BarChart.ts'
 
@@ -339,17 +344,20 @@ export default defineComponent({
   setup () {
     return {
       totalAnulados: ref(34),
-      totalAsignados: ref(340),
-      totalDisponible: ref(240),
-      totalClientes: ref(40),
+      totalAsignados: ref(0),
+      clientesTerminando: ref(0),
+      totalUtilizados: ref(0),
       avg7Days: ref(22.8),
-      totaldoc: ref(46),
+      totaldoc: ref(0),
       totalanu: ref(0),
       totalimpg: ref(0),
       totalimpr: ref(0),
+      totalimpa: ref(0),
       totalimpigtf: ref(0),
+      totalimp: ref(0),
       totalbaseg: ref(0),
       totalbaser: ref(0),
+      totalbasea: ref(0),
       totalbaseigtf: ref(0),
       totalfacturas: ref(0),
       sumafacturas: ref(0),
@@ -377,7 +385,6 @@ export default defineComponent({
       disabledCodes: ref(false),
       dateFrom: ref(moment().format('YYYY-MM-DD')),
       dateTo: ref(moment().format('YYYY-MM-DD')),
-      totalclientes: ref(0),
       modeltipo: ref([]),
       modelsede: ref([]),
       modelcodes: ref([]),
@@ -404,6 +411,8 @@ export default defineComponent({
       docproc: [],
       tab: 'grafica',
       saludo: 'Buenos días',
+      totalClientes: 0,
+      totalDisponible: 0,
       modalFechas: false,
       displayName: sessionStorage.getItem('tx_nombre'),
       rowssemana: []
@@ -589,6 +598,25 @@ export default defineComponent({
         Notify.create('Problemas al listar Codigos comerciales ' + error)
       })
     },
+    getLotes () {
+      const body = {
+        id: this.idserviciosmasivo
+      }
+      axios.post(ENDPOINT_PATH_V2 + 'sede/lotes', body).then(async response => {
+        const datos = response.data.data
+        console.log(datos)
+        this.totalAsignados = 0
+        this.totalUtilizados = 0
+        // this.totaldoc = 0
+        for (const i in datos) {
+          this.totalAsignados += Number(datos[i].cantidad)
+          this.totalUtilizados += Number(datos[i].utilizado)
+        }
+        this.totalDisponible = this.totalAsignados - this.totalUtilizados
+      }).catch(error => {
+        Notify.create('Problemas al listar Lotes ' + error)
+      })
+    },
     listartipos () {
       axios.get(ENDPOINT_PATH_V2 + 'tipodocumento').then(async response => {
         console.log(response.data)
@@ -632,6 +660,9 @@ export default defineComponent({
         }
         this.emisores = this.optionssede
         this.rifs = this.optionssede
+        this.totalclientes = datos.length
+        console.log('this.totalclientes')
+        console.log(this.totalclientes)
       }).catch(error => {
         Notify.create('Problemas al listar Sedes ' + error)
       })
@@ -640,12 +671,12 @@ export default defineComponent({
       this.totalImp()
       this.getDocProcesados()
       this.getUltimaSemana()
+      this.getLotes()
     }
   },
   mounted () {
     // this.listartipos()
     this.listarsedes()
-    // this.getCodes()
     this.idserviciosmasivo = this.co_rol === '3' ? this.co_sede : undefined
 
     console.log('Mounted')
