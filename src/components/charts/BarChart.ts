@@ -56,15 +56,12 @@ export default defineComponent({
         idcodigocomercial: undefined,
         estatus: 1
       }
-      //  console.log('IP: ', this.term)
       const datagrafica = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
       axios.post(ENDPOINT_PATH_V2 + 'reporte/grafica', body).then(async response => {
-        console.log('response.data')
-        console.log(response.data.data)
         const arreglo = response.data.data
         for (const i in arreglo) {
           const item = arreglo[i]
-          console.log(item)
+          // console.log(item)
           datagrafica[item.mes - 1] = item.total
         }
         const labelgrafica = [
@@ -81,19 +78,16 @@ export default defineComponent({
           'Noviembre',
           'Diciembre'
         ]
-        /* const datagrafica = [40, 20, 12, 39, 10, 40, 39, 80, 40, 20, 12, 11]
-        const datagrafica2 = [39, 80, 40, 20, 12, 11, 40, 20, 12, 39, 10, 40]
-        const datagrafica3 = [20, 10, 6, 30, 5, 20, 44, 70, 20, 80, 20, 4] */
         chartData.value.labels = labelgrafica
         chartData.value.datasets = [
           {
             label: 'Documentos procesados',
-            backgroundColor: '#00C7DC',
+            backgroundColor: '#0999FF',
             data: datagrafica
           }
         ]
-        console.log('chartData.value')
-        console.log(chartData.value)
+        // console.log('chartData.value')
+        // console.log(chartData.value)
       })
       /* const updatedChartData = {
         labels: [],

@@ -1,7 +1,7 @@
 <template>
   <q-page class="q-pa-sm my-fondo">
     <div class="row">
-      <div class="col-md-4 col-sm-12 col-xs-12">
+      <div class="col-md-5 col-sm-12 col-xs-12">
         <div class="row">
             <div class="col">
               <img src="dashboard.png" alt="" style="margin-bottom: -6px;">
@@ -13,7 +13,10 @@
               <div class="dash_welcome_blue">
                   {{ saludo }}.
               </div>
-              <div class="dash_welcome_small">
+              <div v-if="idserviciosmasivo" class="dash_welcome_small">
+                Esto es lo que está pasando con la facturación de <br>{{ serviciosmasivo }}.
+              </div>
+              <div v-else class="dash_welcome_small">
                 Esto es lo que está pasando con tu facturación en este momento.
               </div>
             </div>
@@ -21,32 +24,38 @@
           <div class="row">
             <div class="col">
               <q-card class="my-card tarjetaMain">
-                <q-card-section class="dash_card_main">
-                  <div style="display: flex;margin-bottom: 20px;">
+                <q-card-section class="dash_card_main" style="padding-top: 40px;">
+                  <div v-if="!idserviciosmasivo" style="display: flex;margin-bottom: 30px;">
                     <q-icon name="fact_check" class="text-secondary" style="font-size: xx-large;"/>
                     <span class="itemsCardMain">
-                      Tiene <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalClientes }}</span> emisores con <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalAsignados }}</span> documentos asignados.
+                      Tiene <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalclientes }}</span> emisores con <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalAsignados }}</span> documentos asignados.
                     </span>
                   </div>
-                  <div style="display: flex;margin-bottom: 20px;">
+                  <div style="display: flex;margin-bottom: 30px;">
                     <q-icon name="format_list_bulleted" class="text-secondary" style="font-size: xx-large;"/>
                     <span class="itemsCardMain">
                       Se han procesado <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalUtilizados }}</span> documentos y quedan <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalDisponible }}</span> disponibles.
                     </span>
                   </div>
-                  <div style="display: flex;margin-bottom: 20px;">
+                  <div v-if="!estatusasignacion" style="display: flex;margin-bottom: 30px;">
                     <q-icon name="warning" class="text-secondary" style="font-size: xx-large;"/>
-                    <span class="itemsCardMain">
+                    <span v-if="!idserviciosmasivo" class="itemsCardMain">
                       Existe(n) <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ clientesTerminando }}</span> emisores con cantidad crítica de asignación de lotes.
                     </span>
-                  </div>
-                  <div style="display: flex;margin-bottom: 20px;">
-                    <q-icon name="done_all" class="text-secondary" style="font-size: xx-large;"/>
-                    <span class="itemsCardMain">
-                      Todos los clientes emisores sin problemas de asignación.
+                    <span v-else class="itemsCardMain">
+                      Presenta una cantidad crítica en la asignación actual.
                     </span>
                   </div>
-                  <div v-if="idserviciosmasivo" style="display: flex;margin-bottom: 20px;">
+                  <div v-else style="display: flex;margin-bottom: 30px;">
+                    <q-icon name="done_all" class="text-secondary" style="font-size: xx-large;"/>
+                    <span v-if="!idserviciosmasivo" class="itemsCardMain">
+                      Todos los clientes emisores sin problemas de asignación.
+                    </span>
+                    <span v-else class="itemsCardMain">
+                      Tiene una cantidad aceptable en la asignación actual.
+                    </span>
+                  </div>
+                  <div v-if="idserviciosmasivo" style="display: flex;margin-bottom: 30px;">
                     <q-icon name="segment" class="text-secondary" style="font-size: xx-large;"/>
                     <span class="itemsCardMain">
                       Se usaron <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalAnulados }}</span> entre Anulados y Notas de Créditos.
@@ -57,29 +66,29 @@
             </div>
           </div>
       </div>
-      <div class="col-8">
-        <q-select
-          v-if="co_rol === '1' || co_rol === '2'"
-          label="Buscar por Nombre o RIF del Emisor"
-          dense
-          class="col-md-6 col-sm-12 col-xs-12"
-          filled
-          v-model="modelsede"
-          :disable="disabledSede"
-          use-input
-          hide-selected
-          fill-input
-          clearable
-          options-dense
-          option-label="namerif"
-          option-value="cod"
-          input-debounce="0"
-          :options="optionssede"
-          @update:model-value="changeSede()"
-          @input:="changeSede()"
-          @filter="searchEmisor"
-          style="padding: 5px;margin-left: 20px;"
-        />
+      <div class="col-7">
+        <div style="padding: 5px;margin-left: 40px;width: 50%;height: 48px;">
+          <q-select
+            v-if="co_rol === '1' || co_rol === '2'"
+            label="Buscar por Nombre o RIF del Emisor"
+            dense
+            rounded outlined
+            v-model="modelsede"
+            :disable="disabledSede"
+            use-input
+            hide-selected
+            fill-input
+            clearable
+            options-dense
+            option-label="namerif"
+            option-value="cod"
+            input-debounce="0"
+            :options="optionssede"
+            @update:model-value="changeSede()"
+            @input:="changeSede()"
+            @filter="searchEmisor"
+          />
+        </div>
         <q-card style="margin: 10px 50px;">
           <q-card-section >
             <bar-chart/>
@@ -88,7 +97,7 @@
       </div>
     </div>
     <div class="row">
-      <q-card class="col-4" style="margin: 15px">
+      <q-card class="col-5" style="margin: 15px">
         <q-card-section >
           <q-list>
             <q-item>
@@ -97,7 +106,7 @@
                   <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Filtrado por:</span>
                   <span class="filtros">Desde: {{ dateFrom }}</span>
                   <span class="filtros">Hasta: {{ dateTo }}</span>
-                  <q-icon name="date_range" style="color: #0999ff;font-size: larger;cursor: pointer;" @click="openFechas"/>
+                  <q-icon name="date_range" style="color: #0999ff;font-size: x-large;cursor: pointer;" @click="openFechas"/>
                 </div>
               </q-item-section>
             </q-item>
@@ -121,15 +130,15 @@
           <q-list>
             <q-item class="dash_welcome_small">
               <q-item-section>
-                <q-item-label>Monto obtenido de 45 documentos procesados</q-item-label>
+                <q-item-label>Monto obtenido de {{ totaldoc }} documentos procesados</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
         </q-card-section>
       </q-card>
-      <q-card class="col-7" style="margin: 20px;">
+      <q-card class="col-6" style="margin: 20px;">
         <q-card-section >
-          <q-list bordered class="rounded-borders" style="max-width: 600px">
+          <q-list>
             <q-item-label class="dash_welcome_long">Impuestos por tipos</q-item-label>
             <q-item class="text-dark">
               <q-item-section avatar top>
@@ -266,60 +275,65 @@
           />
         </q-card-section>
       </q-card>
-      <q-dialog v-model="modalFechas" persistent transition-show="scale" transition-hide="scale">
-        <q-card class="bg-primary text-white" style="width: auto;">
-          <q-card-section>
-            <div class="text-h6">Fechas</div>
-          </q-card-section>
-          <q-separator />
-          <q-card-section class="bg-white text-secondary">
-            <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;display: grid;">
-              <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Rango de fecha:</span>
-              <q-radio
-                label="Hoy"
-                v-model="fechacustom"
-                val="1"
-                checked-icon="task_alt"
-                unchecked-icon="highlight_off"
-              />
-              <q-radio
-                label="Ayer"
-                v-model="fechacustom"
-                val="2"
-                checked-icon="task_alt"
-                unchecked-icon="highlight_off"
-              />
-              <q-radio
-                label="En 1 semana"
-                v-model="fechacustom"
-                val="3"
-                checked-icon="task_alt"
-                unchecked-icon="highlight_off"
-              />
-              <q-radio
-                label="En 1 mes"
-                v-model="fechacustom"
-                val="4"
-                checked-icon="task_alt"
-                unchecked-icon="highlight_off"
-              />
-              <q-radio
-                label="Escojer fechas"
-                v-model="fechacustom"
-                val="5"
-                checked-icon="task_alt"
-                unchecked-icon="highlight_off"
-              />
-              <div style="width: 280px;display: flex;justify-content: space-around;"><input disabled type="date" name="desde" :value="dateFrom"><input disabled type="date" name="desde" :value="dateTo"></div>
-            </div>
-          </q-card-section>
-
-          <q-card-actions align="right" class="bg-white text-teal">
-            <q-btn color="secondary" label="Aceptar" v-close-popup />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
     </div> -->
+    <q-dialog v-model="modalFechas" persistent transition-show="scale" transition-hide="scale">
+      <q-card class="bg-primary text-white" style="width: 480px;">
+        <q-card-section>
+          <div class="text-h6">Fechas</div>
+        </q-card-section>
+        <q-separator />
+        <q-card-section class="bg-white text-secondary">
+          <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;display: grid;">
+            <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Rango de fecha:</span>
+            <q-radio
+              label="Hoy"
+              v-model="fechacustom"
+              val="1"
+              checked-icon="task_alt"
+              unchecked-icon="highlight_off"
+            />
+            <q-radio
+              label="Ayer"
+              v-model="fechacustom"
+              val="2"
+              checked-icon="task_alt"
+              unchecked-icon="highlight_off"
+            />
+            <q-radio
+              label="En 1 semana"
+              v-model="fechacustom"
+              val="3"
+              checked-icon="task_alt"
+              unchecked-icon="highlight_off"
+            />
+            <q-radio
+              label="En 1 mes"
+              v-model="fechacustom"
+              val="4"
+              checked-icon="task_alt"
+              unchecked-icon="highlight_off"
+            />
+            <q-radio
+              label="Escojer fechas"
+              v-model="fechacustom"
+              val="5"
+              checked-icon="task_alt"
+              unchecked-icon="highlight_off"
+            />
+            <div style="width: 100%;display: flex;justify-content: space-around;">
+              <input class="inputDate fecha1" :disabled="dsbFechas" type="date" name="desde" :value="dateFrom">
+              <input class="inputDate fecha2" :disabled="dsbFechas" type="date" name="hasta" :value="dateTo">
+              <q-btn color="primary" label="Ir" :disabled="dsbFechas" @click="changeFechas" />
+            </div>
+
+          </div>
+        </q-card-section>
+
+        <q-card-actions align="right" class="bg-white text-teal">
+          <q-btn color="secondary" label="Cerrar" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
@@ -344,6 +358,7 @@ export default defineComponent({
   setup () {
     return {
       totalAnulados: ref(34),
+      estatusasignacion: ref(false),
       totalAsignados: ref(0),
       clientesTerminando: ref(0),
       totalUtilizados: ref(0),
@@ -401,6 +416,7 @@ export default defineComponent({
       optionsfechas: ref([{ cod: 1, name: 'Hoy' }, { cod: 4, name: 'Ayer' }, { cod: 2, name: 'En 1 semana' }, { cod: 3, name: 'En 1 mes' }]),
       co_rol: sessionStorage.getItem('co_rol'),
       co_sede: sessionStorage.getItem('co_sede'),
+      tx_sede: sessionStorage.getItem('tx_sede'),
       co_sede_seleted: sessionStorage.getItem('co_sede_seleted'),
       tx_sede_seleted: sessionStorage.getItem('tx_sede_seleted'),
       rif_sede_seleted: sessionStorage.getItem('rif_sede_seleted')
@@ -411,9 +427,10 @@ export default defineComponent({
       docproc: [],
       tab: 'grafica',
       saludo: 'Buenos días',
-      totalClientes: 0,
+      totalclientes: 0,
       totalDisponible: 0,
       modalFechas: false,
+      dsbFechas: true,
       displayName: sessionStorage.getItem('tx_nombre'),
       rowssemana: []
     }
@@ -535,28 +552,6 @@ export default defineComponent({
         }
       })
     },
-    changeFechas () {
-      console.log(this.modelfechas?.cod)
-      this.dateTo = moment().format('YYYY/MM/DD')
-      switch (this.modelfechas.cod) {
-        case 1:
-          this.dateFrom = moment().format('YYYY/MM/DD')
-          break
-        case 2:
-          this.dateFrom = moment().subtract(1, 'w').format('YYYY/MM/DD')
-          break
-        case 3:
-          this.dateFrom = moment().subtract(1, 'M').format('YYYY/MM/DD')
-          break
-        case 4:
-          this.dateFrom = moment().subtract(1, 'd').format('YYYY/MM/DD')
-          this.dateTo = moment().subtract(1, 'd').format('YYYY/MM/DD')
-          break
-        default:
-          console.log('Sorry, we are out of.')
-      }
-      // this.listarfacturas()
-    },
     changeSedeChild (reg) {
       console.log('changeSedeChild')
       this.idserviciosmasivo = reg.cod
@@ -607,10 +602,13 @@ export default defineComponent({
         console.log(datos)
         this.totalAsignados = 0
         this.totalUtilizados = 0
+        this.estatusasignacion = true
         // this.totaldoc = 0
         for (const i in datos) {
           this.totalAsignados += Number(datos[i].cantidad)
           this.totalUtilizados += Number(datos[i].utilizado)
+          console.log(this.totalUtilizados / this.totalAsignados)
+          this.estatusasignacion = (this.totalUtilizados / this.totalAsignados) < 0.80 || false
         }
         this.totalDisponible = this.totalAsignados - this.totalUtilizados
       }).catch(error => {
@@ -661,8 +659,6 @@ export default defineComponent({
         this.emisores = this.optionssede
         this.rifs = this.optionssede
         this.totalclientes = datos.length
-        console.log('this.totalclientes')
-        console.log(this.totalclientes)
       }).catch(error => {
         Notify.create('Problemas al listar Sedes ' + error)
       })
@@ -672,12 +668,52 @@ export default defineComponent({
       this.getDocProcesados()
       this.getUltimaSemana()
       this.getLotes()
+    },
+    changeFechas () {
+      const selectElementDesde = document.querySelector('.fecha1')
+      const selectElementHasta = document.querySelector('.fecha2')
+      this.dateFrom = selectElementDesde.value
+      this.dateTo = selectElementHasta.value
+    }
+  },
+  watch: {
+    fechacustom: function (val) {
+      console.log(val)
+      switch (val) {
+        case '1':
+          this.dateFrom = moment().format('YYYY-MM-DD')
+          this.dateTo = moment().format('YYYY-MM-DD')
+          this.dsbFechas = true
+          break
+        case '2':
+          this.dateFrom = moment().subtract(1, 'days').format('YYYY-MM-DD')
+          this.dateTo = moment().subtract(1, 'days').format('YYYY-MM-DD')
+          this.dsbFechas = true
+          break
+        case '3':
+          this.dateFrom = moment().subtract(7, 'days').format('YYYY-MM-DD')
+          this.dateTo = moment().format('YYYY-MM-DD')
+          this.dsbFechas = true
+          break
+        case '4':
+          this.dateFrom = moment().subtract(30, 'days').format('YYYY-MM-DD')
+          this.dateto = moment().format('YYYY-MM-DD')
+          this.dsbFechas = true
+          break
+        case '5':
+          this.dsbFechas = false
+          break
+      }
+
+      this.listarReportes()
     }
   },
   mounted () {
     // this.listartipos()
     this.listarsedes()
+    console.log(this.co_rol)
     this.idserviciosmasivo = this.co_rol === '3' ? this.co_sede : undefined
+    this.serviciosmasivo = this.co_rol === '3' ? this.tx_sede : undefined
 
     console.log('Mounted')
     console.log(this.tx_sede_seleted)
@@ -693,12 +729,23 @@ export default defineComponent({
       this.modelsede = obj
       this.disabledSede = true
     }
+    console.log(this.serviciosmasivo)
     this.listarReportes()
   }
 })
 </script>
 
 <style>
+
+.inputDate {
+  font-family: 'avenir';
+  width: 130px;
+  padding: 7px;
+  height: 36px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  background: #f2f2f2;
+}
 .dash_welcome_long {
   font-size: 24px;
   margin: 20px 0px;
@@ -710,6 +757,7 @@ export default defineComponent({
   color: #98A7BA;
   font-weight: bold;
   font-size: 12px;
+  height: 50px;
 }
 .dash_welcome_blue {
   font-size: 22px;
