@@ -22,6 +22,7 @@ export default defineComponent({
   components: {
     Bar
   },
+
   props: {
     chartId: {
       type: String,
@@ -52,7 +53,7 @@ export default defineComponent({
     function fillData () {
       const body = {
         idtipodocumento: undefined,
-        idserviciosmasivo: undefined,
+        idserviciosmasivo: sessionStorage.getItem('co_sede_seleted') ? sessionStorage.getItem('co_sede_seleted') : sessionStorage.getItem('co_sede'),
         idcodigocomercial: undefined,
         estatus: 1
       }
@@ -83,6 +84,7 @@ export default defineComponent({
           {
             label: 'Documentos procesados',
             backgroundColor: '#0999FF',
+            borderRadius: 10,
             data: datagrafica
           }
         ]
@@ -100,7 +102,7 @@ export default defineComponent({
       chartData.value = { ...updatedChartData } */
     }
     onMounted(() => {
-      console.log('Component mounted!')
+      // console.log('Component mounted!')
       fillData()
     })
     return () =>

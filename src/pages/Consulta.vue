@@ -27,7 +27,7 @@
         <template v-slot:top-right>
           <div style="display: inline;">
             <q-btn icon-right="print" class="q-ml-sm col-md-4 col-sm-3 col-xs-3" color="secondary" label="Imprimir" @click="openImprimir" :disable="btnDisable"/>
-            <q-btn icon-right="file_download" class="q-ml-sm col-md-4 col-sm-3 col-xs-3" color="secondary" label="Exportar" @click="drawerFilters" :disable="btnDisable"/>
+            <q-btn icon-right="file_download" class="q-ml-sm col-md-4 col-sm-3 col-xs-3" color="secondary" label="Exportar" @click="drawerExportar = true" :disable="btnDisable"/>
             <q-btn icon-right="filter_alt" class="q-ml-sm col-md-4 col-sm-3 col-xs-3" color="secondary" label="Filtrar" @click="drawerFilters = true" />
           </div>
         </template>
@@ -459,6 +459,69 @@
         </div>
       </q-scroll-area>
     </q-drawer>
+    <q-drawer
+      v-model="drawerExportar"
+      side="right"
+      :width="300"
+      :breakpoint="700"
+      overlay
+      elevated
+      class="text-secondary"
+    >
+      <q-scroll-area class="fit">
+        <div class="q-pa-sm">
+          <div class="tituloDrawer">
+            <div style="margin: 0 20px; font-size: 25px; font-weight: bolder">Exportar</div>
+            <q-icon color="red" name="close" @click="drawerExportar = false" class="cursor-pointer" style="font-size: x-large;" />
+          </div>
+          <div style="margin: 20px 5px;">Exportar los documentos de acuerdo a tus necesidades y escoge el formato que sea de tu agrado.</div>
+          <img src="exportar.png" alt="Exportar" style="max-width: 285px;">
+          <div style="margin: 20px 5px;"> Exportar <span class="text-blue">{{ rows.length }}</span> documento(s).</div>
+          <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;display: grid;">
+            <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Exportar como:</span>
+            <q-radio
+              v-model="tipoExportar"
+              val="1"
+              label="Registros en un archivo PDF"
+              checked-icon="task_alt"
+              unchecked-icon="highlight_off"
+              :disable="disableExport"
+            />
+            <q-separator />
+            <q-radio
+              v-model="tipoExportar"
+              val="2"
+              label="Comprimido .zip en varios PDFs"
+              checked-icon="task_alt"
+              unchecked-icon="highlight_off"
+              :disable="disableExport"
+            />
+            <q-separator />
+            <q-radio
+              v-model="tipoExportar"
+              val="3"
+              label="Registros en un archivo XML"
+              checked-icon="task_alt"
+              unchecked-icon="highlight_off"
+              :disable="disableExport"
+            />
+            <q-separator />
+            <q-radio
+              v-model="tipoExportar"
+              val="4"
+              label="Registros en un archivo .csv"
+              checked-icon="task_alt"
+              unchecked-icon="highlight_off"
+              :disable="disableExport"
+            />
+          </div>
+          <div class="text-center" style="display: flex;justify-content: space-evenly;">
+            <q-btn label="Aceptar" :disable="btnDisableExp" color="secondary" @click="exportarDoc" />
+            <q-btn label="Cerrar" color="negative" @click="drawerExportar = false" />
+          </div>
+        </div>
+      </q-scroll-area>
+    </q-drawer>
   </div>
 </template>
 
@@ -520,6 +583,9 @@ export default {
       tipoorden: ref(false),
       tipoguia: ref(false),
       drawerFilters: ref(false),
+      tipoExportar: ref('1'),
+      drawerExportar: ref(false),
+      disableExport: ref(true),
       totalbaseg: ref('0,00'),
       totalbaser: ref('0,00'),
       totalbaseigtf: ref('0,00'),
@@ -542,6 +608,7 @@ export default {
       titulotabla: ref('Documentos'),
       disable: ref(true),
       btnDisable: ref(true),
+      btnDisableExp: ref(false),
       dateFrom: ref(moment().format('YYYY-MM-DD')),
       dateTo: ref(moment().format('YYYY-MM-DD')),
       co_rol: sessionStorage.getItem('co_rol'),
@@ -761,10 +828,29 @@ export default {
       co_sede_seleted: sessionStorage.getItem('co_sede_seleted'),
       tx_sede_seleted: sessionStorage.getItem('tx_sede_seleted'),
       rif_sede_seleted: sessionStorage.getItem('rif_sede_seleted'),
-      rif_sede: sessionStorage.getItem('rif_sede')
+      rif_sede: sessionStorage.getItem('rif_sede'),
+      tx_sede: sessionStorage.getItem('tx_sede')
     }
   },
   methods: {
+    exportarDoc () {
+      switch (this.tipoExportar) {
+        case '1':
+          this.exportPDF()
+          break
+        case '2':
+          this.exportarLotes()
+          break
+        case '3':
+          this.exportXML(this.tempxml)
+          break
+        case '4':
+          this.exportTable()
+          break
+        default:
+          console.log('Sorry, we are out of.')
+      }
+    },
     openImprimir () {
       this.viewPrint = true
     },
@@ -1170,7 +1256,7 @@ export default {
         impuestog: this.impuestog,
         impuestor: this.impuestor,
         impuestoigtf: this.impuestoigtf,
-        rif: $this.rif_sede,
+        rif: this.rif_sede_exportar,
         estatus: 4
       }
       const url = ENDPOINT_PATH_V2 + 'archivos/exportarlote'
@@ -1185,7 +1271,7 @@ export default {
         const link = document.createElement('a')
         link.style.display = 'none'
         link.href = window.URL.createObjectURL(blob)
-        link.download = $this.rif_sede + '-' + moment().format('YYYYMMDDhhmmss') + '.zip'
+        link.download = $this.rif_sede_exportar + '-' + moment().format('YYYYMMDDhhmmss') + '.zip'
         link.click()
         window.URL.revokeObjectURL(link.href)
         // Notify.create('Documentos exportados con exito ')
@@ -1531,6 +1617,7 @@ export default {
             this.tempxml.push(this.detailXML(datos[i]))
             this.crearClientes(obj)
           }
+          this.disableExport = this.rows.length === 0 || false
           this.totalbaseg = this.completarDecimales(this.totalbaseg)
           this.totalbaser = this.completarDecimales(this.totalbaser)
           this.totalbaseigtf = this.completarDecimales(this.totalbaseigtf)
@@ -1712,6 +1799,12 @@ export default {
       .then(({ ip }) => {
         this.term = ip
         this.colspan = this.co_rol === '1' ? 8 : this.co_rol === '2' ? 7 : 6
+        console.log('this.rif_sede')
+        console.log(this.rif_sede)
+        console.log('this.tx_sede')
+        console.log(this.tx_sede)
+        this.rif_sede_exportar = this.rif_sede
+        this.clienteEmisorfilter = this.tx_sede
         if (this.co_sede_seleted) {
           if (this.co_rol !== '1') {
             this.colspan = 6
@@ -1722,6 +1815,8 @@ export default {
           obj.razonsocial = this.tx_sede_seleted
           this.idserviciosmasivo = this.co_sede_seleted
           obj.namerif = obj.razonsocial + ' ' + obj.rif
+          this.rif_sede_exportar = this.rif_sede_seleted
+          this.clienteEmisorfilter = this.tx_sede_seleted
           this.serviciosmasivo = obj.namerif
           this.modelsede = obj
           this.disabledSede = true
@@ -1745,12 +1840,10 @@ export default {
         const selectElementHasta = document.querySelector('.fecha2')
 
         selectElementDesde.addEventListener('change', (event) => {
-          console.log('Cambiando fechas Desde: ', selectElementDesde.value)
           this.dateFrom = selectElementDesde.value
           this.listarfacturas()
         })
         selectElementHasta.addEventListener('change', (event) => {
-          console.log('Cambiando fechas Hasta: ', selectElementHasta.value)
           this.dateTo = selectElementHasta.value
           this.listarfacturas()
         })

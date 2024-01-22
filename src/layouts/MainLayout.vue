@@ -232,6 +232,8 @@ export default defineComponent({
         sessionStorage.removeItem('tx_nombre')
         sessionStorage.removeItem('tx_sede')
         sessionStorage.removeItem('co_sede')
+        sessionStorage.removeItem('id_usuario')
+        sessionStorage.removeItem('rif_sede')
         sessionStorage.removeItem('co_rol')
         this.$router.push('/')
       })

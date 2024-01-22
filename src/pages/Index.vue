@@ -91,7 +91,7 @@
         </div>
         <q-card style="margin: 10px 50px;">
           <q-card-section >
-            <bar-chart/>
+            <bar-chart />
           </q-card-section>
         </q-card>
       </div>
@@ -357,14 +357,13 @@ export default defineComponent({
   },
   setup () {
     return {
-      totalAnulados: ref(34),
       estatusasignacion: ref(false),
       totalAsignados: ref(0),
       clientesTerminando: ref(0),
       totalUtilizados: ref(0),
       avg7Days: ref(22.8),
       totaldoc: ref(0),
-      totalanu: ref(0),
+      totalAnulados: ref(0),
       totalimpg: ref(0),
       totalimpr: ref(0),
       totalimpa: ref(0),
@@ -512,7 +511,7 @@ export default defineComponent({
       axios.post(ENDPOINT_PATH_V2 + 'reporte/anulados', body).then(async response => {
         const datos = response.data.data
         // console.log(datos)
-        this.totalanu = datos[0].totalanu
+        this.totalAnulados = datos[0].totalanu
       }).catch(error => {
         Notify.create('Problemas al procesar  anulados' + error)
       })
@@ -552,13 +551,6 @@ export default defineComponent({
         }
       })
     },
-    changeSedeChild (reg) {
-      console.log('changeSedeChild')
-      this.idserviciosmasivo = reg.cod
-      reg.namerif = reg.razonsocial + ' ' + reg.rif
-      this.serviciosmasivo = reg.namerif
-      this.modelsede = reg
-    },
     changeSede () {
       this.idserviciosmasivo = this.modelsede?.cod
       this.serviciosmasivo = this.modelsede?.namerif
@@ -573,8 +565,8 @@ export default defineComponent({
       console.log(this.modelcodes?.cod)
       this.idcodigocomercial = this.modelcodes?.cod
       this.codigocomercial = this.modelcodes?.namecode
-      console.log(this.idcodigocomercial)
-      console.log(this.codigocomercial)
+      // console.log(this.idcodigocomercial)
+      // console.log(this.codigocomercial)
       // this.listarfacturas()
     },
     getCodes () {
@@ -588,7 +580,7 @@ export default defineComponent({
           this.optionscodes.push(obj)
         }
         this.codes = this.optionscodes
-        console.log(this.optionscodes)
+        // console.log(this.optionscodes)
       }).catch(error => {
         Notify.create('Problemas al listar Codigos comerciales ' + error)
       })
@@ -599,7 +591,7 @@ export default defineComponent({
       }
       axios.post(ENDPOINT_PATH_V2 + 'sede/lotes', body).then(async response => {
         const datos = response.data.data
-        console.log(datos)
+        // console.log(datos)
         this.totalAsignados = 0
         this.totalUtilizados = 0
         this.estatusasignacion = true
@@ -617,7 +609,7 @@ export default defineComponent({
     },
     listartipos () {
       axios.get(ENDPOINT_PATH_V2 + 'tipodocumento').then(async response => {
-        console.log(response.data)
+        // console.log(response.data)
         const datos = response.data.data
         this.optionstipo = []
         const obj = {}
@@ -636,7 +628,7 @@ export default defineComponent({
     },
     listarsedes () {
       axios.get(ENDPOINT_PATH_V2 + 'sede').then(async response => {
-        console.log(response.data)
+        // console.log(response.data)
         const datos = response.data.data
         this.optionssede = []
         const obj = {}
@@ -749,7 +741,7 @@ export default defineComponent({
 .dash_welcome_long {
   font-size: 24px;
   margin: 20px 0px;
-  color: #6283AE;
+  color: #65778D;
   font-weight: bold;
 }
 .dash_welcome_small {
@@ -760,10 +752,9 @@ export default defineComponent({
   height: 50px;
 }
 .dash_welcome_blue {
-  font-size: 22px;
-  margin: 0px 0px 20px;
+  font-size: 28px;
+  margin: -20px 0px 20px 0px;
   color: #0999FF;
-  font-weight: bold;
 }
 .dash_card_main {
   color: #98A7BA;
