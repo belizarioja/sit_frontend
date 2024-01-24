@@ -91,7 +91,7 @@
         </div>
         <q-card style="margin: 10px 50px;">
           <q-card-section >
-            <bar-chart />
+            <bar-chart ref="barmeses" />
           </q-card-section>
         </q-card>
       </div>
@@ -110,27 +110,24 @@
                 </div>
               </q-item-section>
             </q-item>
-          </q-list>
-          <q-list>
             <q-item class="dash_welcome_long">
               <q-item-section>
                 <q-item-label>Total gravado</q-item-label>
               </q-item-section>
             </q-item>
-          </q-list>
-          <q-separator spaced inset />
-          <q-list>
             <q-item class="dash_welcome_igtf">
               <q-item-section>
                 <q-item-label>Bs. {{totalimp}}</q-item-label>
               </q-item-section>
             </q-item>
-          </q-list>
-          <q-separator spaced inset />
-          <q-list>
             <q-item class="dash_welcome_small">
               <q-item-section>
                 <q-item-label>Monto obtenido de {{ totaldoc }} documentos procesados</q-item-label>
+              </q-item-section>
+            </q-item>
+            <q-item class="dash_welcome_long">
+              <q-item-section>
+                <q-item-label>Total base exento Bs. {{totalexento}}</q-item-label>
               </q-item-section>
             </q-item>
           </q-list>
@@ -139,12 +136,12 @@
       <q-card class="col-6" style="margin: 20px;">
         <q-card-section >
           <q-list>
-            <q-item-label class="dash_welcome_long">Impuestos por tipos</q-item-label>
+            <q-item-label class="dash_welcome_long">Tipo de Impuestos</q-item-label>
             <q-item class="text-dark">
               <q-item-section avatar top>
                 <q-avatar color="white"></q-avatar>
               </q-item-section>
-              <q-item-section top class="col-2 gt-sm">
+              <q-item-section top>
                 <q-item-label class="q-mt-sm">Decripción</q-item-label>
               </q-item-section>
               <q-item-section top>
@@ -153,18 +150,12 @@
               <q-item-section top>
                 <q-item-label class="q-mt-sm">Impuesto</q-item-label>
               </q-item-section>
-              <q-item-section top>
-                <q-item-label class="q-mt-sm">% Proporción</q-item-label>
-              </q-item-section>
-              <q-item-section top>
-                <q-item-label class="q-mt-sm">&nbsp;</q-item-label>
-              </q-item-section>
             </q-item>
             <q-item>
               <q-item-section avatar top>
                 <q-avatar color="secondary"></q-avatar>
               </q-item-section>
-              <q-item-section top class="col-2 gt-sm">
+              <q-item-section top>
                 <q-item-label class="q-mt-sm">IVA 16%</q-item-label>
               </q-item-section>
 
@@ -174,21 +165,13 @@
               <q-item-section top>
                 <q-item-label class="q-mt-sm">Bs {{ totalimpg }}</q-item-label>
               </q-item-section>
-              <q-item-section top>
-                <q-item-label class="q-mt-sm">70%</q-item-label>
-              </q-item-section>
-              <q-item-section top side style="width: 100px;display: block;" class="q-mt-sm">
-                <div class="barraporc" style="width: 70%;">
-                  &nbsp;
-                </div>
-              </q-item-section>
             </q-item>
             <q-item>
               <q-item-section avatar top>
                 <q-avatar color="accent">
                 </q-avatar>
               </q-item-section>
-              <q-item-section top class="col-2 gt-sm">
+              <q-item-section top>
                 <q-item-label class="q-mt-sm">Reducido 8%</q-item-label>
               </q-item-section>
               <q-item-section top>
@@ -197,21 +180,13 @@
               <q-item-section top>
                 <q-item-label class="q-mt-sm">Bs {{ totalimpr }}</q-item-label>
               </q-item-section>
-              <q-item-section top>
-                <q-item-label class="q-mt-sm">80%</q-item-label>
-              </q-item-section>
-              <q-item-section top side style="width: 100px;display: block;" class="q-mt-sm">
-                <div class="barraporc" style="width: 10%;">
-                  &nbsp;
-                </div>
-              </q-item-section>
             </q-item>
             <q-item>
               <q-item-section avatar top>
                 <q-avatar color="info">
                 </q-avatar>
               </q-item-section>
-              <q-item-section top class="col-2 gt-sm">
+              <q-item-section top>
                 <q-item-label class="q-mt-sm">Al lujo 30%</q-item-label>
               </q-item-section>
 
@@ -221,21 +196,13 @@
               <q-item-section top>
                 <q-item-label class="q-mt-sm">Bs {{ totalimpa }}</q-item-label>
               </q-item-section>
-              <q-item-section top>
-                <q-item-label class="q-mt-sm">0%</q-item-label>
-              </q-item-section>
-              <q-item-section top side style="width: 100px;display: block;" class="q-mt-sm">
-                <div class="barraporc" style="width: 0%;">
-                  &nbsp;
-                </div>
-              </q-item-section>
             </q-item>
             <q-item>
               <q-item-section avatar top>
                 <q-avatar color="positive">
                 </q-avatar>
               </q-item-section>
-              <q-item-section top class="col-2 gt-sm">
+              <q-item-section top>
                 <q-item-label class="q-mt-sm">IGTF 3%</q-item-label>
               </q-item-section>
 
@@ -245,27 +212,23 @@
               <q-item-section top>
                 <q-item-label class="q-mt-sm">Bs {{ totalimpigtf }}</q-item-label>
               </q-item-section>
-              <q-item-section top>
-                <q-item-label class="q-mt-sm">20%</q-item-label>
-              </q-item-section>
-              <q-item-section top side style="width: 100px;display: block;" class="q-mt-sm">
-                <div class="barraporc" style="width: 20%;">
-                  &nbsp;
-                </div>
-              </q-item-section>
             </q-item>
           </q-list>
         </q-card-section>
       </q-card>
     </div>
 
-    <!-- <div class="row">
-      <q-card class="col-4" style="margin: 20px">
+    <div class="row">
+      <q-card class="col-5" style="margin: 20px">
+        <div class="dash_welcome_long" style="margin-left: 20px">Tipos de Documento</div>
         <q-card-section >
-          <img src="formasdepago.png" style="max-width: 375px;" />
+          <donut-chart ref="donutipos" />
+        </q-card-section>
+        <q-card-section >
+          <donut-chart ref="donutipos" />
         </q-card-section>
       </q-card>
-      <q-card class="col-7" style="margin: 20px">
+      <q-card class="col-6" style="margin: 20px;">
         <q-card-section >
           <q-table
             :rows="rowssemana"
@@ -275,7 +238,7 @@
           />
         </q-card-section>
       </q-card>
-    </div> -->
+    </div>
     <q-dialog v-model="modalFechas" persistent transition-show="scale" transition-hide="scale">
       <q-card class="bg-primary text-white" style="width: 480px;">
         <q-card-section>
@@ -340,7 +303,8 @@
 <script>
 import { defineComponent, ref } from 'vue'
 
-import BarChart from '../components/charts/BarChart.ts'
+import BarChart from '../components/dashboard/graficameses/BarChart.vue'
+import DonutChart from '../components/dashboard/tiposfactura/DougChart.vue'
 
 import { Notify } from 'quasar'
 import axios from 'axios'
@@ -352,7 +316,7 @@ const ENDPOINT_PATH_V2 = config.endpoint_path_v2
 export default defineComponent({
   name: 'Dashboard',
   components: {
-    // LineChart,
+    DonutChart,
     BarChart
   },
   setup () {
@@ -364,6 +328,7 @@ export default defineComponent({
       avg7Days: ref(22.8),
       totaldoc: ref(0),
       totalAnulados: ref(0),
+      totalexento: ref(0),
       totalimpg: ref(0),
       totalimpr: ref(0),
       totalimpa: ref(0),
@@ -387,12 +352,12 @@ export default defineComponent({
           align: 'left'
         },
         { name: 'hoy', label: 'Hoy', field: 'hoy' },
-        { name: 'hace1dia', label: 'Hace 1 día', field: 'hace1dia' },
-        { name: 'hace2dia', label: 'Hace 2 día', field: 'hace2dia' },
-        { name: 'hace3dia', label: 'Hace 3 día', field: 'hace3dia' },
-        { name: 'hace4dia', label: 'Hace 4 día', field: 'hace4dia' },
-        { name: 'hace5dia', label: 'Hace 5 día', field: 'hace5dia' },
-        { name: 'hace6dia', label: 'Hace 6 día', field: 'hace6dia' }
+        { name: 'hace1dia', label: moment().subtract(1, 'days').format('DD/MM/YYYY'), field: 'hace1dia' },
+        { name: 'hace2dia', label: moment().subtract(2, 'days').format('DD/MM/YYYY'), field: 'hace2dia' },
+        { name: 'hace3dia', label: moment().subtract(3, 'days').format('DD/MM/YYYY'), field: 'hace3dia' },
+        { name: 'hace4dia', label: moment().subtract(4, 'days').format('DD/MM/YYYY'), field: 'hace4dia' },
+        { name: 'hace5dia', label: moment().subtract(5, 'days').format('DD/MM/YYYY'), field: 'hace5dia' },
+        { name: 'hace6dia', label: moment().subtract(6, 'days').format('DD/MM/YYYY'), field: 'hace6dia' }
       ],
       fechacustom: ref('1'),
       disabledSede: ref(false),
@@ -440,7 +405,9 @@ export default defineComponent({
     },
     getDocProcesados () {
       const body = {
-        idserviciosmasivo: this.idserviciosmasivo
+        idserviciosmasivo: this.idserviciosmasivo,
+        desde: moment(this.dateFrom, 'YYYY/MM/DD').format('YYYY-MM-DD'),
+        hasta: moment(this.dateTo, 'YYYY/MM/DD').format('YYYY-MM-DD')
       }
       axios.post(ENDPOINT_PATH_V2 + 'reporte/totaldocumentos', body).then(async response => {
         const datos = response.data.data
@@ -460,7 +427,7 @@ export default defineComponent({
       }
       axios.post(ENDPOINT_PATH_V2 + 'reporte/ultimasemana', body).then(async response => {
         const datos = response.data.data
-        console.log(datos)
+        // console.log(datos)
         this.rowssemana = []
         for (const i in datos) {
           const obj = {}
@@ -488,7 +455,7 @@ export default defineComponent({
         const datos = response.data.data
         // console.log(datos)
         this.totaldoc = datos[0].total
-        this.exento = datos[0].totalexento || 0
+        this.totalexento = datos[0].totalexento || 0
         this.totalimpg = datos[0].totalg || 0
         this.totalimpr = datos[0].totalr || 0
         // this.totalbase = Number(this.totalimpg) + Number(this.totalimpr) + Number(this.exento)
@@ -505,6 +472,7 @@ export default defineComponent({
         this.totalimpr = this.completarDecimales(this.totalimpr)
         this.totalimpigtf = this.completarDecimales(this.totalimpigtf)
         this.totalimp = this.completarDecimales(this.totalimp)
+        this.totalexento = this.completarDecimales(this.totalexento)
       }).catch(error => {
         Notify.create('Problemas al procesar ' + error)
       })
@@ -555,14 +523,13 @@ export default defineComponent({
       this.idserviciosmasivo = this.modelsede?.cod
       this.serviciosmasivo = this.modelsede?.namerif
       this.listarReportes()
-      // this.listarfacturas()
     },
     changeTipo () {
       this.idtipodocumento = this.modeltipo.cod
       this.tipodocumento = this.modeltipo.name
     },
     changeCodes () {
-      console.log(this.modelcodes?.cod)
+      // console.log(this.modelcodes?.cod)
       this.idcodigocomercial = this.modelcodes?.cod
       this.codigocomercial = this.modelcodes?.namecode
       // console.log(this.idcodigocomercial)
@@ -599,7 +566,7 @@ export default defineComponent({
         for (const i in datos) {
           this.totalAsignados += Number(datos[i].cantidad)
           this.totalUtilizados += Number(datos[i].utilizado)
-          console.log(this.totalUtilizados / this.totalAsignados)
+          // console.log(this.totalUtilizados / this.totalAsignados)
           this.estatusasignacion = (this.totalUtilizados / this.totalAsignados) < 0.80 || false
         }
         this.totalDisponible = this.totalAsignados - this.totalUtilizados
@@ -660,6 +627,10 @@ export default defineComponent({
       this.getDocProcesados()
       this.getUltimaSemana()
       this.getLotes()
+      // console.log(this.$refs.barmeses)
+      this.$refs.barmeses.createData(this.idserviciosmasivo)
+      this.$refs.donutipos.createData(this.idserviciosmasivo, this.dateFrom, this.dateTo)
+      // this.$emit('createData')
     },
     changeFechas () {
       const selectElementDesde = document.querySelector('.fecha1')
@@ -753,7 +724,7 @@ export default defineComponent({
 }
 .dash_welcome_blue {
   font-size: 28px;
-  margin: -20px 0px 20px 0px;
+  margin: -20px 0px 7px 0px;
   color: #0999FF;
 }
 .dash_card_main {
@@ -761,7 +732,7 @@ export default defineComponent({
 }
 .dash_welcome_igtf {
   font-size: 50px;
-  margin: 0px 0px 20px;
+  margin: 0px 0px -20px;
   color: #0999FF;
   font-weight: bold;
 }
@@ -778,7 +749,7 @@ export default defineComponent({
   background: radial-gradient(circle, rgb(250 250 250) 0%, rgb(250 250 250) 100%);
 }
 .itemsCardMain {
-  font-size: 11px;
+  font-size: 14px;
   display: flex;
   align-items: center;
   padding-left: 10px;

@@ -10,11 +10,11 @@
     "test": "echo \"No test specified\" && exit 0"
   },
   "dependencies": {
-    "@quasar/cli": "^1.3.2",
-    "@quasar/extras": "^1.0.0",
-    "@vuepic/vue-datepicker": "^3.5.3",
+    "@quasar/cli": "^1.4.0",
+    "@quasar/extras": "^1.16.9",
+    "apexcharts": "^3.45.2",
     "axios": "^0.27.2",
-    "chart.js": "^3.7.1",
+    "chart.js": "^3.9.1",
     "core-js": "^3.6.5",
     "html2pdf": "0.0.11",
     "jspdf": "^2.5.1",
@@ -22,11 +22,10 @@
     "luxon": "^1.0.0",
     "md5": "^2.3.0",
     "moment": "^2.29.3",
-    "quasar": "^2.0.0",
+    "quasar": "^2.14.2",
     "stream-http": "^3.2.0",
     "vue": "^3.0.0",
-    "vue-chartjs": "^4.1.0",
-    "vue-datetime": "^1.0.0-beta.14",
+    "vue-chartjs": "^4.1.2",
     "vue-html2pdf": "^1.8.0",
     "vue-router": "^4.0.0",
     "vue-tailwind-datepicker": "^1.1.0",
@@ -35,13 +34,15 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.13.14",
     "@quasar/app": "^3.0.0",
+    "@quasar/vite-plugin": "^1.6.0",
     "eslint": "^7.14.0",
     "eslint-config-standard": "^16.0.2",
     "eslint-plugin-import": "^2.19.1",
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-promise": "^5.1.0",
     "eslint-plugin-vue": "^7.0.0",
-    "eslint-webpack-plugin": "^2.4.0"
+    "eslint-webpack-plugin": "^2.4.0",
+    "sass": "^1.33.0"
   },
   "browserslist": [
     "last 10 Chrome versions",
