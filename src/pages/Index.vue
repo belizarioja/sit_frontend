@@ -56,7 +56,7 @@
                     </span>
                   </div>
                   <div v-if="idserviciosmasivo" style="display: flex;margin-bottom: 30px;">
-                    <q-icon name="segment" class="text-secondary" style="font-size: xx-large;"/>
+                    <q-icon name="rule" class="text-secondary" style="font-size: xx-large;"/>
                     <span class="itemsCardMain">
                       Se usaron <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalAnulados }}</span> entre Anulados y Notas de Créditos.
                     </span>

@@ -18,7 +18,7 @@ export default {
           width: '100%'
         },
         series: [{
-          name: 'Cantidad de documentos',
+          name: 'Documentos procesados',
           data: []
         }],
         xaxis: {
@@ -44,18 +44,18 @@ export default {
           datagrafica[item.mes - 1] = item.total
         }
         const labelgrafica = [
-          'Enero',
-          'Febrero',
-          'Marzo',
-          'Abril',
-          'Mayo',
-          'Junio',
-          'Julio',
-          'Agosto',
-          'Septiembre',
-          'Octubre',
-          'Noviembre',
-          'Diciembre'
+          'Ene',
+          'Feb',
+          'Mar',
+          'Abr',
+          'May',
+          'Juno',
+          'Julo',
+          'Ago',
+          'Sep',
+          'Oct',
+          'Nov',
+          'Dic'
         ]
         this.options.xaxis.categories = labelgrafica
         this.options.series[0].data = datagrafica

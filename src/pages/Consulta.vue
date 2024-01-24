@@ -10,6 +10,7 @@
           <span class="filtros">Hasta: {{ dateTo }}</span>
           <span class="filtros">Tipo documento: {{ tipodocumentofilter }}</span>
           <span class="filtros">Cliente emisor: {{ clienteEmisorfilter }}</span>
+          <span class="filtros">Estatus: {{ estatusfilter }}</span>
         </div>
         <span class="my-fondo" style="position: absolute;top: 9px; left: 20px; color: #ccc;">Filtrado por:</span>
       </div>
@@ -23,7 +24,15 @@
         :pagination="initialPagination"
         style="overflow: auto;"
         :loading="loading"
+        :filter="filterTable"
         no-data-label="No hay registros!">
+        <template v-slot:top-left>
+          <q-input dense debounce="300" color="primary" v-model="filterTable" placeholder="Buscar">
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+        </template>
         <template v-slot:top-right>
           <div style="display: inline;">
             <q-btn icon-right="print" class="q-ml-sm col-md-4 col-sm-3 col-xs-3" color="secondary" label="Imprimir" @click="openImprimir" :disable="btnDisable"/>
@@ -385,14 +394,6 @@
             <q-icon color="red" name="close" @click="drawerFilters = false" class="cursor-pointer" style="font-size: x-large;" />
           </div>
           <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;">
-            <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Cliente emisor:</span>
-            <q-select v-if="co_rol === '1' || co_rol === '2'" label="Agregue Nombre o RIF" dense
-              class="col-md-3 col-sm-12 col-xs-12" filled v-model="modelsede" :disable="disabledSede" use-input hide-selected
-              fill-input clearable options-dense option-label="namerif" option-value="cod" input-debounce="0"
-              :options="optionssede" @update:model-value="changeSede()" @input:="changeSede()" @filter="searchEmisor"
-              style="padding: 5px" />
-          </div>
-          <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;">
             <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Fechas:</span>
             <div style="display: flex;justify-content: space-around;">
               <input class="inputDate fecha1" type="date" id="desde" :value="dateFrom">
@@ -400,8 +401,18 @@
             </div>
           </div>
           <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;">
+            <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Cliente emisor:</span>
+            <q-icon color="blue" :name="view1 ? 'expand_less' : 'expand_more'" @click="view1 = !view1" class="cursor-pointer" style="font-size: x-large;position: absolute;top: -12px; right: 10px;" />
+            <q-select v-if="(co_rol === '1' || co_rol === '2') && view1" label="Agregue Nombre o RIF" dense
+              class="col-md-3 col-sm-12 col-xs-12" filled v-model="modelsede" :disable="disabledSede" use-input hide-selected
+              fill-input clearable options-dense option-label="namerif" option-value="cod" input-debounce="0"
+              :options="optionssede" @update:model-value="changeSede()" @input:="changeSede()" @filter="searchEmisor"
+              style="padding: 5px" />
+          </div>
+          <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;">
             <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">N° Control:</span>
-            <q-input filled label="Agregue N° Control" v-model="numerodocumento"
+            <q-icon color="blue" :name="view3 ? 'expand_less' : 'expand_more'" @click="view3 = !view3" class="cursor-pointer" style="font-size: x-large;position: absolute;top: -12px; right: 10px;" />
+            <q-input v-if="view3" filled label="Agregue N° Control" v-model="numerodocumento"
               @input:="listarfacturas" style="padding: 5px" :disable="disable" dense>
               <template v-slot:append>
                 <q-icon v-if="numerodocumento.length > 0" name="close" @click="(numerodocumento = ''), listarfacturas()"
@@ -414,44 +425,78 @@
           </div>
           <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;display: grid;">
             <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Tipo documento:</span>
-            <q-checkbox
-              v-model="tipotodos"
-              label="Todos"
-              checked-icon="task_alt"
-              unchecked-icon="highlight_off"
-              :disable="disabletipo"
-            />
-            <q-separator />
-            <q-checkbox
-              v-model="tipofactura"
-              label="Factura"
-              checked-icon="task_alt"
-              unchecked-icon="highlight_off"
-            />
-            <q-checkbox
-              v-model="tipocredito"
-              label="Nota de crédito"
-              checked-icon="task_alt"
-              unchecked-icon="highlight_off"
-            />
-            <q-checkbox
-              v-model="tipodebito"
-              label="Nota de débito"
-              checked-icon="task_alt"
-              unchecked-icon="highlight_off"
-            />
-            <q-checkbox
-              v-model="tipoorden"
-              label="Orden de entrega"
-              checked-icon="task_alt"
-              unchecked-icon="highlight_off"
-            />
-            <q-checkbox
-              v-model="tipoguia"
-              label="Guía de despacho"
-              checked-icon="task_alt"
-              unchecked-icon="highlight_off"
-            />
+            <q-icon color="blue" :name="view4 ? 'expand_less' : 'expand_more'" @click="view4 = !view4" class="cursor-pointer" style="font-size: x-large;position: absolute;top: -12px; right: 10px;" />
+            <div v-if="view4" style="display: grid;">
+              <q-checkbox
+                v-model="tipotodos"
+                label="Todos"
+                checked-icon="task_alt"
+                unchecked-icon="highlight_off"
+                :disable="disabletipo"
+              />
+              <q-separator />
+              <q-checkbox
+                v-model="tipofactura"
+                label="Factura"
+                checked-icon="task_alt"
+                unchecked-icon="highlight_off"
+              />
+              <q-checkbox
+                v-model="tipocredito"
+                label="Nota de crédito"
+                checked-icon="task_alt"
+                unchecked-icon="highlight_off"
+              />
+              <q-checkbox
+                v-model="tipodebito"
+                label="Nota de débito"
+                checked-icon="task_alt"
+                unchecked-icon="highlight_off"
+              />
+              <q-checkbox
+                v-model="tipoorden"
+                label="Orden de entrega"
+                checked-icon="task_alt"
+                unchecked-icon="highlight_off"
+              />
+              <q-checkbox
+                v-model="tipoguia"
+                label="Guía de despacho"
+                checked-icon="task_alt"
+                unchecked-icon="highlight_off"
+              />
+            </div>
+          </div>
+          <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;display: grid;">
+            <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Estatus anulado:</span>
+            <q-icon color="blue" :name="view5 ? 'expand_less' : 'expand_more'" @click="view5 = !view5" class="cursor-pointer" style="font-size: x-large;position: absolute;top: -12px; right: 10px;" />
+            <div v-if="view5" style="display: grid;">
+              <q-radio
+                v-model="estatusanulados"
+                val="4"
+                label="Todos"
+                checked-icon="task_alt"
+                unchecked-icon="highlight_off"
+                @click="listarfacturas"
+              />
+              <q-separator />
+              <q-radio
+                v-model="estatusanulados"
+                val="2"
+                label="Anulados"
+                checked-icon="task_alt"
+                unchecked-icon="highlight_off"
+                @click="listarfacturas"
+              />
+              <q-radio
+                v-model="estatusanulados"
+                val="1"
+                label="No anulados"
+                checked-icon="task_alt"
+                unchecked-icon="highlight_off"
+                @click="listarfacturas"
+              />
+            </div>
           </div>
           <div class="text-center">
             <q-btn label="Cerrar" color="negative" @click="drawerFilters = false" />
@@ -522,6 +567,21 @@
         </div>
       </q-scroll-area>
     </q-drawer>
+    <q-dialog v-model="openDialogExportar" persistent transition-show="scale" transition-hide="scale">
+      <q-card class="bg-primary text-white" style="width: 480px;">
+        <q-card-section>
+          <div class="text-h6">Aviso!</div>
+        </q-card-section>
+        <q-separator />
+        <q-card-section class="bg-white text-secondary">
+          <div class="text-h6 text-center">Debe seleccionar Clente Emisor</div>
+        </q-card-section>
+
+        <q-card-actions align="right" class="bg-white text-teal">
+          <q-btn color="secondary" label="Cerrar" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -576,6 +636,8 @@ export default {
       disabletipo: ref(true),
       tipodocumentofilter: ref('Todos'),
       clienteEmisorfilter: ref('Todos'),
+      estatusfilter: ref('Todos'),
+      estatusanulados: ref('4'),
       tipotodos: ref(true),
       tipofactura: ref(false),
       tipocredito: ref(false),
@@ -607,6 +669,7 @@ export default {
       numerodocumento: ref(''),
       titulotabla: ref('Documentos'),
       disable: ref(true),
+      filterTable: ref(''),
       btnDisable: ref(true),
       btnDisableExp: ref(false),
       dateFrom: ref(moment().format('YYYY-MM-DD')),
@@ -829,7 +892,13 @@ export default {
       tx_sede_seleted: sessionStorage.getItem('tx_sede_seleted'),
       rif_sede_seleted: sessionStorage.getItem('rif_sede_seleted'),
       rif_sede: sessionStorage.getItem('rif_sede'),
-      tx_sede: sessionStorage.getItem('tx_sede')
+      tx_sede: sessionStorage.getItem('tx_sede'),
+      openDialogExportar: false,
+      view1: false,
+      view2: false,
+      view3: false,
+      view4: false,
+      view5: false
     }
   },
   methods: {
@@ -839,7 +908,12 @@ export default {
           this.exportPDF()
           break
         case '2':
-          this.exportarLotes()
+          console.log(this.serviciosmasivo)
+          if (this.serviciosmasivo) {
+            this.exportarLotes()
+          } else {
+            this.openDialogExportar = true
+          }
           break
         case '3':
           this.exportXML(this.tempxml)
@@ -1191,11 +1265,12 @@ export default {
     changeSede () {
       this.disable = true
       this.numerodocumento = ''
-      // console.log(this.modelsede)
+      console.log(this.modelsede)
       this.idserviciosmasivo = this.modelsede?.cod
       this.serviciosmasivo = this.modelsede?.namerif
       this.clienteEmisorfilter = 'Todos'
       if (this.modelsede?.cod) {
+        this.rif_sede_exportar = this.modelsede?.rif
         this.disable = false
         this.clienteEmisorfilter = this.modelsede?.name
       }
@@ -1490,6 +1565,7 @@ export default {
       this.rows = lista
     },
     listarfacturas () {
+      this.estatusfilter = this.estatusanulados === '1' ? 'No anulados' : this.estatusanulados === '2' ? 'Anulados' : 'Todos'
       const desde =
         this.numerodocumento.length > 0
           ? undefined
@@ -1516,7 +1592,7 @@ export default {
         impuestog: this.impuestog,
         impuestor: this.impuestor,
         impuestoigtf: this.impuestoigtf,
-        estatus: 4
+        estatus: Number(this.estatusanulados)
       }
       this.crearbitacora(desde, hasta, 3)
       this.loading = true
@@ -1804,7 +1880,7 @@ export default {
         console.log('this.tx_sede')
         console.log(this.tx_sede)
         this.rif_sede_exportar = this.rif_sede
-        this.clienteEmisorfilter = this.tx_sede
+        this.clienteEmisorfilter = this.tx_sede.length > 0 || 'Todos'
         if (this.co_sede_seleted) {
           if (this.co_rol !== '1') {
             this.colspan = 6
