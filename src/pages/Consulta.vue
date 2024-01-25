@@ -1880,7 +1880,8 @@ export default {
         console.log('this.tx_sede')
         console.log(this.tx_sede)
         this.rif_sede_exportar = this.rif_sede
-        this.clienteEmisorfilter = this.tx_sede.length > 0 || 'Todos'
+        this.serviciosmasivo = this.tx_sede
+        this.clienteEmisorfilter = this.tx_sede.length > 0 ? this.tx_sede : 'Todos'
         if (this.co_sede_seleted) {
           if (this.co_rol !== '1') {
             this.colspan = 6

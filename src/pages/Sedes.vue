@@ -1,8 +1,16 @@
 <template>
-  <div class="my-font q-pa-md">
-    <div class="text-h6">Cliente Emisor</div>
+  <div class="my-font my-fondo q-pa-md">
+    <div class="row" style="margin-bottom: 40px;justify-content: space-between;">
+      <span class="text-secondary" style="margin: 0 20px; font-size: 25px; font-weight: bolder;">Clientes emisores</span>
+      <q-btn
+         v-if="co_rol === '1'"
+         color="secondary"
+         :disabled="btndisable"
+         label="Crear emisor"
+         @click="openCrear"
+         style="border-radius: 20px;padding: 7px 20px;" />
+    </div>
     <q-table
-      title="Secciones"
       dense
       :rows="rows"
       :columns="columns"
@@ -11,14 +19,7 @@
       v-model:pagination="pagination"
     >
       <template v-slot:top>
-        <q-btn
-         v-if="co_rol === '1'"
-         color="primary"
-         :disabled="btndisable"
-         label="Crear emisor"
-         @click="openCrear" />
-        <q-space />
-        <q-input borderless dense debounce="300" color="primary" v-model="filter">
+        <q-input borderless dense debounce="300" color="primary" v-model="filter" label="Buscar">
           <template v-slot:append>
             <q-icon name="search" />
           </template>
@@ -73,49 +74,63 @@
       </template>
     </q-table>
     <q-dialog v-model="modalcrear" persistent>
-      <q-card style="min-width: 350px">
+      <q-card style="min-width: 550px">
         <q-card-section>
-          <div class="text-h6">Cliente Emisor</div>
+          <div class="text-h6">Crear emisor</div>
         </q-card-section>
         <q-card-section class="q-pt-none">
           <q-form @submit.prevent="crear" class="q-gutter-md">
-            <q-input
-              dense
-              label="Ingrese RIF"
-              v-model="rif"
-              autofocus
-              :rules="[ val => val.length > 0 || 'Ingresar RIF' ]"
-            />
-            <q-input
-              dense
-              label="Ingrese Razón Social"
-              v-model="razonsocial"
-              autofocus
-              :rules="[ val => val.length > 0 || 'Ingresar RAZON SOCIAL' ]"
-            />
-            <q-input
-              dense
-              label="Ingrese Dirección"
-              v-model="direccion"
-              :rules="[ val => val.length > 0 || 'Ingresar DIRECCIÓN' ]"
-            />
-            <q-input
-              dense
-              v-model="email"
-              label="Ingrese Email"
-              :rules="[ val => val.length > 0 || 'Ingresar EMAIL' ]"
-            />
-            <q-input
-              dense
-              v-model="telefono"
-              label="Ingrese Teléfono de contacto"
-              :rules="[ val => val.length > 0 || 'Ingresar TELÉFONO' ]"
-            />
-            <q-input
-              dense
-              v-model="sitioweb"
-              label="Ingrese Sitio Web"
-            />
+            <div class="row">
+              <q-input
+                class="col-6 q-pa-sm"
+                dense
+                label="RIF"
+                v-model="rif"
+                autofocus
+                :rules="[ val => val.length > 0 || 'Ingresar RIF' ]"
+              />
+              <q-input
+                class="col-6 q-pa-sm"
+                dense
+                label="Razón Social"
+                v-model="razonsocial"
+                autofocus
+                :rules="[ val => val.length > 0 || 'Ingresar RAZON SOCIAL' ]"
+              />
+            </div>
+            <div class="row">
+              <q-input
+                class="col q-pa-sm"
+                dense
+                label="Dirección"
+                v-model="direccion"
+                :rules="[ val => val.length > 0 || 'Ingresar DIRECCIÓN' ]"
+              />
+            </div>
+            <div class="row">
+              <q-input
+                dense
+                class="col q-pa-sm"
+                v-model="email"
+                label="Email"
+                :rules="[ val => val.length > 0 || 'Ingresar EMAIL' ]"
+              />
+            </div>
+            <div class="row">
+              <q-input
+                dense
+                class="col-6 q-pa-sm"
+                v-model="telefono"
+                label="Teléfono de contacto"
+                :rules="[ val => val.length > 0 || 'Ingresar TELÉFONO' ]"
+              />
+              <q-input
+                dense
+                class="col-6 q-pa-sm"
+                v-model="sitioweb"
+                label="Sitio Web"
+              />
+            </div>
             <div style="text-align: center;">
               <q-radio v-model="shape" val="0" label="Sin envío de correo" />
               <q-radio v-model="shape" val="1" label="Con envío de correo" />

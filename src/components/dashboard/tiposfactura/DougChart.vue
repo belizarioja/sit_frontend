@@ -1,5 +1,10 @@
 <template>
-  <div id="donutchart"></div>
+  <div id="donutchart">
+    <div v-if="options.series.length === 0" class="text-center">
+      <img src="estatusgrafica.png" alt="Sin datos" style="width: 250px;">
+      <div class="dash_welcome_small">No hay datos que mostrar para esta fecha</div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -57,8 +62,11 @@ export default {
         this.options.series = datagrafica
         console.log(this.options)
         console.log(this.options.series)
-        const chart = new ApexCharts(document.querySelector('#donutchart'), this.options)
-        chart.render()
+        const estatus = (datagrafica[0] > 0 || datagrafica[1] > 0 || datagrafica[2] > 0 || datagrafica[3] > 0 || datagrafica[4] > 0) || false
+        if (estatus) {
+          const chart = new ApexCharts(document.querySelector('#donutchart'), this.options)
+          chart.render()
+        }
       }).catch(error => {
         console.log('Problemas al listar Documentos ' + error)
       })
@@ -66,3 +74,12 @@ export default {
   }
 }
 </script>
+<style>
+  .dash_welcome_small {
+    margin: 0px 20px 20px 0px;
+    color: #98A7BA;
+    font-weight: bold;
+    font-size: 12px;
+    height: 50px;
+  }
+</style>

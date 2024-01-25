@@ -92,6 +92,9 @@ export default {
   },
   methods: {
     todos () {
+      sessionStorage.setItem('co_sede_seleted', '')
+      sessionStorage.setItem('tx_sede_seleted', '')
+      sessionStorage.setItem('rif_sede_seleted', '')
       if (this.co_rol === '1') {
         this.$router.push('/dashboard')
       } else {
