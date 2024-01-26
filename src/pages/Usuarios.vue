@@ -1,18 +1,24 @@
 <template>
-  <div class="my-font q-pa-md">
-    <div class="row">
-      <span style="margin: 0 20px;font-size: 25px;font-weight: bolder;">Usuarios</span>
+  <div class="my-font my-fondo q-pa-md">
+    <div class="row" style="margin-bottom: 40px;justify-content: space-between;">
+      <span class="text-secondary" style="margin: 0 20px; font-size: 25px; font-weight: bolder;">Usuarios</span>
+      <q-btn
+         v-if="co_rol === '1'"
+         color="secondary"
+         :disabled="btndisable"
+         label="Crear usuario"
+         @click="modalcrear = true"
+         style="border-radius: 20px;padding: 7px 20px;" />
     </div>
     <q-table
       dense
       :rows="rows"
       :columns="columns"
       row-key="name"
+      :filter="filter"
       :pagination="pagination"
     >
       <template v-slot:top>
-        <q-btn color="primary" :disable="loading" label="Crear usuario" @click="modalcrear = true" />
-        <q-space />
         <q-input borderless dense debounce="300" color="primary" v-model="filter">
           <template v-slot:append>
             <q-icon name="search" />
@@ -52,6 +58,7 @@
             dense
             v-model="nombre"
             label="Nombre"
+            hint="Debe ser distinto a la razón social"
             autofocus
             :rules="[ val => val.length > 0 || 'Ingresar NOMBRE DE USUARIO' ]"
           />
@@ -95,15 +102,15 @@
         </q-card-section>
 
         <q-card-actions align="right" class="text-primary">
-          <q-btn color="secondary" label="Cancelar" v-close-popup />
-          <q-btn color="primary" label="Aceptar" @click="crearusuario"/>
+          <q-btn color="negative" label="Cancelar" v-close-popup />
+          <q-btn color="secondary" label="Aceptar" @click="crearusuario"/>
         </q-card-actions>
       </q-card>
     </q-dialog>
     <q-dialog v-model="viewdetails" persistent>
       <q-card style="width: 800px; max-width: 80vw;">
         <q-card-section class="row items-center">
-          <span class="q-ml-sm">Bitácoras</span>
+          <span class="q-ml-sm">Trazas de seguridad</span>
         </q-card-section>
         <q-card-section class="row items-center">
           <q-table
@@ -118,7 +125,7 @@
 
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn flat label="Aceptar" color="primary" v-close-popup />
+          <q-btn color="secondary" label="Aceptar" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -133,10 +140,10 @@
            </div>
         </q-card-section>
         <q-card-section class="q-pt-none">
-           <div  style="text-align: center;">
-             <q-btn flat label="Cancel" v-close-popup />
+          <div style="display: flex; justify-content: space-evenly;margin-top: 20px;">
+             <q-btn color="negative" label="Cancelar" v-close-popup />
              <q-btn
-              color="primary"
+              color="secondary"
               label="Aceptar"
               @click="actualizarEstatus"
              />
@@ -146,7 +153,7 @@
     </q-dialog>
 
     <q-dialog v-model="modalactualizarclave" persistent>
-      <q-card >
+      <q-card  style="width: 300px;">
         <q-card-section>
           <div class="text-h6" style="text-align: center;">Actualizar Clave</div>
         </q-card-section>
@@ -154,15 +161,15 @@
           <q-input
             dense
             v-model="nuevaclave"
-            label="Nueva Clave"
+            label="Ingrese nueva clave"
             autofocus
           />
         </q-card-section>
         <q-card-section class="q-pt-none">
-           <div  style="text-align: center;">
-             <q-btn flat label="Cancel" v-close-popup />
+           <div style="display: flex; justify-content: space-evenly;margin-top: 20px;">
+             <q-btn color="negative" label="Cancelar" v-close-popup />
              <q-btn
-              color="primary"
+              color="secondary"
               label="Aceptar"
               @click="cambiarclave"
              />

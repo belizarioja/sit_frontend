@@ -1,9 +1,9 @@
 <template>
-  <div id="donutchart">
-    <div v-if="options.series.length === 0" class="text-center">
+   <div v-if="estatus === '1'" class="text-center">
       <img src="estatusgrafica.png" alt="Sin datos" style="width: 250px;">
       <div class="dash_welcome_small">No hay datos que mostrar para esta fecha</div>
     </div>
+  <div v-else id="donutchart">
   </div>
 </template>
 
@@ -18,6 +18,7 @@ export default {
   name: 'DonutChart',
   data () {
     return {
+      estatus: '3',
       options: {
         chart: {
           type: 'donut'
@@ -37,12 +38,20 @@ export default {
             }
           }
         },
+        noData: {
+          text: 'No data text',
+          align: 'center',
+          verticalAlign: 'middle'
+        },
         series: [],
         labels: ['Factura', 'Nota de débito', 'Nota de crédito', 'Orden de entrega', 'Guía de despacho']
       }
     }
   },
   methods: {
+    reset () {
+      return this.options.series
+    },
     createData (id, dateFrom, dateTo) {
       const datagrafica = []
       const body = {
@@ -62,10 +71,12 @@ export default {
         this.options.series = datagrafica
         console.log(this.options)
         console.log(this.options.series)
-        const estatus = (datagrafica[0] > 0 || datagrafica[1] > 0 || datagrafica[2] > 0 || datagrafica[3] > 0 || datagrafica[4] > 0) || false
-        if (estatus) {
+        // this.estatus = (datagrafica[0] > 0 || datagrafica[1] > 0 || datagrafica[2] > 0 || datagrafica[3] > 0 || datagrafica[4] > 0) ? '2' : '1'
+        this.estatus = '2'
+        if (this.estatus === '2') {
           const chart = new ApexCharts(document.querySelector('#donutchart'), this.options)
           chart.render()
+          // chart.updateSeries(this.reset())
         }
       }).catch(error => {
         console.log('Problemas al listar Documentos ' + error)

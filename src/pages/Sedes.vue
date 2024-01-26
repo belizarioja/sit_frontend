@@ -87,6 +87,7 @@
                 label="RIF"
                 v-model="rif"
                 autofocus
+                hint="Formato J-########-#"
                 :rules="[ val => val.length > 0 || 'Ingresar RIF' ]"
               />
               <q-input
@@ -94,6 +95,7 @@
                 dense
                 label="Razón Social"
                 v-model="razonsocial"
+                hint="Tal cual como va a salir en los documentos"
                 autofocus
                 :rules="[ val => val.length > 0 || 'Ingresar RAZON SOCIAL' ]"
               />
@@ -113,6 +115,7 @@
                 class="col q-pa-sm"
                 v-model="email"
                 label="Email"
+                hint="Formato correo@mail.com"
                 :rules="[ val => val.length > 0 || 'Ingresar EMAIL' ]"
               />
             </div>
@@ -122,23 +125,31 @@
                 class="col-6 q-pa-sm"
                 v-model="telefono"
                 label="Teléfono de contacto"
+                hint="Formato +5842612345678"
                 :rules="[ val => val.length > 0 || 'Ingresar TELÉFONO' ]"
               />
               <q-input
                 dense
                 class="col-6 q-pa-sm"
                 v-model="sitioweb"
+                hint="Formato www.sitiowebejemplo.com"
                 label="Sitio Web"
               />
+              <div class="col-6 q-pa-sm" style="text-align: center;margin-top: 20px;">
+                <div>Envío de correo</div>
+                <q-radio v-model="shape" val="0" label="No" />
+                <q-radio v-model="shape" val="1" label="Si" />
+              </div>
+              <div class="col-6 q-pa-sm" style="text-align: center;margin-top: 20px;">
+                <div>Validar número interno</div>
+                <q-radio v-model="shapeinterno" val="0" label="No" />
+                <q-radio v-model="shapeinterno" val="2" label="Si" />
+              </div>
             </div>
-            <div style="text-align: center;">
-              <q-radio v-model="shape" val="0" label="Sin envío de correo" />
-              <q-radio v-model="shape" val="1" label="Con envío de correo" />
-            </div>
-            <div style="text-align: center;">
-              <q-btn flat label="Cancel" v-close-popup />
+            <div style="display: flex; justify-content: space-evenly;">
+              <q-btn color="negative" label="Cancelar" v-close-popup />
               <q-btn
-                color="primary"
+                color="secondary"
                 label="Aceptar"
                 type="submit"
               />
@@ -277,31 +288,33 @@
                 v-model="sitioweb"
                 label="Sitio Web"
               />
-            </div>
-            <q-select
-              dense
-              options-dense
-              v-model="modelcodes"
-              :options="optionscodes"
-              option-label="name"
-              option-value="cod"
-              label="Código comercial"
+              <q-select
+                dense
+                options-dense
+                v-model="modelcodes"
+                :options="optionscodes"
+                option-label="name"
+                option-value="cod"
+                class="col-12 q-pa-sm"
+                label="Código comercial"
               />
-            <div style="text-align: center;">
-              <q-radio v-model="shape" val="0" label="Sin envío de correo" />
-              <q-radio v-model="shape" val="1" label="Con envío de correo" />
+              <div class="col-6 q-pa-sm" style="text-align: center;margin-top: 20px;">
+                <div>Envío de correo</div>
+                <q-radio v-model="shape" val="0" label="No" />
+                <q-radio v-model="shape" val="1" label="Si" />
+              </div>
+              <div class="col-6 q-pa-sm" style="text-align: center;margin-top: 20px;">
+                <div>Validar número interno</div>
+                <q-radio v-model="shapeinterno" val="0" label="No" />
+                <q-radio v-model="shapeinterno" val="2" label="Si" />
+              </div>
             </div>
-            <div style="text-align: center;">
-              <q-radio v-model="shapeinterno" val="0" label="Sin validar interno" />
-              <q-radio v-model="shapeinterno" val="1" label="Sin repetir" />
-              <q-radio v-model="shapeinterno" val="2" label="Validar consecutivo" />
-            </div>
-            <div style="text-align: center;">
-              <q-btn flat label="Cancel" v-close-popup />
+            <div style="display: flex; justify-content: space-evenly;">
+              <q-btn color="negative" label="Cancel" v-close-popup />
               <q-btn
-              color="primary"
-              label="Aceptar"
-              type="submit"
+                color="secondary"
+                label="Aceptar"
+                type="submit"
               />
             </div>
            </q-form>
@@ -319,10 +332,10 @@
            </div>
         </q-card-section>
         <q-card-section class="q-pt-none">
-           <div  style="text-align: center;">
-             <q-btn flat label="Cancel" v-close-popup />
+           <div style="display: flex; justify-content: space-evenly;">
+             <q-btn color="negative" label="Cancelar" v-close-popup />
              <q-btn
-              color="primary"
+              color="secondary"
               label="Aceptar"
               @click="actualizarEstatus"
              />
@@ -522,7 +535,7 @@ export default {
       this.cantidad = row.asignados
       this.sitioweb = row.sitioweb
       this.shape = row.enviocorreo === 'Si' ? '1' : '0'
-      this.shapeinterno = row.validarinterno === 'Sin validar' ? '0' : row.validarinterno === 'Sin repetidos' ? '1' : '2'
+      this.shapeinterno = row.validarinterno === 'Sin validar' ? '0' : '2'
       this.modalactualizar = true
     },
     btnviewdetails (row) {
@@ -587,7 +600,8 @@ export default {
         telefono: this.telefono,
         asignados: 0,
         sitioweb: this.sitioweb,
-        enviocorreo: this.shape
+        enviocorreo: this.shape,
+        validarinterno: this.shapeinterno
       }
       console.log(data)
       axios.post(ENDPOINT_PATH_V2 + 'sede', data).then(async response => {
