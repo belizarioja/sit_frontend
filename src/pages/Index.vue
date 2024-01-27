@@ -395,6 +395,7 @@ export default defineComponent({
       totalDisponible: 0,
       modalFechas: false,
       dsbFechas: true,
+      term: ref(''),
       idusuario: sessionStorage.getItem('id_usuario'),
       displayName: sessionStorage.getItem('tx_nombre'),
       rowssemana: []
@@ -645,27 +646,32 @@ export default defineComponent({
     }
   },
   mounted () {
-    this.listarsedes()
-    console.log(this.co_rol)
-    this.idserviciosmasivo = this.co_rol === '3' ? this.co_sede : undefined
-    this.serviciosmasivo = this.co_rol === '3' ? this.tx_sede : undefined
+    fetch('https://api.ipify.org?format=json')
+      .then((x) => x.json())
+      .then(({ ip }) => {
+        this.term = ip
+        this.listarsedes()
+        console.log(this.co_rol)
+        this.idserviciosmasivo = this.co_rol === '3' ? this.co_sede : undefined
+        this.serviciosmasivo = this.co_rol === '3' ? this.tx_sede : undefined
 
-    console.log('Mounted')
-    console.log(this.tx_sede_seleted)
-    console.log(this.co_sede_seleted)
-    if (this.co_sede_seleted) {
-      const obj = {}
-      obj.cod = this.co_sede_seleted
-      obj.rif = this.rif_sede_seleted
-      obj.razonsocial = this.tx_sede_seleted
-      this.idserviciosmasivo = this.co_sede_seleted
-      obj.namerif = obj.razonsocial + ' ' + obj.rif
-      this.serviciosmasivo = obj.namerif
-      this.modelsede = obj
-      this.disabledSede = true
-    }
-    console.log(this.serviciosmasivo)
-    this.listarReportes()
+        console.log('Mounted')
+        console.log(this.tx_sede_seleted)
+        console.log(this.co_sede_seleted)
+        if (this.co_sede_seleted) {
+          const obj = {}
+          obj.cod = this.co_sede_seleted
+          obj.rif = this.rif_sede_seleted
+          obj.razonsocial = this.tx_sede_seleted
+          this.idserviciosmasivo = this.co_sede_seleted
+          obj.namerif = obj.razonsocial + ' ' + obj.rif
+          this.serviciosmasivo = obj.namerif
+          this.modelsede = obj
+          this.disabledSede = true
+        }
+        console.log(this.serviciosmasivo)
+        this.listarReportes()
+      })
   }
 })
 </script>
