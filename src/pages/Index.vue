@@ -395,6 +395,7 @@ export default defineComponent({
       totalDisponible: 0,
       modalFechas: false,
       dsbFechas: true,
+      idusuario: sessionStorage.getItem('id_usuario'),
       displayName: sessionStorage.getItem('tx_nombre'),
       rowssemana: []
     }
@@ -523,34 +524,7 @@ export default defineComponent({
       this.idserviciosmasivo = this.modelsede?.cod
       this.serviciosmasivo = this.modelsede?.namerif
       this.listarReportes()
-    },
-    changeTipo () {
-      this.idtipodocumento = this.modeltipo.cod
-      this.tipodocumento = this.modeltipo.name
-    },
-    changeCodes () {
-      // console.log(this.modelcodes?.cod)
-      this.idcodigocomercial = this.modelcodes?.cod
-      this.codigocomercial = this.modelcodes?.namecode
-      // console.log(this.idcodigocomercial)
-      // console.log(this.codigocomercial)
-      // this.listarfacturas()
-    },
-    getCodes () {
-      axios.get(ENDPOINT_PATH_V2 + 'sede/codes').then(async response => {
-        const datos = response.data.data
-        this.optionscodes = []
-        for (const i in datos) {
-          const obj = {}
-          obj.cod = datos[i].id
-          obj.namecode = datos[i].codigocomercial + '-' + datos[i].descripcion
-          this.optionscodes.push(obj)
-        }
-        this.codes = this.optionscodes
-        // console.log(this.optionscodes)
-      }).catch(error => {
-        Notify.create('Problemas al listar Codigos comerciales ' + error)
-      })
+      this.crearbitacora(this.dateFrom, this.dateTo, 2)
     },
     getLotes () {
       const body = {
@@ -572,25 +546,6 @@ export default defineComponent({
         this.totalDisponible = this.totalAsignados - this.totalUtilizados
       }).catch(error => {
         Notify.create('Problemas al listar Lotes ' + error)
-      })
-    },
-    listartipos () {
-      axios.get(ENDPOINT_PATH_V2 + 'tipodocumento').then(async response => {
-        // console.log(response.data)
-        const datos = response.data.data
-        this.optionstipo = []
-        const obj = {}
-        obj.cod = null
-        obj.name = 'Todos'
-        this.optionstipo.push(obj)
-        for (const i in datos) {
-          const obj = {}
-          obj.cod = datos[i].id
-          obj.name = datos[i].tipodocumento
-          this.optionstipo.push(obj)
-        }
-      }).catch(error => {
-        Notify.create('Problemas al listar Tipos de documentos ' + error)
       })
     },
     listarsedes () {
@@ -637,6 +592,23 @@ export default defineComponent({
       const selectElementHasta = document.querySelector('.fecha2')
       this.dateFrom = selectElementDesde.value
       this.dateTo = selectElementHasta.value
+      this.crearbitacora(this.dateFrom, this.dateTo, 2)
+    },
+    crearbitacora (desde, hasta, idevento) {
+      let observacion = ''
+      const fechas = ' desde el ' + desde + ' hasta el ' + hasta
+      const cliente = this.modelsede?.name
+        ? 'Cliente emisor ' + this.modelsede.namerif
+        : ''
+      observacion += cliente
+      observacion += fechas
+      axios.post(ENDPOINT_PATH_V2 + 'bitacora', {
+        idusuario: this.idusuario,
+        idevento: idevento,
+        ip: this.term,
+        observacion: observacion,
+        fecha: moment().format('YYYY-MM-DD HH:mm:ss')
+      })
     }
   },
   watch: {
@@ -669,10 +641,10 @@ export default defineComponent({
       }
 
       this.listarReportes()
+      this.crearbitacora(this.dateFrom, this.dateTo, 2)
     }
   },
   mounted () {
-    // this.listartipos()
     this.listarsedes()
     console.log(this.co_rol)
     this.idserviciosmasivo = this.co_rol === '3' ? this.co_sede : undefined

@@ -1265,7 +1265,7 @@ export default {
     changeSede () {
       this.disable = true
       this.numerodocumento = ''
-      console.log(this.modelsede)
+      // console.log(this.modelsede)
       this.idserviciosmasivo = this.modelsede?.cod
       this.serviciosmasivo = this.modelsede?.namerif
       this.clienteEmisorfilter = 'Todos'

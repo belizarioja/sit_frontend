@@ -1,93 +1,110 @@
 <template>
-  <div class="my-font q-pa-md">
+  <div class="my-font my-fondo q-pa-md">
     <div class="row">
-      <span style="margin: 0 20px;font-size: 25px;font-weight: bolder;">Auditoría</span>
+      <span class="text-secondary" style="margin: 0 20px; font-size: 25px; font-weight: bolder;">Auditoría</span>
     </div>
     <div class="row">
-      <q-select
-          label="Buscar por Nombre o Usernamme del usuario"
-          dense
-          class="col-md-4 col-sm-6 col-xs-12"
-          filled
-          v-model="modelusuario"
-          use-input
-          hide-selected
-          fill-input
-          clearable
-          options-dense
-          option-label="nameuser"
-          option-value="cod"
-          input-debounce="0"
-          :options="optionsusuarios"
-          @update:model-value="listar()"
-          @input:="listar()"
-          @filter="searchUsuario"
-          style="padding: 5px;"
-        />
-        <q-input
-          dense
-          filled
-          label="Desde"
-          mask="date"
-          v-model="dateFrom"
-          class="col-md-2 col-sm-6 col-xs-6"
-          style="padding: 5px;">
-          <template v-slot:append>
-            <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                <q-date v-model="dateFrom" :locale="myLocale">
-                  <div class="row items-center justify-end">
-                    <q-btn v-close-popup label="Close" color="primary" flat />
-                  </div>
-                </q-date>
-              </q-popup-proxy>
-            </q-icon>
-          </template>
-        </q-input>
-        <q-input
-          dense
-          filled
-          label="Hasta"
-          v-model="dateTo"
-          class="col-md-2 col-sm-6 col-xs-6"
-          style="padding: 5px;"
-          mask="date">
-          <template v-slot:append>
-            <q-icon name="event" class="cursor-pointer">
-              <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-                <q-date v-model="dateTo" :locale="myLocale">
-                  <div class="row items-center justify-end">
-                    <q-btn v-close-popup label="Close" color="primary" flat />
-                  </div>
-                </q-date>
-              </q-popup-proxy>
-            </q-icon>
-          </template>
-        </q-input>
-        <q-select
-          dense
-          class="col-md-4 col-sm-6 col-xs-12"
-          filled
-          options-dense
-          v-model="modelevento"
-          :options="optionsevento"
-          option-label="name"
-          option-value="cod"
-          label="Tipo de Evento"
-          @update:model-value="listar()"
-          style="padding: 5px;"
-        />
+      <div class="col" style="position: relative;">
+        <div style="margin-top: 20px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;">
+          <span class="filtros">Desde: {{ dateFrom }}</span>
+          <span class="filtros">Hasta: {{ dateTo }}</span>
+          <span class="filtros">Usuario: {{ usuariofilter }}</span>
+          <span class="filtros">Acción: {{ accionfilter }}</span>
+        </div>
+        <span class="my-fondo" style="position: absolute;top: 9px; left: 20px; color: #ccc;">Filtrado por:</span>
+      </div>
     </div>
     <q-table
-        dense
-        :rows="rowstodos"
-        title="Bitácora"
-        :columns="columnsdetails"
-        row-key="num"
-        :pagination="pagination"
-        style="width: 100%; margin-top: 40px;"
+      dense
+      :rows="rowstodos"
+      title="Bitácora"
+      :columns="columnsdetails"
+      row-key="num"
+      :pagination="pagination"
+      style="width: 100%; margin-top: 40px;"
+      :loading="loading"
+      :filter="filterTable"
+      no-data-label="No hay registros!"
       >
+        <template v-slot:top-left>
+          <q-input dense debounce="300" color="primary" v-model="filterTable" placeholder="Buscar">
+            <template v-slot:append>
+              <q-icon name="search" />
+            </template>
+          </q-input>
+        </template>
+        <template v-slot:top-right>
+          <div style="display: inline;">
+            <q-btn icon-right="filter_alt" class="q-ml-sm col-md-4 col-sm-3 col-xs-3" color="secondary" label="Filtrar" @click="drawerFilters = true" />
+          </div>
+        </template>
     </q-table>
+    <q-drawer
+      v-model="drawerFilters"
+      side="right"
+      :width="300"
+      :breakpoint="700"
+      overlay
+      elevated
+      class="bg-white text-secondary"
+    >
+      <q-scroll-area class="fit">
+        <div class="q-pa-sm">
+          <div class="tituloDrawer">
+            <div style="margin: 0 20px; font-size: 25px; font-weight: bolder">Filtros</div>
+            <q-icon color="red" name="close" @click="drawerFilters = false" class="cursor-pointer" style="font-size: x-large;" />
+          </div>
+          <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;">
+            <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Fechas:</span>
+            <div style="display: flex;justify-content: space-around;">
+              <input class="inputDate fecha1" type="date" id="desde" :value="dateFrom">
+              <input class="inputDate fecha2" type="date" id="hasta" :value="dateTo">
+            </div>
+          </div>
+          <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;">
+            <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Cliente emisor:</span>
+            <q-select
+              label="Username del usuario"
+              dense
+              filled
+              v-model="modelusuario"
+              use-input
+              hide-selected
+              fill-input
+              clearable
+              options-dense
+              option-label="nameuser"
+              option-value="cod"
+              input-debounce="0"
+              :options="optionsusuarios"
+              @update:model-value="listar()"
+              @input:="listar()"
+              @filter="searchUsuario"
+              style="padding: 5px;"
+            />
+          </div>
+          <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;">
+            <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">N° Control:</span>
+            <q-select
+              dense
+              class="col-md-4 col-sm-6 col-xs-12"
+              filled
+              options-dense
+              v-model="modelevento"
+              :options="optionsevento"
+              option-label="name"
+              option-value="cod"
+              label="Tipo de Evento"
+              @update:model-value="listar()"
+              style="padding: 5px;"
+            />
+          </div>
+          <div class="text-center">
+            <q-btn label="Cerrar" color="negative" @click="drawerFilters = false" />
+          </div>
+        </div>
+      </q-scroll-area>
+    </q-drawer>
   </div>
 </template>
 
@@ -114,7 +131,10 @@ export default {
         format24h: true,
         pluralDay: 'dias'
       },
-      filter: ref(''),
+      filterTable: ref(''),
+      usuariofilter: ref('Todos'),
+      accionfilter: ref('Todos'),
+      drawerFilters: ref(false),
       co_rol: sessionStorage.getItem('co_rol'),
       dateFrom: ref(moment().format('YYYY-MM-DD')),
       dateTo: ref(moment().format('YYYY-MM-DD')),
@@ -195,6 +215,14 @@ export default {
       })
     },
     listar () {
+      this.usuariofilter = 'Todos'
+      this.accionfilter = 'Todos'
+      if (this.modelusuario?.cod) {
+        this.usuariofilter = this.modelusuario?.name
+      }
+      if (this.modelevento?.cod) {
+        this.accionfilter = this.modelevento?.name
+      }
       const desde = moment(this.dateFrom, 'YYYY/MM/DD').format('YYYY-MM-DD')
       const hasta = moment(this.dateTo, 'YYYY/MM/DD').format('YYYY-MM-DD')
       const body = {
@@ -241,6 +269,33 @@ export default {
     this.listar()
     this.listareventos()
     this.listarusuarios()
+    const selectElementDesde = document.querySelector('.fecha1')
+    const selectElementHasta = document.querySelector('.fecha2')
+
+    selectElementDesde.addEventListener('change', (event) => {
+      this.dateFrom = selectElementDesde.value
+      this.listarfacturas()
+    })
+    selectElementHasta.addEventListener('change', (event) => {
+      this.dateTo = selectElementHasta.value
+      this.listarfacturas()
+    })
   }
 }
 </script>
+<style>
+.inputDate {
+  font-family: 'avenir';
+  width: 116px;
+  padding: 7px;
+  height: 36px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  background: #f2f2f2;
+}
+.tituloDrawer {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+</style>

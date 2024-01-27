@@ -1,9 +1,12 @@
 <template>
-  <div class="my-font q-pa-md">
+  <div class="my-font my-fondo q-pa-md">
+    <div class="row">
+      <span class="text-secondary" style="margin: 0 20px; font-size: 25px; font-weight: bolder;">Asignar cantidad de correlativos</span>
+    </div>
     <div class="row">
         <q-select
           dense
-          class="col"
+          class="col-5"
           filled
           options-dense
           v-model="modelsede"
@@ -16,10 +19,6 @@
     </div>
     <div class="row">
       <q-card class="col q-pa-md" style="min-width: 350px">
-        <q-card-section class="row">
-          <div class="text-h6">Asignar Cantidad de Correlativos</div>
-        </q-card-section>
-
         <q-card-section class="row q-pt-none">
           <q-input
             class="col-12 q-pa-md"
@@ -65,8 +64,7 @@
         </q-card-section>
 
         <q-card-actions align="right" class="text-primary">
-          <q-btn flat label="Cancel" v-close-popup />
-          <q-btn color="primary" label="Aceptar" @click="crear"/>
+          <q-btn color="secondary" label="Asignar" @click="crear"/>
         </q-card-actions>
       </q-card>
       <q-card class="col q-pa-md">
