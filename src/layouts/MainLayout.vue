@@ -216,11 +216,11 @@ export default defineComponent({
         title: 'Confirmación!',
         message: '¿Está seguro que quieres cerrar sesión?',
         ok: {
-          color: 'primary',
+          color: 'secondary',
           label: 'Sí'
         },
         cancel: {
-          color: 'secondary',
+          color: 'negative',
           label: 'No'
         },
         persistent: true

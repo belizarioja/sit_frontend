@@ -10,8 +10,8 @@
             <p class="redirectEmail-error" v-if="error">{{ error }}</p>
           </div>
           <div class="redicrectEmail-actions">
-            <q-btn label="Cerrar" color="secondary" v-close-popup />
-            <q-btn label="Enviar" color="primary" @click="onConfirmSendEmail" />
+            <q-btn label="Cancelar" color="negative" v-close-popup />
+            <q-btn label="Enviar" color="secondary" @click="onConfirmSendEmail" />
           </div>
         </div>
       </div>
@@ -82,11 +82,11 @@ export default {
         title: 'Confirmación!',
         message: '¿Está seguro de enviar este documento al correo del cliente?',
         ok: {
-          color: 'primary',
+          color: 'secondary',
           label: 'Sí'
         },
         cancel: {
-          color: 'secondary',
+          color: 'negative',
           label: 'No'
         },
         persistent: true

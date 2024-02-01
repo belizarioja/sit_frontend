@@ -112,8 +112,7 @@ export default {
             Notify.create('Error ' + error)
           })
         }
-      }
-      )
+      })
     }
   }
 }

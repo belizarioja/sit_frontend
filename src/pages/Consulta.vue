@@ -66,7 +66,7 @@
                 {{ props.row.numerodocumento }}</span>
             </q-td>
             <q-td key="fecha" :props="props">
-              {{ props.row.fecha }}
+              {{ props.row.fechasolo + ' ' + props.row.hora }}
             </q-td>
             <q-td key="nombrecliente" :props="props" style="display: grid; text-align: left; height: 51px">
               <span style="
@@ -78,61 +78,28 @@
                 ">{{ props.row.nombrecliente }}</span>
               <span style="font-style: italic">{{ props.row.abrev }}: {{ props.row.cedulacliente }}</span>
             </q-td>
-            <q-td key="exento" :props="props">
-              {{ props.row.exento }}
+            <q-td key="totalimpuestos" :props="props">
+              {{ props.row.totalimpuestos }}
             </q-td>
-            <q-td key="tasag" :props="props">
-              {{ props.row.tasag }}
-            </q-td>
-            <q-td key="baseg" :props="props">
-              {{ props.row.baseg }}
-            </q-td>
-            <q-td key="impuestog" :props="props">
-              {{ props.row.impuestog }}
-            </q-td>
-            <q-td key="tasar" :props="props">
-              {{ props.row.tasar }}
-            </q-td>
-            <q-td key="baser" :props="props">
-              {{ props.row.baser }}
-            </q-td>
-            <q-td key="impuestor" :props="props">
-              {{ props.row.impuestor }}
-            </q-td>
-            <q-td key="tasaigtf" :props="props">
-              {{ props.row.tasaigtf }}
-            </q-td>
-            <q-td key="baseigtf" :props="props">
-              {{ props.row.baseigtf }}
-            </q-td>
-            <q-td key="impuestoigtf" :props="props">
-              {{ props.row.impuestoigtf }}
-            </q-td>
-            <q-td key="anulado" :props="props">
-              <q-badge v-if="isAnulado(props.row)" color="red" style="padding: 5px 10px">
+            <q-td key="estatus" :props="props">
+              <q-badge v-if="isNormal(props.row)" class="normal">
+                Normal
+              </q-badge>
+              <q-badge v-if="isAnulado(props.row)" class="anulado">
                 Anulado
+              </q-badge>
+              <q-badge v-if="isDebito(props.row)" class="notadebito">
+                Afectado Nota de débito
+              </q-badge>
+              <q-badge v-if="isCredito(props.row)" class="notacredito">
+                Afectado Nota de crédito
               </q-badge>
             </q-td>
             <q-td key="detail" :props="props">
-              <q-btn color="primary" icon="receipt_long" @click="openDetail(props.row)" />
+              <q-btn color="secondary" icon="visibility" @click="openDrawerDetalles(props.row)" />
             </q-td>
             <q-td key="enviarcorreo" :props="props">
-              <q-badge :color="props.row.colorEmailStatus" style="cursor: pointer; padding: 5px 10px"
-                @click="renderWindownRedirectEmail(props.row)">
-                {{ props.row.enviarcorreo }}
-              </q-badge>
-              <q-badge v-if="props.row.enviocorreo === '0'" color="orange" style="padding: 5px 10px">
-                {{ props.row.enviarcorreo }}
-              </q-badge>
-            </q-td>
-            <q-td key="relacionado" :props="props">
-              <q-badge v-if="props.row.relacionado" color="green" style="cursor: pointer; padding: 5px 10px"
-                @click="buscarDetail(props.row)">
-                {{ props.row.relacionado }}
-              </q-badge>
-            </q-td>
-            <q-td key="exportar" :props="props">
-              <q-btn color="info" label="XML" @click="exportXMLDetail(props.row)" />
+              <q-btn :color="props.row.colorEmailStatus" :icon="props.row.iconoEmailStatus" @click="renderWindownRedirectEmail(props.row)" />
             </q-td>
           </q-tr>
         </template>
@@ -142,19 +109,19 @@
           <div id="detailid">
             <q-item>
               <q-item-section style="flex: auto">
-                <img width="100" :src="registro.logo" onerror="this.src='logo_nophoto.png'" />
+                <img width="100" :src="registroDet.logo" onerror="this.src='logo_nophoto.png'" />
               </q-item-section>
 
               <q-item-section>
                 <table>
                   <tr>
                     <td style="width: 300px">
-                      <span>{{ registro.razonsocialdetail }}</span>
+                      <span>{{ registroDet.razonsocialdetail }}</span>
                       <br /><span style="font-size: 10px">
-                        {{ registro.direcciondetail }}
+                        {{ registroDet.direcciondetail }}
                       </span>
                       <br /><span style="font-size: 10px">
-                        RIF: {{ registro.rifdetail }}
+                        RIF: {{ registroDet.rifdetail }}
                       </span>
                     </td>
                     <td style="display: grid">
@@ -163,41 +130,41 @@
                             font-size: 18px;
                             color: #e00303;
                             font-weight: bolder;
-                          ">{{ registro.numerodocumento }}</span></span>
-                      <span>{{ registro.tipodocumentodetail }}:
-                        {{ registro.numerointerno }}</span>
-                      <span v-if="numeroafectado.length > 0" style="font-size: 10px">Afecta a: {{ tipodocafectado }}
+                          ">{{ registroDet.numerodocumento }}</span></span>
+                      <span>{{ registroDet.tipodocumentodetail }}:
+                        {{ registroDet.numerointerno }}</span>
+                      <span v-if="numeroafectadoDet.length > 0" style="font-size: 10px">Afecta a: {{ tipodocafectadoDet }}
                         <span style="color: #e00303; font-weight: bolder">{{
-                          numeroafectado
+                          numeroafectadoDet
                         }}</span></span>
-                      <span v-if="numeroafectado.length > 0" style="font-size: 10px">Fecha: {{ fechaafectado }}</span>
+                      <span v-if="numeroafectadoDet.length > 0" style="font-size: 10px">Fecha: {{ fechaafectadoDet }}</span>
                     </td>
                   </tr>
                 </table>
               </q-item-section>
             </q-item>
             <q-item>
-              <q-item-section>
+              <q-item-section style="font-size: 11px;">
                 <table>
                   <tr>
                     <td style="width: 409px">
-                      Cliente: {{ registro.nombreclientedetail }}
+                      Cliente: {{ registroDet.nombreclientedetail }}
                     </td>
-                    <td>Fecha de Emisión: {{ registro.fechadetail }}</td>
+                    <td>Fecha de Emisión: {{ registroDet.fechadetail }}</td>
                   </tr>
                   <tr>
                     <td>
-                      {{ " " + registro.abrevdetail }}:
-                      {{ registro.cedulaclientedetail }}
+                      {{ " " + registroDet.abrevdetail }}:
+                      {{ registroDet.cedulaclientedetail }}
                     </td>
-                    <td>Hora de Emisión: {{ registro.horadetail }}</td>
+                    <td>Hora de Emisión: {{ registroDet.horadetail }}</td>
                   </tr>
                   <tr>
-                    <td>Teléfono: {{ registro.telefonoclientedetail }}</td>
+                    <td>Teléfono: {{ registroDet.telefonoclientedetail }}</td>
                     <td></td>
                   </tr>
                   <tr>
-                    <td>Dirección: {{ registro.direccionclientedetail }}</td>
+                    <td>Dirección: {{ registroDet.direccionclientedetail }}</td>
                     <td></td>
                   </tr>
                 </table>
@@ -214,9 +181,35 @@
                       height: fit-content;
                       white-space: pre-wrap;
                       width: 400px;
+                      font-size: 11px;
                     ">
                     <span>{{ props.row.descripcion }}</span>
                     <span>{{ props.row.comentario }}</span>
+                  </q-td>
+                </template>
+                <template v-slot:body-cell-precio="props">
+                  <q-td :props="props" style="font-size: 11px;">
+                    {{ props.row.precio }}
+                  </q-td>
+                </template>
+                <template v-slot:body-cell-cantidad="props">
+                  <q-td :props="props" style="font-size: 11px;">
+                    {{ props.row.cantidad }}
+                  </q-td>
+                </template>
+                <template v-slot:body-cell-tasa="props">
+                  <q-td :props="props" style="font-size: 11px;">
+                    {{ props.row.tasa }}
+                  </q-td>
+                </template>
+                <template v-slot:body-cell-descuento="props">
+                  <q-td :props="props" style="font-size: 11px;">
+                    {{ props.row.descuento }}
+                  </q-td>
+                </template>
+                <template v-slot:body-cell-monto="props">
+                  <q-td :props="props" style="font-size: 11px;">
+                    {{ props.row.monto }}
                   </q-td>
                 </template>
               </q-table>
@@ -224,38 +217,38 @@
             <q-separator />
 
             <q-item>
-              <q-item-section side top>
+              <q-item-section side top style="font-size: 11px;">
                 <table style="width: 656px">
                   <tr>
                     <td style="width: 525px; text-align: right">
                       Subtotal Bs.:
                     </td>
                     <td style="text-align: right">
-                      {{ registro.subtotaldetail }}
+                      {{ registroDet.subtotaldetail }}
                     </td>
                   </tr>
-                  <tr v-if="registro.impuestogdetail !== '0,00'">
+                  <tr v-if="registroDet.impuestogdetail !== '0,00'">
                     <td style="text-align: right">IVA 16% Bs.:</td>
                     <td style="text-align: right">
-                      {{ registro.impuestogdetail }}
+                      {{ registroDet.impuestogdetail }}
                     </td>
                   </tr>
-                  <tr v-if="registro.impuestordetail !== '0,00'">
+                  <tr v-if="registroDet.impuestordetail !== '0,00'">
                     <td style="text-align: right">IVA 8% Bs.:</td>
                     <td style="text-align: right">
-                      {{ registro.impuestordetail }}
+                      {{ registroDet.impuestordetail }}
                     </td>
                   </tr>
-                  <tr v-if="registro.impuestoigtfdetail !== '0,00'">
+                  <tr v-if="registroDet.impuestoigtfdetail !== '0,00'">
                     <td style="text-align: right">IGTF 3% Bs.:</td>
                     <td style="text-align: right">
-                      {{ registro.impuestoigtfdetail }}
+                      {{ registroDet.impuestoigtfdetail }}
                     </td>
                   </tr>
                   <tr>
                     <td style="text-align: right">Total Bs.:</td>
                     <td style="text-align: right">
-                      {{ registro.totaldetail }}
+                      {{ registroDet.totaldetail }}
                     </td>
                   </tr>
                 </table>
@@ -268,7 +261,7 @@
                   text-align: center;
                   min-width: 458px;
                 ">
-                {{ registro.piedepagina }}
+                {{ registroDet.piedepagina }}
               </div>
               <div style="text-align: center; font-size: 8px; color: red">
                 ORIGINAL
@@ -277,7 +270,8 @@
           </div>
           <q-separator spaced inset="item" />
           <q-card-actions align="right">
-            <q-btn color="info" label="PDF" style="margin-right: 10px" @click="exportDetailToPDF" />
+            <q-btn color="secondary" label="XML" @click="exportXMLDetail(registroDetalle)" />
+            <q-btn color="secondary" label="PDF" style="margin-right: 10px" @click="exportDetailToPDF" />
             <q-btn label="Cerrar" color="negative" v-close-popup />
           </q-card-actions>
         </q-card>
@@ -582,6 +576,108 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <q-drawer
+      v-model="drawerDetalle"
+      side="right"
+      :width="375"
+      :breakpoint="700"
+      overlay
+      elevated
+      class="text-secondary"
+    >
+      <q-scroll-area class="fit">
+        <div class="q-pa-sm">
+          <div class="tituloDrawer">
+            <div style="margin: 0 20px; font-size: 25px; font-weight: bolder">Detalles del documento</div>
+            <q-icon color="red" name="close" @click="drawerDetalle = false" class="cursor-pointer" style="font-size: x-large;" />
+          </div>
+          <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;display: grid;">
+            <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Datos del emisor:</span>
+            <div style="display: flex;align-items: start;">
+              <img width="100" :src="registro.logo" onerror="this.src='logo_nophoto.png'" />
+              <div style="display: grid;">
+                <div style="margin: 3px;">{{ registro.razonsocialdetail }}</div>
+                <div style="margin: 3px;">{{ registro.direcciondetail }}</div>
+                <div style="margin: 3px;">RIF: {{ registro.rifdetail }}</div>
+              </div>
+            </div>
+          </div>
+          <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;display: grid;">
+            <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Datos del documento:</span>
+            <div style="margin: 3px;">N° DE CONTROL: {{ registro.numerodocumento }}</div>
+            <div style="margin: 3px;">{{ registro.tipodocumentodetail }}: {{ registro.numerointerno }}</div>
+            <div style="margin: 3px 3px 10px 3px;">Fecha emisión: {{ registro.fechadetail }} {{ registro.horadetail }}</div>
+            <div>
+              <span>Estatus </span>
+              <q-badge v-if="isNormal(registroDetalle)" class="normal">
+                Normal
+              </q-badge>
+              <q-badge v-if="isAnulado(registroDetalle)" class="anulado">
+                Anulado
+              </q-badge>
+              <q-badge v-if="isDebito(registroDetalle)" class="notadebito">
+                Afectado Nota de débito
+              </q-badge>
+              <q-badge v-if="isCredito(registroDetalle)" class="notacredito">
+                Afectado Nota de crédito
+              </q-badge>
+            </div>
+            <div v-if="numeroafectado.length > 0" style="display: grid;border: solid 1px #ccc;border-radius: 5px;padding: 15px;" >
+              <span style="margin: 3px;">Afecta a {{ tipodocafectado }} {{numeroafectado}}</span>
+              <span style="margin: 3px;">De fecha: {{ fechaafectado }}</span>
+              <div class="text-center">
+                <q-btn label="Ver relacionado" color="primary" @click="openDetailRelacionado" style="width: fit-content; border-radius: 15px;font-size: 10px;"/>
+              </div>
+            </div>
+          </div>
+          <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;display: grid;">
+            <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Datos del cliente:</span>
+            <div style="display: flex;">
+              <div class="circuloPerfil">
+                {{ primeraletra(registro.nombreclientedetail) }}
+              </div>
+              <div style="display: grid;padding-left: 10px;">
+                <div style="margin: 3px;">{{ registro.nombreclientedetail }}</div>
+                <div style="margin: 3px;">{{ registro.abrevdetail }}: {{ registro.cedulaclientedetail }}</div>
+              </div>
+            </div>
+            <div style="margin: 3px;display: flex;align-items: center;">
+              <q-icon name="home" style="font-size: 20px;" />
+              <span style="margin: 3px 7px;">{{ registro.direccionclientedetail }}</span>
+            </div>
+            <div style="margin: 3px;display: flex;align-items: center;">
+              <q-icon name="phone" style="font-size: 20px;" />
+              <span style="margin: 3px 7px;">{{ registro.telefonoclientedetail }}</span>
+            </div>
+            <div style="margin: 3px;display: flex;align-items: center;">
+              <q-icon name="email" style="font-size: 20px;" />
+              <span style="margin: 3px 7px;">{{ registro.emailclientedetail }}</span>
+            </div>
+          </div>
+          <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;display: grid;">
+            <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Montos de lo gravado:</span>
+            <div style="display: flex;width: 100%;">
+              <div style="width: 48%; border-right: 2px solid #D9E7F5;">
+                <div style="margin: 3px 0;">IVA 16% Bs. {{ registro.impuestogdetail }}</div>
+                <div style="margin: 3px 0;">Reducido 8% Bs. {{ registro.impuestordetail }}</div>
+                <div style="margin: 3px 0;">IGTF 3% Bs. {{ registro.impuestoigtfdetail }}</div>
+                <div style="margin: 3px 0;">Exento Bs. {{ registro.exentodetail }}</div>
+              </div>
+              <div style="width: 50%;padding-left: 10px;">
+                <div style="margin: 3px;">Base Bs. {{ registro.subtotaldetail }}</div>
+                <div style="margin: 3px;">Impuestos Bs. {{ registro.totalimpuestodetail }}</div>
+                <div style="margin: 3px;">&nbsp;</div>
+                <div style="margin: 3px;font-weight: bolder;color: #0999FF;">Total Bs. {{ registro.totaldetail }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="text-center" style="display: flex;justify-content: space-evenly;">
+            <q-btn label="Ver documento" color="secondary" @click="openDetail" />
+            <q-btn label="Cerrar" color="negative" @click="drawerDetalle = false" />
+          </div>
+        </div>
+      </q-scroll-area>
+    </q-drawer>
   </div>
 </template>
 
@@ -648,6 +744,7 @@ export default {
       tipoExportar: ref('1'),
       drawerExportar: ref(false),
       disableExport: ref(true),
+      drawerDetalle: ref(false),
       totalbaseg: ref('0,00'),
       totalbaser: ref('0,00'),
       totalbaseigtf: ref('0,00'),
@@ -722,25 +819,14 @@ export default {
           label: 'Nombre Cliente',
           field: 'nombrecliente'
         },
-        { name: 'exento', label: 'Exento', field: 'exento' },
-        { name: 'tasag', label: 'Tasa IVA', field: 'tasag' },
-        { name: 'baseg', label: 'Imponible IVA', field: 'baseg' },
-        { name: 'impuestog', label: 'Impuesto IVA', field: 'impuestog' },
-        { name: 'tasar', label: 'Tasa Reducido', field: 'tasar' },
-        { name: 'baser', label: 'Imponible Reducido', field: 'baser' },
-        { name: 'impuestor', label: 'Impuesto Reducido', field: 'impuestor' },
-        { name: 'tasaigtf', label: 'Tasa IGTF', field: 'tasaigtf' },
-        { name: 'baseigtf', label: 'Imponible IGTF', field: 'baseigtf' },
-        { name: 'impuestoigtf', label: 'Impuesto IGTF', field: 'impuestoigtf' },
-        { name: 'anulado', label: 'Anulado', field: 'status' },
-        { name: 'detail', label: 'Ver', align: 'center' },
+        { name: 'totalimpuestos', label: 'Impuestos', field: 'totalimpuestos' },
+        { name: 'estatus', label: 'Estatus', field: 'status' },
+        { name: 'detail', label: 'Detalles', align: 'center' },
         {
           name: 'enviarcorreo',
           label: 'Envío de correo',
           field: 'enviarcorreo'
-        },
-        { name: 'relacionado', label: 'Relacionado', field: 'relacionado' },
-        { name: 'exportar', label: 'Exportar', align: 'center' }
+        }
       ],
       columns2: [
         {
@@ -774,23 +860,13 @@ export default {
           field: 'nombrecliente'
         },
         { name: 'exento', label: 'Exento', field: 'exento' },
-        { name: 'tasag', label: 'Tasa IVA', field: 'tasag' },
-        { name: 'baseg', label: 'Imponible IVA', field: 'baseg' },
-        { name: 'impuestog', label: 'Impuesto IVA', field: 'impuestog' },
-        { name: 'tasar', label: 'Tasa Reducido', field: 'tasar' },
-        { name: 'baser', label: 'Imponible Reducido', field: 'baser' },
-        { name: 'impuestor', label: 'Impuesto Reducido', field: 'impuestor' },
-        { name: 'tasaigtf', label: 'Tasa IGTF', field: 'tasaigtf' },
-        { name: 'baseigtf', label: 'Imponible IGTF', field: 'baseigtf' },
-        { name: 'impuestoigtf', label: 'Impuesto IGTF', field: 'impuestoigtf' },
-        { name: 'detail', label: 'Ver', align: 'center' },
+        { name: 'totalimpuestos', label: 'Impuestos', field: 'totalimpuestos' },
+        { name: 'detail', label: 'Detalles', align: 'center' },
         {
           name: 'enviarcorreo',
           label: 'Envío de correo',
           field: 'enviarcorreo'
-        },
-        { name: 'relacionado', label: 'Relacionado', field: 'relacionado' },
-        { name: 'exportar', label: 'Exportar', align: 'center' }
+        }
       ],
       columns3: [
         {
@@ -814,24 +890,13 @@ export default {
           label: 'Nombre Cliente',
           field: 'nombrecliente'
         },
-        { name: 'exento', label: 'Exento', field: 'exento' },
-        { name: 'tasag', label: 'Tasa IVA', field: 'tasag' },
-        { name: 'baseg', label: 'Imponible IVA', field: 'baseg' },
-        { name: 'impuestog', label: 'Impuesto IVA', field: 'impuestog' },
-        { name: 'tasar', label: 'Tasa Reducido', field: 'tasar' },
-        { name: 'baser', label: 'Imponible Reducido', field: 'baser' },
-        { name: 'impuestor', label: 'Impuesto Reducido', field: 'impuestor' },
-        { name: 'tasaigtf', label: 'Tasa IGTF', field: 'tasaigtf' },
-        { name: 'baseigtf', label: 'Imponible IGTF', field: 'baseigtf' },
-        { name: 'impuestoigtf', label: 'Impuesto IGTF', field: 'impuestoigtf' },
-        { name: 'detail', label: 'Ver', align: 'center' },
+        { name: 'totalimpuestos', label: 'Impuestos', field: 'totalimpuestos' },
+        { name: 'detail', label: 'Detalles', align: 'center' },
         {
           name: 'enviarcorreo',
           label: 'Envío de correo',
           field: 'enviarcorreo'
-        },
-        { name: 'relacionado', label: 'Relacionado', field: 'relacionado' },
-        { name: 'exportar', label: 'Exportar', align: 'center' }
+        }
       ],
       rows: [],
       columnsDetallesDoc: [
@@ -883,9 +948,14 @@ export default {
       exentodetail: '',
       baseigtfdetail: '',
       registro: {},
+      registroDet: {},
+      registroDetalle: '',
       tipodocafectado: '',
       fechaafectado: '',
       numeroafectado: '',
+      tipodocafectadoDet: '',
+      fechaafectadoDet: '',
+      numeroafectadoDet: '',
       selected: [],
       idusuario: sessionStorage.getItem('id_usuario'),
       co_sede_seleted: sessionStorage.getItem('co_sede_seleted'),
@@ -908,7 +978,6 @@ export default {
           this.exportPDF()
           break
         case '2':
-          console.log(this.serviciosmasivo)
           if (this.serviciosmasivo) {
             this.exportarLotes()
           } else {
@@ -925,6 +994,203 @@ export default {
           console.log('Sorry, we are out of.')
       }
     },
+    primeraletra (item) {
+      return item ? item[0] : 'S'
+    },
+    openDetail () {
+      if (this.co_rol === '3') {
+        const anniomes =
+        moment(this.registroDetalle.fecha, 'DD/MM/YYYY HH:mm:ss a').format('YYYY') +
+        '-' +
+        moment(this.registroDetalle.fecha, 'DD/MM/YYYY HH:mm:ss a').format('MM')
+        window.open(
+          ENDPOINT_PATH_V2 +
+        'archivos/' +
+        this.registroDetalle.rif +
+        '/' +
+        anniomes +
+        '/' +
+        this.registroDetalle.rif +
+        this.registroDetalle.numerodocumento
+        )
+      } else {
+        this.buscarDetalles(this.registroDetalle)
+        this.viewdetail = true
+      }
+    },
+    openDetailRelacionado () {
+      this.buscarDetailRelacionado(this.registroDetalle)
+    },
+    async openDrawerDetalles (reg) {
+      this.registroDetalle = reg
+      this.rowtempxml = []
+      this.detallesDoc = []
+      if (reg.cod) {
+        const detalles = await axios.get(ENDPOINT_PATH_V2 + 'reporte/facturas/detalles/' + reg.cod)
+        let subtotaldetalle = 0
+        for (const i in detalles.data.data) {
+          const dato = detalles.data.data[i]
+          const obj = {}
+          obj.codigo = dato.codigo
+          obj.descripcion = dato.descripcion
+          obj.comentario = dato.comentario
+          obj.cantidad = dato.cantidad.toFixed(2)
+          obj.precio = dato.precio.toFixed(2)
+          obj.tasa = dato.tasa.toFixed(2)
+          obj.exento = dato.exento
+          const descuento = (dato.precio * dato.cantidad) - dato.monto
+          obj.descuento = Math.abs(descuento).toFixed(2)
+          obj.monto = dato.monto.toFixed(2)
+          subtotaldetalle += Number(obj.monto)
+          this.detallesDoc.push(obj)
+        }
+        // const $this = this
+        this.tipodocafectado = ''
+        this.fechaafectado = ''
+        this.numeroafectado = ''
+        if (reg.relacionado.length > 0) {
+          const body = {
+            idserviciosmasivo: reg.idserviciosmasivo,
+            numerodocumento: reg.relacionado
+          }
+          await axios.post(ENDPOINT_PATH_V2 + 'reporte/facturas/relacionado', body).then(async response => {
+            const datosafectado = response.data.data
+            this.tipodocafectado = datosafectado[0].tipodocumento
+            this.fechaafectado = moment(datosafectado[0].fecha).format('DD/MM/YYYY hh:mm:ss a')
+            this.numeroafectado = datosafectado[0].numerointerno.length > 0 ? datosafectado[0].numerointerno : reg.relacionado
+          })
+        }
+        reg.subtotal = detalles.data.data.length > 0 ? subtotaldetalle : reg.subtotal
+      }
+      reg.fecha = moment(reg.fecha, 'DD/MM/YYYY hh:mm:ss a')
+      this.rowtempxml.push(this.detailXML(reg))
+      this.drawerDetalle = true
+      this.registro.logo = reg.logo
+      this.registro.razonsocialdetail = reg.razonsocial
+      this.registro.rifdetail = reg.rif
+      this.registro.direcciondetail = reg.direccion
+      this.registro.tipodocumentodetail = reg.tipodocumento
+      this.registro.numerodocumento = reg.numerodocumento
+      this.registro.numerointerno = reg.numerointerno
+      this.registro.nombreclientedetail = reg.nombrecliente
+      this.registro.piedepagina = reg.piedepagina
+      this.registro.abrevdetail = reg.abrev
+      this.registro.cedulaclientedetail = reg.cedulacliente
+      this.registro.direccionclientedetail = reg.direccioncliente
+      this.registro.telefonoclientedetail = reg.telefonocliente
+      this.registro.emailclientedetail = reg.emailcliente
+      this.registro.fechadetail = reg.fechasolo
+      this.registro.horadetail = reg.hora
+      this.registro.exentodetail = reg.exento
+
+      this.registro.basegdetail = reg.baseg
+      this.registro.baserdetail = reg.baser
+      this.registro.baseigtfdetail = reg.baseigtf
+
+      this.registro.impuestogdetail = reg.impuestog
+      this.registro.impuestordetail = reg.impuestor
+      this.registro.impuestoigtfdetail = reg.impuestoigtf
+
+      this.registro.totalimpuestodetail = Number(reg.impuestogN) + Number(reg.impuestorN) + Number(reg.impuestoigtfN)
+      reg.total = reg.subtotal + this.registro.totalimpuestodetail
+      this.registro.totalimpuestodetail = this.completarDecimales(this.registro.totalimpuestodetail)
+      this.registro.subtotaldetail = this.completarDecimales(reg.subtotal)
+      this.registro.totaldetail = this.completarDecimales(reg.total)
+    },
+    async buscarDetalles (reg) {
+      if (this.co_rol === '3') {
+        const anniomes =
+        moment(reg.fecha, 'DD/MM/YYYY HH:mm:ss a').format('YYYY') +
+        '-' +
+        moment(reg.fecha, 'DD/MM/YYYY HH:mm:ss a').format('MM')
+        window.open(
+          ENDPOINT_PATH_V2 +
+        'archivos/' +
+        reg.rif +
+        '/' +
+        anniomes +
+        '/' +
+        reg.rif +
+        reg.numerodocumento
+        )
+      } else {
+        this.rowtempxml = []
+        this.detallesDoc = []
+        if (reg.cod) {
+          const detalles = await axios.get(ENDPOINT_PATH_V2 + 'reporte/facturas/detalles/' + reg.cod)
+
+          let subtotaldetalle = 0
+          for (const i in detalles.data.data) {
+            const dato = detalles.data.data[i]
+            const obj = {}
+            obj.codigo = dato.codigo
+            obj.descripcion = dato.descripcion
+            obj.comentario = dato.comentario
+            obj.cantidad = dato.cantidad.toFixed(2)
+            obj.precio = dato.precio.toFixed(2)
+            obj.tasa = dato.tasa.toFixed(2)
+            obj.exento = dato.exento
+            const descuento = (dato.precio * dato.cantidad) - dato.monto
+            obj.descuento = Math.abs(descuento).toFixed(2)
+            obj.monto = dato.monto.toFixed(2)
+            subtotaldetalle += Number(obj.monto)
+            this.detallesDoc.push(obj)
+          }
+          // const $this = this
+          this.tipodocafectadoDet = ''
+          this.fechaafectadoDet = ''
+          this.numeroafectadoDet = ''
+          if (reg.relacionado.length > 0) {
+            const body = {
+              idserviciosmasivo: reg.idserviciosmasivo,
+              numerodocumento: reg.relacionado
+            }
+            await axios.post(ENDPOINT_PATH_V2 + 'reporte/facturas/relacionado', body).then(async response => {
+              const datosafectado = response.data.data
+              this.tipodocafectadoDet = datosafectado[0].tipodocumento
+              this.fechaafectadoDet = moment(datosafectado[0].fecha).format('DD/MM/YYYY hh:mm:ss a')
+              this.numeroafectadoDet = datosafectado[0].numerointerno.length > 0 ? datosafectado[0].numerointerno : reg.relacionado
+            })
+          }
+          reg.subtotal = detalles.data.data.length > 0 ? subtotaldetalle : reg.subtotal
+        }
+        reg.fecha = moment(reg.fecha, 'DD/MM/YYYY hh:mm:ss a')
+        this.rowtempxml.push(this.detailXML(reg))
+        this.viewdetail = true
+        this.registroDet.logo = reg.logo
+        this.registroDet.razonsocialdetail = reg.razonsocial
+        this.registroDet.rifdetail = reg.rif
+        this.registroDet.direcciondetail = reg.direccion
+        this.registroDet.tipodocumentodetail = reg.tipodocumento
+        this.registroDet.numerodocumento = reg.numerodocumento
+        this.registroDet.numerointerno = reg.numerointerno
+        this.registroDet.nombreclientedetail = reg.nombrecliente
+        this.registroDet.piedepagina = reg.piedepagina
+        this.registroDet.abrevdetail = reg.abrev
+        this.registroDet.cedulaclientedetail = reg.cedulacliente
+        this.registroDet.direccionclientedetail = reg.direccioncliente
+        this.registroDet.telefonoclientedetail = reg.telefonocliente
+        this.registroDet.emailclientedetail = reg.emailcliente
+
+        this.registroDet.fechadetail = reg.fechasolo
+        this.registroDet.horadetail = reg.hora
+        this.registroDet.exentodetail = reg.exento
+
+        this.registroDet.basegdetail = reg.baseg
+        this.registroDet.baserdetail = reg.baser
+        this.registroDet.baseigtfdetail = reg.baseigtf
+
+        this.registroDet.impuestogdetail = reg.impuestog
+        this.registroDet.impuestordetail = reg.impuestor
+        this.registroDet.impuestoigtfdetail = reg.impuestoigtf
+
+        this.registroDet.totalimpuestodetail = Number(reg.impuestogN) + Number(reg.impuestorN) + Number(reg.impuestoigtfN)
+        reg.total = reg.subtotal + this.registroDet.totalimpuestodetail
+        this.registroDet.totalimpuestodetail = this.completarDecimales(this.registroDet.totalimpuestodetail)
+        this.registroDet.subtotaldetail = this.completarDecimales(reg.subtotal)
+        this.registroDet.totaldetail = this.completarDecimales(reg.total)
+      }
+    },
     openImprimir () {
       this.viewPrint = true
     },
@@ -936,9 +1202,15 @@ export default {
     },
     getColorEmailStatus (obj) {
       if (obj.estatuscorreo === '1' && obj.enviocorreo === '1') {
-        return 'blue'
+        return 'info'
       }
-      return 'red'
+      return 'negative'
+    },
+    getIconoEmailStatus (obj) {
+      if (obj.estatuscorreo === '1' && obj.enviocorreo === '1') {
+        return 'mark_email_read'
+      }
+      return 'cancel_schedule_send'
     },
     exportDetailToPDF () {
       // eslint-disable-next-line new-cap
@@ -1087,104 +1359,6 @@ export default {
       // console.log(this.rowtempxml)
       this.exportXML(this.rowtempxml)
     },
-    async openDetail (reg) {
-      //  console.log('openDetail')
-      if (this.co_rol === '3') {
-        const anniomes =
-        moment(reg.fecha, 'DD/MM/YYYY HH:mm:ss a').format('YYYY') +
-        '-' +
-        moment(reg.fecha, 'DD/MM/YYYY HH:mm:ss a').format('MM')
-        window.open(
-          ENDPOINT_PATH_V2 +
-        'archivos/' +
-        reg.rif +
-        '/' +
-        anniomes +
-        '/' +
-        reg.rif +
-        reg.numerodocumento
-        )
-      } else {
-        this.rowtempxml = []
-        this.detallesDoc = []
-        if (reg.cod) {
-          const detalles = await axios.get(ENDPOINT_PATH_V2 + 'reporte/facturas/detalles/' + reg.cod)
-          // this.detallesDoc = detalles.data.data
-          // console.log(detalles.data.data.length)
-
-          let subtotaldetalle = 0
-          for (const i in detalles.data.data) {
-            const dato = detalles.data.data[i]
-            const obj = {}
-            obj.codigo = dato.codigo
-            obj.descripcion = dato.descripcion
-            obj.comentario = dato.comentario
-            obj.cantidad = dato.cantidad.toFixed(2)
-            obj.precio = dato.precio.toFixed(2)
-            obj.tasa = dato.tasa.toFixed(2)
-            obj.exento = dato.exento
-            const descuento = (dato.precio * dato.cantidad) - dato.monto
-            obj.descuento = Math.abs(descuento).toFixed(2)
-            obj.monto = dato.monto.toFixed(2)
-            subtotaldetalle += Number(obj.monto)
-            this.detallesDoc.push(obj)
-          }
-          // const $this = this
-          this.tipodocafectado = ''
-          this.fechaafectado = ''
-          this.numeroafectado = ''
-          if (reg.relacionado.length > 0) {
-            const body = {
-              idserviciosmasivo: reg.idserviciosmasivo,
-              numerodocumento: reg.relacionado
-            }
-            await axios.post(ENDPOINT_PATH_V2 + 'reporte/facturas/relacionado', body).then(async response => {
-              const datosafectado = response.data.data
-              console.log('datosafectado')
-              console.log(datosafectado[0])
-              this.tipodocafectado = datosafectado[0].tipodocumento
-              this.fechaafectado = moment(datosafectado[0].fecha).format('DD/MM/YYYY hh:mm:ss a')
-              this.numeroafectado = datosafectado[0].numerointerno.length > 0 ? datosafectado[0].numerointerno : reg.relacionado
-            })
-          }
-          reg.subtotal = detalles.data.data.length > 0 ? subtotaldetalle : reg.subtotal
-        }
-        // console.log(this.detallesDoc)
-        reg.fecha = moment(reg.fecha, 'DD/MM/YYYY hh:mm:ss a')
-        this.rowtempxml.push(this.detailXML(reg))
-        this.viewdetail = true
-        this.registro.logo = reg.logo
-        this.registro.razonsocialdetail = reg.razonsocial
-        this.registro.rifdetail = reg.rif
-        this.registro.direcciondetail = reg.direccion
-        this.registro.tipodocumentodetail = reg.tipodocumento
-        this.registro.numerodocumento = reg.numerodocumento
-        this.registro.numerointerno = reg.numerointerno
-        this.registro.nombreclientedetail = reg.nombrecliente
-        this.registro.piedepagina = reg.piedepagina
-        this.registro.abrevdetail = reg.abrev
-        this.registro.cedulaclientedetail = reg.cedulacliente
-        this.registro.direccionclientedetail = reg.direccioncliente
-        this.registro.telefonoclientedetail = reg.telefonocliente
-        this.registro.fechadetail = reg.fechasolo
-        this.registro.horadetail = reg.hora
-        this.registro.exentodetail = reg.exento
-
-        this.registro.basegdetail = reg.baseg
-        this.registro.baserdetail = reg.baser
-        this.registro.baseigtfdetail = reg.baseigtf
-
-        this.registro.impuestogdetail = reg.impuestog
-        this.registro.impuestordetail = reg.impuestor
-        this.registro.impuestoigtfdetail = reg.impuestoigtf
-
-        this.registro.totalimpuestodetail = Number(reg.impuestogN) + Number(reg.impuestorN) + Number(reg.impuestoigtfN)
-        reg.total = reg.subtotal + this.registro.totalimpuestodetail
-        this.registro.totalimpuestodetail = this.completarDecimales(this.registro.totalimpuestodetail)
-        this.registro.subtotaldetail = this.completarDecimales(reg.subtotal)
-        this.registro.totaldetail = this.completarDecimales(reg.total)
-      }
-    },
     searchCliente (val, update, abort) {
       if (val.length < 3) {
         abort()
@@ -1265,7 +1439,6 @@ export default {
     changeSede () {
       this.disable = true
       this.numerodocumento = ''
-      // console.log(this.modelsede)
       this.idserviciosmasivo = this.modelsede?.cod
       this.serviciosmasivo = this.modelsede?.namerif
       this.clienteEmisorfilter = 'Todos'
@@ -1279,8 +1452,6 @@ export default {
     changeCodes () {
       this.idcodigocomercial = this.modelcodes?.cod
       this.codigocomercial = this.modelcodes?.namecode
-      console.log(this.idcodigocomercial)
-      console.log(this.codigocomercial)
       this.listarfacturas()
     },
     redistribuir () {
@@ -1299,12 +1470,6 @@ export default {
     },
     exportarLotes () {
       const $this = this
-      /* const arregloOriginal = this.rows.map(item => ({
-        correlativo: item.numerodocumento,
-        annio: moment(item.fecha, 'DD/MM/YYYY hh:mm:ss a').format('YYYY'),
-        mes: moment(item.fecha, 'DD/MM/YYYY hh:mm:ss a').format('MM')
-      })) */
-      // console.log('Arreglo de arreglos: ', arregloDeArreglos)
       const desde =
         this.numerodocumento.length > 0
           ? undefined
@@ -1335,8 +1500,6 @@ export default {
         estatus: 4
       }
       const url = ENDPOINT_PATH_V2 + 'archivos/exportarlote'
-      // console.log('2 Segundo INDICE: ', indice)
-      // console.log(body)
       axios.post(
         url,
         body,
@@ -1424,9 +1587,9 @@ export default {
           Notify.create('Problemas al listar Codigos comerciales ' + error)
         })
     },
-    buscarDetail (row) {
+    buscarDetailRelacionado (row) {
       // console.log(this.co_rol)
-      // console.log(row)
+      console.log(row)
       const body = {
         idserviciosmasivo: row.idserviciosmasivo,
         numerodocumento: row.relacionado
@@ -1446,6 +1609,7 @@ export default {
           obj.direccion = datos[0].direccion
           obj.telefono = datos[0].telefono
           obj.trackingid = datos[0].trackingid
+          obj.numerointerno = datos[0].numerointerno
           obj.numerodocumento = datos[0].numerodocumento
           obj.tipodocumento = datos[0].tipodocumento
           obj.abrev = datos[0].abrev
@@ -1492,7 +1656,7 @@ export default {
           obj.impuestor = this.completarDecimales(obj.impuestorN)
           obj.baseigtf = this.completarDecimales(obj.baseigtf)
           obj.impuestoigtf = this.completarDecimales(obj.impuestoigtfN)
-          this.openDetail(obj)
+          this.buscarDetalles(obj)
         })
         .catch((error) => {
           Notify.create('Problemas al Buscar factura ' + error)
@@ -1557,8 +1721,8 @@ export default {
       const { trackingid } = record
       const lista = this.rows.map((row) => {
         if (row.trackingid === trackingid) {
-          row.enviarcorreo = 'Enviado'
-          row.colorEmailStatus = 'blue'
+          row.iconoEmailStatus = 'mark_email_read'
+          row.colorEmailStatus = 'info'
         }
         return row
       })
@@ -1574,7 +1738,6 @@ export default {
         this.numerodocumento.length > 0
           ? undefined
           : moment(this.dateTo, 'YYYY/MM/DD').format('YYYY-MM-DD')
-      console.log(this.idtipodocumento)
       const body = {
         idserviciosmasivo: this.modelsede?.cod
           ? this.modelsede.cod
@@ -1619,6 +1782,8 @@ export default {
             obj.rif = datos[i].rif
             obj.piedepagina = datos[i].piedepagina
             obj.relacionado = datos[i].relacionado
+            obj.notadebito = datos[i].notadebito
+            obj.notacredito = datos[i].notacredito
             obj.direccion = datos[i].direccion
             obj.telefono = datos[i].telefono
             obj.trackingid = datos[i].trackingid
@@ -1681,6 +1846,8 @@ export default {
             obj.totalxml = datos[i].totalxml
             obj.grandtotalxml = datos[i].grandtotalxml
 
+            obj.totalimpuestos = Number(obj.impuestogN) + Number(obj.impuestorN) + Number(obj.impuestoigtfN)
+
             obj.exento = this.completarDecimales(obj.exento)
             obj.baseg = this.completarDecimales(obj.baseg)
             obj.impuestog = this.completarDecimales(obj.impuestogN)
@@ -1689,6 +1856,7 @@ export default {
             obj.baseigtf = this.completarDecimales(obj.baseigtf)
             obj.impuestoigtf = this.completarDecimales(obj.impuestoigtfN)
             obj.colorEmailStatus = this.getColorEmailStatus(datos[i])
+            obj.iconoEmailStatus = this.getIconoEmailStatus(datos[i])
             this.rows.push(obj)
             this.tempxml.push(this.detailXML(datos[i]))
             this.crearClientes(obj)
@@ -1784,8 +1952,17 @@ export default {
         this.clientes.push(obj)
       }
     },
+    isNormal (row) {
+      return (row.estatus === '1' && !row.notadebito && !row.notacredito) ? 'true' : false
+    },
     isAnulado (row) {
       return row.estatus === '2' ? 'true' : false
+    },
+    isDebito (row) {
+      return row.notadebito || false
+    },
+    isCredito (row) {
+      return row.notacredito || false
     },
     changeTipos (valor) {
       this.tipofactura = valor
@@ -1875,10 +2052,10 @@ export default {
       .then(({ ip }) => {
         this.term = ip
         this.colspan = this.co_rol === '1' ? 8 : this.co_rol === '2' ? 7 : 6
-        console.log('this.rif_sede')
-        console.log(this.rif_sede)
-        console.log('this.tx_sede')
-        console.log(this.tx_sede)
+        // console.log('this.rif_sede')
+        // console.log(this.rif_sede)
+        // console.log('this.tx_sede')
+        // console.log(this.tx_sede)
         this.rif_sede_exportar = this.rif_sede
         this.serviciosmasivo = this.tx_sede
         this.clienteEmisorfilter = this.tx_sede.length > 0 ? this.tx_sede : 'Todos'
@@ -1976,6 +2153,38 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: baseline;
+}
+.anulado {
+  background: #F17F7F;
+  color: #BF4141;
+  padding: 5px 10px;
+}
+.notadebito {
+  background: #62DDBC;
+  color: #1C9877;
+  padding: 5px 10px;
+}
+.notacredito {
+  background: #FFD586;
+  color: #AF832F;
+  padding: 5px 10px;
+}
+.normal {
+  background: #86d8ff;
+  color: #29719a;
+  padding: 5px 10px;
+}
+.circuloPerfil {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  color: #fff;
+  background: #f57b09;
+  align-items: center;
+  border-radius: 50%;
+  font-size: 34px;
+  font-weight: bold;
 }
 </style>
 <style lang="sass">
