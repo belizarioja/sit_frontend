@@ -6,6 +6,9 @@ const routes = [
   }, {
     path: '/emisores',
     component: () => import('layouts/SedesLayout.vue')
+  }, {
+    path: '/viewqrinvoice/:qrinvoice',
+    component: () => import('layouts/ViewInvoiceqrLayout.vue')
   },
   {
     path: '/dashboard',
