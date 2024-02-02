@@ -1,123 +1,144 @@
 <template>
- <div class="my-font my-fondo" style="display: flex; justify-content: center;">
-    <q-card style="width: 650px;">
-      <div v-if="haydata" id="detailid">
-        <q-item>
-          <q-item-section style="flex: auto">
-            <img width="100" :src="registro.logo" onerror="this.src='logo_nophoto.png'" />
-          </q-item-section>
-
-          <q-item-section>
-            <table>
+ <div class="my-font my-fondo row" >
+    <q-card class="col-md-6 col-sm-12 col-xs-12">
+      <div v-if="loading" style="position: relative; height: 500px;">
+        <q-spinner
+          color="primary"
+          size="8em"
+          style="position: absolute; top: 50%;left: 40%;"
+        />
+          <div style="position: absolute; top: 30%;left: 25%; right: 25%; font-size: 20px;">Por favor espere... Procesando!</div>
+      </div>
+      <div v-else-if="haydata" id="detailid" class="row"  style="padding-top: 10px;">
+        <div class="col">
+          <div class="row">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="row">
+                <div class="col-6  text-center">
+                  <img width="100" :src="registro.logo" onerror="this.src='logo_nophoto.png'" />
+                </div>
+                <table class="col-6">
+                  <tr>
+                    <td>
+                      <span>{{ registro.razonsocialdetail }}</span>
+                      <br /><span style="font-size: 10px">
+                        {{ registro.direcciondetail }}
+                      </span>
+                      <br /><span style="font-size: 10px">
+                        RIF: {{ registro.rifdetail }}
+                      </span>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12 text-center">
+              <table style="width: 100%;">
+                <tr>
+                  <td style="display: grid">
+                    <span>N° DE CONTROL:
+                      <span style="
+                          font-size: 18px;
+                          color: #e00303;
+                          font-weight: bolder;
+                        ">{{ registro.numerodocumento }}</span></span>
+                    <span>{{ registro.tipodocumentodetail }}:
+                      {{ registro.numerointerno }}</span>
+                    <span v-if="numeroafectadoDet.length > 0" style="font-size: 10px">Afecta a: {{ tipodocafectadoDet }}
+                      <span style="color: #e00303; font-weight: bolder">{{
+                        numeroafectadoDet
+                      }}</span></span>
+                    <span v-if="numeroafectadoDet.length > 0" style="font-size: 10px">Fecha: {{ fechaafectadoDet }}</span>
+                  </td>
+                </tr>
+              </table>
+            </div>
+          </div>
+          <q-separator />
+          <div class="row">
+            <table class="col-md-7 col-sm-7 col-xs-12" style="margin-left: 20px;">
               <tr>
-                <td style="width: 250px">
-                  <span>{{ registro.razonsocialdetail }}</span>
-                  <br /><span style="font-size: 10px">
-                    {{ registro.direcciondetail }}
-                  </span>
-                  <br /><span style="font-size: 10px">
-                    RIF: {{ registro.rifdetail }}
-                  </span>
-                </td>
-                <td style="display: grid">
-                  <span>N° DE CONTROL:
-                    <span style="
-                        font-size: 18px;
-                        color: #e00303;
-                        font-weight: bolder;
-                      ">{{ registro.numerodocumento }}</span></span>
-                  <span>{{ registro.tipodocumentodetail }}:
-                    {{ registro.numerointerno }}</span>
-                  <span v-if="numeroafectadoDet.length > 0" style="font-size: 10px">Afecta a: {{ tipodocafectadoDet }}
-                    <span style="color: #e00303; font-weight: bolder">{{
-                      numeroafectadoDet
-                    }}</span></span>
-                  <span v-if="numeroafectadoDet.length > 0" style="font-size: 10px">Fecha: {{ fechaafectadoDet }}</span>
-                </td>
-              </tr>
-            </table>
-          </q-item-section>
-        </q-item>
-        <q-item>
-          <q-item-section style="font-size: 11px;">
-            <table>
-              <tr>
-                <td style="width: 409px">
+                <td>
                   Cliente: {{ registro.nombreclientedetail }}
                 </td>
-                <td>Fecha de Emisión: {{ registro.fechadetail }}</td>
               </tr>
               <tr>
                 <td>
                   {{ " " + registro.abrevdetail }}:
                   {{ registro.cedulaclientedetail }}
                 </td>
-                <td>Hora de Emisión: {{ registro.horadetail }}</td>
               </tr>
               <tr>
                 <td>Teléfono: {{ registro.telefonoclientedetail }}</td>
-                <td></td>
               </tr>
               <tr>
                 <td>Dirección: {{ registro.direccionclientedetail }}</td>
+              </tr>
+            </table>
+            <table class="col-md-4 col-sm-4 col-xs-12" style="margin-left: 20px;">
+              <tr>
+                <td>Fecha de Emisión: {{ registro.fechadetail }}</td>
+              </tr>
+              <tr>
+                <td>Hora de Emisión: {{ registro.horadetail }}</td>
+              </tr>
+              <tr>
+                <td></td>
+              </tr>
+              <tr>
                 <td></td>
               </tr>
             </table>
-          </q-item-section>
-        </q-item>
-        <q-separator />
-        <q-item >
-          <q-table :rows="detallesDoc" :columns="columnsDetallesDoc" row-key="codigo" hide-pagination dense
-            style="width: 100%">
-            <template v-slot:body-cell-codigo="props">
-              <q-td :props="props" style="font-size: 11px;">
-                {{ props.row.codigo }}
-              </q-td>
-            </template>
-            <template v-slot:body-cell-descripcion="props">
-              <q-td :props="props" style="
-                  display: grid;
-                  height: fit-content;
-                  white-space: pre-wrap;
-                  width: 250px;
-                  font-size: 11px;
-                ">
-                <span>{{ props.row.descripcion }}</span>
-                <span>{{ props.row.comentario }}</span>
-              </q-td>
-            </template>
-            <template v-slot:body-cell-precio="props">
-              <q-td :props="props" style="font-size: 11px;">
-                {{ props.row.precio }}
-              </q-td>
-            </template>
-            <template v-slot:body-cell-cantidad="props">
-              <q-td :props="props" style="font-size: 11px;">
-                {{ props.row.cantidad }}
-              </q-td>
-            </template>
-            <template v-slot:body-cell-tasa="props">
-              <q-td :props="props" style="font-size: 11px;">
-                {{ props.row.tasa }}
-              </q-td>
-            </template>
-            <template v-slot:body-cell-descuento="props">
-              <q-td :props="props" style="font-size: 11px;">
-                {{ props.row.descuento }}
-              </q-td>
-            </template>
-            <template v-slot:body-cell-monto="props">
-              <q-td :props="props" style="font-size: 11px;">
-                {{ props.row.monto }}
-              </q-td>
-            </template>
-          </q-table>
-        </q-item>
-        <q-separator />
-
-        <q-item>
-          <q-item-section side top style="font-size: 11px; width: -webkit-fill-available;">
-            <table style="width: 100%;">
+          </div>
+          <div class="row">
+            <q-table class="col" :rows="detallesDoc" :columns="columnsDetallesDoc" row-key="codigo" hide-pagination dense
+              style="width: 100%; margin: 10px;">
+              <template v-slot:body-cell-codigo="props">
+                <q-td :props="props" style="font-size: 11px;">
+                  {{ props.row.codigo }}
+                </q-td>
+              </template>
+              <template v-slot:body-cell-descripcion="props">
+                <q-td :props="props" style="
+                    display: grid;
+                    height: fit-content;
+                    white-space: pre-wrap;
+                    width: 250px;
+                    font-size: 11px;
+                  ">
+                  <span>{{ props.row.descripcion }}</span>
+                  <span>{{ props.row.comentario }}</span>
+                </q-td>
+              </template>
+              <template v-slot:body-cell-precio="props">
+                <q-td :props="props" style="font-size: 11px;">
+                  {{ props.row.precio }}
+                </q-td>
+              </template>
+              <template v-slot:body-cell-cantidad="props">
+                <q-td :props="props" style="font-size: 11px;">
+                  {{ props.row.cantidad }}
+                </q-td>
+              </template>
+              <template v-slot:body-cell-tasa="props">
+                <q-td :props="props" style="font-size: 11px;">
+                  {{ props.row.tasa }}
+                </q-td>
+              </template>
+              <template v-slot:body-cell-descuento="props">
+                <q-td :props="props" style="font-size: 11px;">
+                  {{ props.row.descuento }}
+                </q-td>
+              </template>
+              <template v-slot:body-cell-monto="props">
+                <q-td :props="props" style="font-size: 11px;">
+                  {{ props.row.monto }}
+                </q-td>
+              </template>
+            </q-table>
+          </div>
+          <div class="row">
+            <table  class="col" style="margin-right: 20px;">
               <tr>
                 <td style="width: 80%; text-align: right">
                   Subtotal Bs.:
@@ -151,28 +172,44 @@
                 </td>
               </tr>
             </table>
+          </div>
+          <q-separator />
+          <div class="row">
+            <div class="col" style="display: grid; justify-content: center; margin: 10px;">
+              <div style="
+                  font-size: 8px;
+                  text-align: center;
+                ">
+                {{ registro.piedepagina }}
+              </div>
+              <div style="text-align: center; font-size: 8px; color: red">
+                ORIGINAL
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- <q-separator  class="col-12" />
+        <q-item class="col-12">
+          <q-item-section side top style="font-size: 11px; width: -webkit-fill-available;"  class="row">
           </q-item-section>
         </q-item>
-        <q-item style="display: grid; justify-content: center">
+        <q-item  class="col-12" style="display: grid; justify-content: center">
           <div style="
               font-size: 8px;
-              max-width: 458px;
               text-align: center;
-              min-width: 458px;
             ">
             {{ registro.piedepagina }}
           </div>
           <div style="text-align: center; font-size: 8px; color: red">
             ORIGINAL
           </div>
-        </q-item>
+        </q-item> -->
       </div>
       <div v-else class="text-center">
         <div class="dash_welcome_blue">Oops!</div>
         <img src="estatusgrafica.png" alt="Sin datos" style="width: 250px;">
-      <div class="dash_welcome_small">No hay datos que mostrar para esta CodeQR</div>
+      <div class="dash_welcome_small text-center">No hay datos que mostrar para esta CodeQR</div>
       </div>
-      <q-separator spaced inset="item" />
       <!-- <q-card-actions align="right">
         <q-btn label="Cerrar" color="negative" v-close-popup />
       </q-card-actions> -->
@@ -191,6 +228,7 @@ export default {
   name: 'ViewInvoiceLayout',
   data () {
     return {
+      loading: true,
       haydata: false,
       registro: {},
       numeroafectadoDet: '',
@@ -408,7 +446,7 @@ export default {
 </script>
 <style>
 .dash_welcome_small {
-  margin: 0px 20px 20px 0px;
+  margin: 0px 0px 20px 0px;
   color: #98A7BA;
   font-weight: bold;
   font-size: 18px;
