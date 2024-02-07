@@ -223,9 +223,14 @@
         <div style="display: flex; justify-content: space-between;">
           <div style="display: grid;">
             <div class="dash_welcome_long" style="margin-left: 20px">Tipos de documento</div>
+            <img src="dashboard2.png" alt="" style="margin-bottom: -6px;">
             <div class="dash_welcome_small" style="margin-left: 20px">Información sobre el uso del principal tipo de documento, por parte de los clientes</div>
           </div>
-          <radial-chart1 ref="radialtipos1" style="margin-right: 20px" />
+          <div style="display: grid;">
+            <radial-chart1 ref="radialtipos1" style="text-align: center; margin-right: 20px;" />
+            <div class="dash_tipos_main" style="text-align: center;margin-right: 20px;">{{totalfacturas}} procesada(s)</div>
+            <div class="dash_tipos_second" style="text-align: center;margin-right: 20px;">Bs. {{sumafacturas}}</div>
+          </div>
         </div>
         <div style="margin: 10px;border: solid 1px #ccc;border-radius: 5px;padding: 5px;position: relative;display: grid;">
           <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Otros tipos de documentos:</span>
@@ -468,7 +473,7 @@ export default defineComponent({
         Notify.create('Problemas al listar Ultima semana ' + error)
       })
     },
-    totalImp () {
+    calcularTotalImp () {
       const body = {
         idserviciosmasivo: this.idserviciosmasivo,
         desde: moment(this.dateFrom, 'YYYY/MM/DD').format('YYYY-MM-DD'),
@@ -600,7 +605,7 @@ export default defineComponent({
       })
     },
     listarReportes () {
-      this.totalImp()
+      this.calcularTotalImp()
       this.getDocProcesados()
       this.getUltimaSemana()
       this.getLotes()
@@ -738,10 +743,9 @@ export default defineComponent({
   color: #0999FF;
   font-weight: bold;
 }
-.dash_welcome_exentos {
-  font-size: 40px;
-  margin: 0px 0px 20px;
-  color: #71CCB5;
+.dash_tipos_main {
+  font-size: 20px;
+  color: #38daae;
   font-weight: bold;
 }
 .tarjetaMain {
@@ -749,6 +753,10 @@ export default defineComponent({
   width: 100%;
   height: 230px;
   background: radial-gradient(circle, rgb(250 250 250) 0%, rgb(250 250 250) 100%);
+}
+.dash_tipos_second {
+  font-size: 20px;
+  color: #98A7BA;
 }
 .itemsCardMain {
   font-size: 14px;
@@ -760,14 +768,5 @@ export default defineComponent({
   background: #0999FF;
   border-radius: 5px;
   height: 12px;
-}
-
-.filtros {
-  padding: 3px 7px;
-  background: #ECF6FF;
-  border: solid 1px #5a8f89;
-  margin: 5px;
-  border-radius: 8px;
-  font-size: 13px;
 }
 </style>

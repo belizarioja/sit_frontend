@@ -22,13 +22,13 @@ export default {
           },
           offsetY: 20
         },
-        colors: ['#008ffb'],
+        colors: ['#17d5a2'],
         plotOptions: {
           radialBar: {
             dataLabels: {
               name: {
                 fontSize: '24px',
-                color: '#008ffb'
+                color: '#17d5a2'
               },
               value: {
                 fontSize: '18px',

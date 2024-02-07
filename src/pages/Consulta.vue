@@ -607,8 +607,8 @@
             <div style="margin: 3px;">N° DE CONTROL: {{ registro.numerodocumento }}</div>
             <div style="margin: 3px;">{{ registro.tipodocumentodetail }}: {{ registro.numerointerno }}</div>
             <div style="margin: 3px 3px 10px 3px;">Fecha emisión: {{ registro.fechadetail }} {{ registro.horadetail }}</div>
-            <div>
-              <span>Estatus </span>
+            <div style="margin-bottom: 10px;">
+              <span style="margin-right: 10px;">Estatus </span>
               <q-badge v-if="isNormal(registroDetalle)" class="normal">
                 Normal
               </q-badge>
@@ -2109,14 +2109,6 @@ export default {
 <style>
 .text-caption {
   font-size: inherit;
-}
-.filtros {
-  padding: 3px 7px;
-  background: #ECF6FF;
-  border: solid 1px #5a8f89;
-  margin: 5px;
-  border-radius: 8px;
-  font-size: 13px;
 }
 .totales {
   font-weight: bolder;

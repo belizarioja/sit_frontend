@@ -22,7 +22,7 @@ export default {
           },
           offsetY: 20
         },
-        colors: ['#00e396'],
+        colors: ['#0999FF'],
         plotOptions: {
           radialBar: {
             startAngle: -135,
@@ -36,7 +36,7 @@ export default {
               value: {
                 offsetY: 20,
                 fontSize: '12px',
-                color: '#00e396',
+                color: '#0999FF',
                 formatter: function (val) {
                   return val + '%'
                 }
