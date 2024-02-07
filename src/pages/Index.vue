@@ -8,7 +8,7 @@
             </div>
             <div class="col">
               <div class="dash_welcome_long">
-                  Hola {{ displayName }},
+                  Hola {{ displayName }}
               </div>
               <div class="dash_welcome_blue">
                   {{ saludo }}.
@@ -26,19 +26,19 @@
               <q-card class="my-card tarjetaMain">
                 <q-card-section class="dash_card_main" style="padding-top: 40px;">
                   <div v-if="!idserviciosmasivo" style="display: flex;margin-bottom: 30px;">
-                    <q-icon name="fact_check" class="text-secondary" style="font-size: xx-large;"/>
+                    <q-icon name="fact_check" class="text-positive" style="font-size: xx-large;"/>
                     <span class="itemsCardMain">
                       Tiene <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalclientes }}</span> emisores con <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalAsignados }}</span> documentos asignados.
                     </span>
                   </div>
                   <div style="display: flex;margin-bottom: 30px;">
-                    <q-icon name="format_list_bulleted" class="text-secondary" style="font-size: xx-large;"/>
+                    <q-icon name="format_list_bulleted" class="text-positive" style="font-size: xx-large;"/>
                     <span class="itemsCardMain">
                       Se han procesado <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalUtilizados }}</span> documentos y quedan <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalDisponible }}</span> disponibles.
                     </span>
                   </div>
                   <div v-if="!estatusasignacion" style="display: flex;margin-bottom: 30px;">
-                    <q-icon name="warning" class="text-secondary" style="font-size: xx-large;"/>
+                    <q-icon name="warning" class="text-positive" style="font-size: xx-large;"/>
                     <span v-if="!idserviciosmasivo" class="itemsCardMain">
                       Existe(n) <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ clientesTerminando }}</span> emisores con cantidad crítica de asignación de lotes.
                     </span>
@@ -47,7 +47,7 @@
                     </span>
                   </div>
                   <div v-else style="display: flex;margin-bottom: 30px;">
-                    <q-icon name="done_all" class="text-secondary" style="font-size: xx-large;"/>
+                    <q-icon name="done_all" class="text-positive" style="font-size: xx-large;"/>
                     <span v-if="!idserviciosmasivo" class="itemsCardMain">
                       Todos los clientes emisores sin problemas de asignación.
                     </span>
@@ -56,7 +56,7 @@
                     </span>
                   </div>
                   <div v-if="idserviciosmasivo" style="display: flex;margin-bottom: 30px;">
-                    <q-icon name="rule" class="text-secondary" style="font-size: xx-large;"/>
+                    <q-icon name="rule" class="text-positive" style="font-size: xx-large;"/>
                     <span class="itemsCardMain">
                       Se usaron <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalAnulados }}</span> entre Anulados y Notas de Créditos.
                     </span>
@@ -135,14 +135,14 @@
       </q-card>
       <q-card class="col-6" style="margin: 20px;">
         <q-card-section >
-          <q-list>
+          <q-list style="color: #98A7BA;">
             <q-item-label class="dash_welcome_long">Tipo de Impuestos</q-item-label>
-            <q-item class="text-dark">
+            <q-item class="text-secondary" style="font-weight: bold;">
               <q-item-section avatar top>
                 <q-avatar color="white"></q-avatar>
               </q-item-section>
               <q-item-section top>
-                <q-item-label class="q-mt-sm">Decripción</q-item-label>
+                <q-item-label class="q-mt-sm">Descripción</q-item-label>
               </q-item-section>
               <q-item-section top>
                 <q-item-label class="q-mt-sm">Base</q-item-label>
@@ -219,22 +219,34 @@
     </div>
 
     <div class="row">
-      <q-card class="col-5" style="margin: 20px">
-        <div class="dash_welcome_long" style="margin-left: 20px">Tipos de Documento</div>
-        <q-card-section >
-          <donut-chart ref="donutipos" />
-        </q-card-section>
-        <q-card-section >
-          <donut-chart ref="donutipos" />
-        </q-card-section>
+      <q-card class="col-5" style="margin: 20px; display: grid;">
+        <div style="display: flex; justify-content: space-between;">
+          <div style="display: grid;">
+            <div class="dash_welcome_long" style="margin-left: 20px">Tipos de documento</div>
+            <div class="dash_welcome_small" style="margin-left: 20px">Información sobre el uso del principal tipo de documento, por parte de los clientes</div>
+          </div>
+          <radial-chart1 ref="radialtipos1" style="margin-right: 20px" />
+        </div>
+        <div style="margin: 10px;border: solid 1px #ccc;border-radius: 5px;padding: 5px;position: relative;display: grid;">
+          <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Otros tipos de documentos:</span>
+          <div style="display: flex;">
+            <radial-chart2 ref="radialtipos2" style="margin-left: 0px; margin-bottom: 20px; margin-top: -20px;" />
+            <radial-chart3 ref="radialtipos3" style="margin-left: -18px; margin-bottom: 20px; margin-top: -20px;" />
+            <radial-chart4 ref="radialtipos4" style="margin-left: -18px; margin-bottom: 20px; margin-top: -20px;" />
+            <radial-chart5 ref="radialtipos5" style="margin-left: -18px; margin-bottom: 20px; margin-top: -20px;" />
+          </div>
+        </div>
       </q-card>
       <q-card class="col-6" style="margin: 20px;">
+        <q-card-section ><div class="dash_welcome_long" style="margin-bottom: -20px; margin-top: 8px;">Última semana</div></q-card-section>
         <q-card-section >
           <q-table
+            dense
             :rows="rowssemana"
             :columns="columnssemana"
             row-key="razonsocial"
-            hide-bottom
+            hide-pagination
+            :rows-per-page-options="[0]"
           />
         </q-card-section>
       </q-card>
@@ -304,7 +316,12 @@
 import { defineComponent, ref } from 'vue'
 
 import BarChart from '../components/dashboard/graficameses/BarChart.vue'
-import DonutChart from '../components/dashboard/tiposfactura/DougChart.vue'
+// import DonutChart from '../components/dashboard/tiposfactura/DougChart.vue'
+import RadialChart1 from '../components/dashboard/tiposfactura/RadialBarChart1.vue'
+import RadialChart2 from '../components/dashboard/tiposfactura/RadialBarChart2.vue'
+import RadialChart3 from '../components/dashboard/tiposfactura/RadialBarChart3.vue'
+import RadialChart4 from '../components/dashboard/tiposfactura/RadialBarChart4.vue'
+import RadialChart5 from '../components/dashboard/tiposfactura/RadialBarChart5.vue'
 
 import { Notify } from 'quasar'
 import axios from 'axios'
@@ -316,7 +333,11 @@ const ENDPOINT_PATH_V2 = config.endpoint_path_v2
 export default defineComponent({
   name: 'Dashboard',
   components: {
-    DonutChart,
+    RadialChart1,
+    RadialChart2,
+    RadialChart3,
+    RadialChart4,
+    RadialChart5,
     BarChart
   },
   setup () {
@@ -352,12 +373,12 @@ export default defineComponent({
           align: 'left'
         },
         { name: 'hoy', label: 'Hoy', field: 'hoy' },
-        { name: 'hace1dia', label: moment().subtract(1, 'days').format('DD/MM/YYYY'), field: 'hace1dia' },
-        { name: 'hace2dia', label: moment().subtract(2, 'days').format('DD/MM/YYYY'), field: 'hace2dia' },
-        { name: 'hace3dia', label: moment().subtract(3, 'days').format('DD/MM/YYYY'), field: 'hace3dia' },
-        { name: 'hace4dia', label: moment().subtract(4, 'days').format('DD/MM/YYYY'), field: 'hace4dia' },
-        { name: 'hace5dia', label: moment().subtract(5, 'days').format('DD/MM/YYYY'), field: 'hace5dia' },
-        { name: 'hace6dia', label: moment().subtract(6, 'days').format('DD/MM/YYYY'), field: 'hace6dia' }
+        { name: 'hace1dia', label: moment().subtract(1, 'days').format('DD-MMM'), field: 'hace1dia' },
+        { name: 'hace2dia', label: moment().subtract(2, 'days').format('DD-MMM'), field: 'hace2dia' },
+        { name: 'hace3dia', label: moment().subtract(3, 'days').format('DD-MMM'), field: 'hace3dia' },
+        { name: 'hace4dia', label: moment().subtract(4, 'days').format('DD-MMM'), field: 'hace4dia' },
+        { name: 'hace5dia', label: moment().subtract(5, 'days').format('DD-MMM'), field: 'hace5dia' },
+        { name: 'hace6dia', label: moment().subtract(6, 'days').format('DD-MMM'), field: 'hace6dia' }
       ],
       fechacustom: ref('1'),
       disabledSede: ref(false),
@@ -429,7 +450,7 @@ export default defineComponent({
       }
       axios.post(ENDPOINT_PATH_V2 + 'reporte/ultimasemana', body).then(async response => {
         const datos = response.data.data
-        // console.log(datos)
+        console.log(datos)
         this.rowssemana = []
         for (const i in datos) {
           const obj = {}
@@ -583,10 +604,13 @@ export default defineComponent({
       this.getDocProcesados()
       this.getUltimaSemana()
       this.getLotes()
-      // console.log(this.$refs.barmeses)
       this.$refs.barmeses.createData(this.idserviciosmasivo)
-      this.$refs.donutipos.createData(this.idserviciosmasivo, this.dateFrom, this.dateTo)
-      // this.$emit('createData')
+      // this.$refs.donutipos.createData(this.idserviciosmasivo, this.dateFrom, this.dateTo)
+      this.$refs.radialtipos1.createData(this.idserviciosmasivo, this.dateFrom, this.dateTo)
+      this.$refs.radialtipos2.createData(this.idserviciosmasivo, this.dateFrom, this.dateTo)
+      this.$refs.radialtipos3.createData(this.idserviciosmasivo, this.dateFrom, this.dateTo)
+      this.$refs.radialtipos4.createData(this.idserviciosmasivo, this.dateFrom, this.dateTo)
+      this.$refs.radialtipos5.createData(this.idserviciosmasivo, this.dateFrom, this.dateTo)
     },
     changeFechas () {
       const selectElementDesde = document.querySelector('.fecha1')

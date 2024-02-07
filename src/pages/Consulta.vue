@@ -1589,7 +1589,7 @@ export default {
     },
     buscarDetailRelacionado (row) {
       // console.log(this.co_rol)
-      console.log(row)
+      // console.log(row)
       const body = {
         idserviciosmasivo: row.idserviciosmasivo,
         numerodocumento: row.relacionado
