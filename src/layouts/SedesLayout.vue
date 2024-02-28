@@ -2,29 +2,56 @@
  <div class="my-font bg-primary window-height window-width row justify-center">
   <div class="bg-white col-3">
     <div class="" style="text-align: center; padding: 20px;">
-      <img src="logo_sit.jpg" style="max-width: 180px;" />
+      <img src="logo_sit.jpg" style="width: 220px;" />
     </div>
     <div class="text-h6 text-secondary text-center">
-      Seleccione cliente
+      Cliente seleccionado
     </div>
-    <div class="text-center" style="display: flex; justify-content: center;">
-      <div class="iconSeleccionado text-secondary">
-        Seleccionado
+    <div class="row">
+      <div class="col" style="height: 65vh;">
+        <div class="row" style="justify-content: center;">
+          <div v-if="changePacks" class="iconSeleccionado text-secondary">
+            No hay selección
+          </div>
+          <div v-else class="iconSeleccionado text-secondary">
+            <div class="imgPaquete">
+              <img
+                v-bind:src="itemselected.logo"
+                onerror="this.src='default.svg'"
+                :width="itemselected.width"
+                style="border-radius: 7px;"
+              />
+            </div>
+            <div class="tituloPaqueteSelected">
+              <span class="nombrePaquete">{{ itemselected.razonsocial }}</span>
+              <span class="sedePaquete">RIF: {{itemselected.rif}}</span>
+            </div>
+          </div>
+        </div>
+        <div v-if="!changePacks" class="row" style="">
+          <div class="col">
+            <span class="nombrePaqueteSeleted" style="margin: 3px 20px; text-align: center;">Dirección: {{ itemselected.direccion }}</span>
+            <span class="nombrePaqueteSeleted">Email: {{itemselected.email}}</span>
+            <span class="nombrePaqueteSeleted">Sitio web: {{itemselected.sitioweb}}</span>
+            <span class="nombrePaqueteSeleted">Teléfono: {{itemselected.telefono}}</span>
+          </div>
+        </div>
       </div>
     </div>
-    <q-btn
-      label="Cliente"
-      :disabled="changePacks"
-      color="primary"
-      @click="continuar"
-      style="float:left;margin-left: 40px;"
-    />
-    <q-btn
-      v-if="co_rol !== '4'"
-      label="Todos"
-      v-close-popup color="secondary"
-      @click="todos"
-      style="float: right;margin-right: 40px;"/>
+    <div style="display: flex; justify-content: space-around;">
+      <q-btn
+        label="Cliente"
+        :disabled="changePacks"
+        color="primary"
+        @click="continuar"
+      />
+      <q-btn
+        v-if="co_rol !== '4'"
+        label="Todos"
+        v-close-popup color="secondary"
+        @click="todos"
+      />
+    </div>
   </div>
   <div class="col-9">
     <div
@@ -36,7 +63,7 @@
         :key="index"
         class="iconPaquete sedeNoSelected "
         :class="{[`class${index}`]: true}"
-        @click="onSeleted(index, item.cod, item.razonsocial, item.rif)"
+        @click="onSeleted(index, item)"
       >
         <div class="imgPaquete">
           <img
@@ -74,20 +101,12 @@ export default {
   data () {
     return {
       changePacks: true,
+      itemselected: {},
+      rows: [],
       usuario: '',
       clave: '',
       loading: false,
-      co_rol: sessionStorage.getItem('co_rol'),
-      columns: [
-        { name: 'logo', align: 'center', label: 'Logo', field: 'logo', sortable: true },
-        { name: 'rif', align: 'center', label: 'RIF', field: 'rif', sortable: true },
-        { name: 'razonsocial', align: 'center', label: 'Razón social', field: 'razonsocial', sortable: true },
-        { name: 'direccion', label: 'Dirección', field: 'direccion', sortable: true },
-        { name: 'email', label: 'Correo electrónico', field: 'email', sortable: true },
-        { name: 'telefono', label: 'Teléfono contacto', field: 'telefono', sortable: true },
-        { name: 'estatus', label: 'Estatus', field: 'estatus' }
-      ],
-      rows: []
+      co_rol: sessionStorage.getItem('co_rol')
     }
   },
   methods: {
@@ -123,16 +142,18 @@ export default {
         }
       }
     },
-    onSeleted (index, cod, razonsocial, rif) {
+    onSeleted (index, item) {
       this.changePacks = true
       const element = document.querySelector('.class' + index)
 
       this.onClean()
       element.classList.add('sedeSelected')
       element.classList.remove('sedeNoSelected')
-      this.co_sede_seleted = cod
-      this.tx_sede_seleted = razonsocial
-      this.rif_sede_seleted = rif
+      this.itemselected = item
+      console.log(this.itemselected)
+      this.co_sede_seleted = item.cod
+      this.tx_sede_seleted = item.razonsocial
+      this.rif_sede_seleted = item.rif
       const elements = document.querySelectorAll('.iconPaquete')
       for (let i = 0; i < elements.length; i++) {
         if (elements[i].classList.contains('sedeSelected')) {
@@ -145,11 +166,11 @@ export default {
         title: 'Confirmación!',
         message: '¿Está seguro que quieres cerrar sesión?',
         ok: {
-          color: 'primary',
+          color: 'secondary',
           label: 'Sí'
         },
         cancel: {
-          color: 'secondary',
+          color: 'negative',
           label: 'No'
         },
         persistent: true
@@ -180,6 +201,7 @@ export default {
           obj.razonsocial = datos[i].razonsocial
           obj.direccion = datos[i].direccion
           obj.email = datos[i].email
+          obj.sitioweb = datos[i].sitioweb
           obj.telefono = datos[i].telefono
           obj.tokenservicios = datos[i].tokenservicios
           obj.estatus = datos[i].estatus === '1' ? 'Activo' : 'Inactivo'
@@ -192,6 +214,9 @@ export default {
     }
   },
   mounted () {
+    if (this.co_rol !== '1' && this.co_rol !== '2' && this.co_rol !== '4') {
+      this.$router.push('/erroracceso')
+    }
     this.listar()
   }
 }
@@ -201,7 +226,7 @@ export default {
     border: 2px solid #ddd;
     }
     .sedeSelected {
-    border: 2px solid #74ab43;
+    border: 2px solid #0999FF;
     }
   .iconPaquete {
     background: white;
@@ -217,19 +242,26 @@ export default {
     padding-top: 10px;
   }
   .iconSeleccionado {
+    text-align: center;
     align-items: center;
     width: 130px;
-    height: 170px;
+    height: 185px;
     border-radius: 10px;
     border: 2px dashed #5a8f89;
     margin: 20px;
     padding: 5px;
     display: grid;
+    justify-content: center;
     padding-top: 10px;
   }
-
+  .nombrePaqueteSeleted {
+    font-size: 13px;
+    display: grid;
+    justify-content: center;
+    align-items: center;
+  }
   .nombrePaquete {
-    height: 53px;
+    height: 60px;
     font-size: 13px;
     display: grid;
     justify-content: center;
@@ -247,13 +279,10 @@ export default {
     justify-content: center;
     align-items: center;
   }
-  .diasPaquete {
-    font-size: 14px;
-  }
   .sedePaquete {
     font-size: 11px;
     font-weight: bolder;
-    color: #74ab43;
+    color: #f57b09;
   }
   .imgPaquete {
     width: auto;
@@ -263,6 +292,11 @@ export default {
   }
   .tituloPaquete {
     width: 72%;
+    display: grid;
+    align-items: center;
+    justify-content: center;
+  }
+  .tituloPaqueteSelected {
     display: grid;
     align-items: center;
     justify-content: center;

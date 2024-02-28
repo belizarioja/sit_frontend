@@ -425,6 +425,7 @@ export default {
   data () {
     return {
       modeltipo: [],
+      co_rol: sessionStorage.getItem('co_rol'),
       optionstipo: [],
       optionscedula: [],
       modelsede: [],
@@ -814,6 +815,9 @@ export default {
     }
   },
   mounted () {
+    if (this.co_rol !== '1') {
+      this.$router.push('/erroracceso')
+    }
     this.listarsedes()
     this.listartipos()
     this.listartiposcedulas()

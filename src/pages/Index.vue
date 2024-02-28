@@ -3,10 +3,10 @@
     <div class="row">
       <div class="col-md-5 col-sm-12 col-xs-12">
         <div class="row">
-            <div class="col">
+            <!-- <div class="col">
               <img src="dashboard.png" alt="" style="margin-bottom: -6px;">
-            </div>
-            <div class="col">
+            </div> -->
+            <div class="col" style="margin-left: 20px;">
               <div class="dash_welcome_long">
                   Hola {{ displayName }}
               </div>
@@ -109,7 +109,7 @@
           </div>
       </div>
       <div class="col-7">
-        <div style="padding: 5px;margin-left: 40px;width: 50%;height:48px;">
+        <div style="padding: 5px;margin-left: 40px;width: 75%;height:48px;">
           <q-select
             v-if="co_rol === '1' || co_rol === '2'"
             label="Buscar por Nombre o RIF del Emisor"
@@ -131,7 +131,7 @@
             @filter="searchEmisor"
           />
         </div>
-        <q-card style="margin: 40px 40px 0 60px;">
+        <q-card style="margin: 27px 40px 0 60px;">
           <q-card-section >
             <bar-chart ref="barmeses" />
           </q-card-section>
@@ -721,12 +721,17 @@ export default defineComponent({
     }
   },
   mounted () {
+    if (this.co_rol === '4') {
+      this.$router.push('/erroracceso')
+    }
     fetch('https://api.ipify.org?format=json')
       .then((x) => x.json())
       .then(({ ip }) => {
         this.term = ip
         this.listarsedes()
-        // console.log(this.co_rol)
+        // console.log(moment().format('HH'))
+        const horadia = moment().format('HH')
+        this.saludo = horadia < 24 && horadia >= 18 ? 'Buenas noches' : horadia < 18 && horadia >= 12 ? 'Buenas tardes' : 'Buenos días'
         this.idserviciosmasivo = this.co_rol === '3' ? this.co_sede : undefined
         this.serviciosmasivo = this.co_rol === '3' ? this.tx_sede : undefined
 

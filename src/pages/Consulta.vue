@@ -22,7 +22,7 @@
         :columns="columnseleted"
         row-key="name"
         :pagination="initialPagination"
-        style="overflow: auto;"
+        style="overflow: auto;width: -webkit-fill-available;"
         :loading="loading"
         :filter="filterTable"
         no-data-label="No hay registros!">

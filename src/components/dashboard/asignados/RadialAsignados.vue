@@ -71,9 +71,9 @@ export default {
           this.totalAsignados += Number(datos[i].cantidad)
           this.totalUtilizados += Number(datos[i].utilizado)
         }
-        this.porcUsados = this.totalUtilizados / this.totalAsignados
+        this.porcUsados = this.totalUtilizados / this.totalAsignados * 100 || 0
         // console.log(Number(this.porcUsados * 100).toFixed(2))
-        datagrafica.push(Number(this.porcUsados * 100).toFixed(2))
+        datagrafica.push(this.porcUsados.toFixed(2))
         this.options.series = datagrafica
         this.options.chart.height = 250
         this.options.chart.width = 200

@@ -397,6 +397,9 @@ export default {
     }
   },
   mounted () {
+    if (this.co_rol !== '1' && this.co_rol !== '2') {
+      this.$router.push('/erroracceso')
+    }
     this.listarusuarios()
     this.listarroles()
     this.listarsedes()

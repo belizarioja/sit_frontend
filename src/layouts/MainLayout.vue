@@ -141,6 +141,9 @@
       <q-page-container>
         <router-view />
       </q-page-container>
+      <q-page-sticky v-if="co_rol === '1' || co_rol === '2'" position="bottom-right" :offset="[18, 18]">
+        <q-btn fab icon="people_alt" color="primary" @click="sedeschange" />
+      </q-page-sticky>
     </q-layout>
   </div>
 </template>
@@ -190,12 +193,6 @@ export default defineComponent({
     consulta () {
       this.$router.push('/consulta')
     },
-    reportes () {
-      this.$router.push('/reportes')
-    },
-    anulaciones () {
-      this.$router.push('/anulaciones')
-    },
     simulador () {
       this.$router.push('/simulador')
     },
@@ -237,6 +234,11 @@ export default defineComponent({
         sessionStorage.removeItem('co_rol')
         this.$router.push('/')
       })
+    }
+  },
+  mounted () {
+    if (!this.co_rol) {
+      this.$router.push('/erroracceso')
     }
   }
 })

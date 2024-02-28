@@ -122,6 +122,7 @@ export default {
   },
   data () {
     return {
+      co_rol: sessionStorage.getItem('co_rol'),
       modelsede: [],
       optionssede: [],
       pagination: {
@@ -213,6 +214,9 @@ export default {
     }
   },
   mounted () {
+    if (this.co_rol !== '1') {
+      this.$router.push('/erroracceso')
+    }
     this.listarsedes()
     // this.listarsedes()
   }

@@ -47,7 +47,7 @@
       <q-dialog v-model="modalactualizar" persistent>
         <q-card >
           <q-card-section>
-            <div class="text-h6" style="text-align: center;">Actualizar Fecha Inicio</div>
+            <div class="text-h6" style="text-align: center;">Actualizar fecha inicio</div>
           </q-card-section>
           <q-card-section class="q-pt-none">
             <div>
@@ -73,10 +73,10 @@
             </div>
           </q-card-section>
           <q-card-section class="q-pt-none">
-            <div  style="text-align: center;">
-              <q-btn flat label="Cancel" v-close-popup />
+            <div style="display: flex; justify-content: space-around;">
+              <q-btn color="negative" label="Cancelar" v-close-popup />
               <q-btn
-                color="primary"
+                color="secondary"
                 label="Aceptar"
                 @click="actualizar"
               />
@@ -322,6 +322,9 @@ export default {
     }
   },
   mounted () {
+    if (this.co_rol !== '1' && this.co_rol !== '2') {
+      this.$router.push('/erroracceso')
+    }
     this.listar()
     this.listarsedes()
     // this.listarusuarios()
