@@ -67,7 +67,8 @@ export default {
       axios.post(ENDPOINT_PATH_V2 + 'reporte/totaldocumentos', body).then(async response => {
         const datos = response.data.data
         const datagrafica = []
-        datagrafica.push(Number(datos[2].totaldoc / datos[0].total * 100).toFixed(2))
+        const porcentaje = Number(datos[2].total) > 0 ? (datos[2].totaldoc / datos[2].total) : 0
+        datagrafica.push(Number(porcentaje * 100).toFixed(2))
         this.options.series = datagrafica
         this.options.chart.height = 130
         this.options.chart.width = 130

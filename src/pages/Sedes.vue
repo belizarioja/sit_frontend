@@ -32,7 +32,7 @@
               v-bind:src="props.row.logo"
               onerror="this.src='default.svg'"
               :width="props.row.width"
-              style="border-radius: 50%;cursor: pointer;"
+              style="cursor: pointer;"
               @click.stop="openLogo(props.row)"
             />
             <!-- <q-btn icon="visibility" @click.stop="openLogo(props.row)" dense flat/>-->
@@ -42,6 +42,19 @@
       <template v-slot:body-cell-direccion="props">
         <q-td :props="props">
           {{ props.row.direccion }}
+        </q-td>
+      </template>
+      <template v-slot:body-cell-bannerpublicidad="props">
+        <q-td :props="props">
+          <div>
+            <img
+              v-bind:src="props.row.bannerpublicidad"
+              onerror="this.src='publicidad.png'"
+              :width="props.row.widthbanner"
+              style="cursor: pointer;"
+              @click.stop="openPublicidad(props.row)"
+            />
+          </div>
         </q-td>
       </template>
       <template v-slot:body-cell-tokenservicios="props">
@@ -298,15 +311,20 @@
                 class="col-12 q-pa-sm"
                 label="Código comercial"
               />
-              <div class="col-6 q-pa-sm" style="text-align: center;margin-top: 20px;">
+              <div class="col-4 q-pa-sm" style="text-align: center;margin-top: 20px;">
                 <div>Envío de correo</div>
                 <q-radio v-model="shape" val="0" label="No" />
                 <q-radio v-model="shape" val="1" label="Si" />
               </div>
-              <div class="col-6 q-pa-sm" style="text-align: center;margin-top: 20px;">
+              <div class="col-4 q-pa-sm" style="text-align: center;margin-top: 20px;">
                 <div>Validar número interno</div>
                 <q-radio v-model="shapeinterno" val="0" label="No" />
                 <q-radio v-model="shapeinterno" val="2" label="Si" />
+              </div>
+              <div class="col-4 q-pa-sm" style="text-align: center;margin-top: 20px;">
+                <div>Publicidad</div>
+                <q-radio v-model="shapepublicidad" val="0" label="No" />
+                <q-radio v-model="shapepublicidad" val="1" label="Si" />
               </div>
             </div>
             <div style="display: flex; justify-content: space-evenly;">
@@ -346,13 +364,13 @@
     <q-dialog v-model="modallogo" persistent>
       <q-card >
         <q-card-section>
-          <div class="text-h6" style="text-align: center;">Actualizar Logo</div>
+          <div class="text-h6" style="text-align: center;">Actualizar {{tituloCargarImagen}}</div>
         </q-card-section>
           <q-card-section class="q-pt-none">
             <q-uploader
               label="Upload"
               :factory="factoryFn"
-              style="max-width: 300px"
+              style="max-width: 350px"
               @uploaded="closeLogoUploader"
             />
           </q-card-section>
@@ -396,9 +414,11 @@ export default {
       sitioweb: ref(''),
       shape: ref('0'),
       shapeinterno: ref('0'),
+      shapepublicidad: ref('0'),
       filter: ref(''),
       co_rol: sessionStorage.getItem('co_rol'),
       loading: ref(false),
+      tituloCargarImagen: ref(''),
       pagination: ref({
         sortBy: 'cod',
         descending: false,
@@ -432,6 +452,8 @@ export default {
         { name: 'numeracionactual', label: 'Numeración actual', field: 'numeracionactual', sortable: true },
         { name: 'enviocorreo', label: 'Envio correo', field: 'enviocorreo', sortable: true },
         { name: 'validarinterno', label: 'Validar interno', field: 'validarinterno', sortable: true },
+        { name: 'publicidad', label: 'Publicidad', field: 'publicidad', sortable: true },
+        { name: 'bannerpublicidad', label: 'Diseño publicidad', field: 'bannerpublicidad', sortable: true },
         { name: 'estatus', label: 'Estatus', field: 'estatus' },
         { name: 'edit', label: 'Editar', field: 'edit' }
       ],
@@ -494,7 +516,13 @@ export default {
       return `${ENDPOINT_PATH_V2}imagen/uploadimg/${this.rifUpd}`
     },
     openLogo (row) {
+      this.tituloCargarImagen = 'Logo'
       this.rifUpd = row.rif
+      this.modallogo = true
+    },
+    openPublicidad (row) {
+      this.tituloCargarImagen = 'Publicidad'
+      this.rifUpd = row.rif + '_publi01'
       this.modallogo = true
     },
     closeLogoUploader: function (info) {
@@ -526,15 +554,18 @@ export default {
       this.modalactualizarestatus = true
     },
     btnOpenUpd (row) {
+      const codecomercial = this.optionscodes.filter(obj => obj.codigocomercial === row.codigocomercial)
       this.idUpd = row.cod
       this.rif = row.rif
       this.razonsocial = row.razonsocial
       this.direccion = row.direccion
       this.email = row.email
+      this.modelcodes = codecomercial[0]
       this.telefono = row.telefono
       this.cantidad = row.asignados
       this.sitioweb = row.sitioweb
       this.shape = row.enviocorreo === 'Si' ? '1' : '0'
+      this.shapepublicidad = row.publicidad === 'Si' ? '1' : '0'
       this.shapeinterno = row.validarinterno === 'Sin validar' ? '0' : '2'
       this.modalactualizar = true
     },
@@ -603,7 +634,7 @@ export default {
         enviocorreo: this.shape,
         validarinterno: this.shapeinterno
       }
-      console.log(data)
+      // console.log(data)
       axios.post(ENDPOINT_PATH_V2 + 'sede', data).then(async response => {
         this.modalcrear = false
         console.log(response.data)
@@ -636,7 +667,8 @@ export default {
         sitioweb: this.sitioweb,
         enviocorreo: this.shape,
         idcodigocomercial: Number(this.modelcodes.cod),
-        validarinterno: this.shapeinterno
+        validarinterno: this.shapeinterno,
+        publicidad: this.shapepublicidad
       }
       axios.put(ENDPOINT_PATH_V2 + 'sede/' + this.idUpd, data).then(async response => {
         this.modalactualizar = false
@@ -666,8 +698,9 @@ export default {
           obj.cod = datos[i].id
           obj.rif = datos[i].rif
           obj.logo = ENDPOINT_PATH_V2 + 'imagen/' + datos[i].rif + '.png'
-          console.log(obj.logo)
+          obj.bannerpublicidad = ENDPOINT_PATH_V2 + 'imagen/' + datos[i].rif + '_publi01.png'
           obj.width = 40
+          obj.widthbanner = 140
           obj.razonsocial = datos[i].razonsocial
           obj.direccion = datos[i].direccion
           obj.email = datos[i].email
@@ -678,6 +711,7 @@ export default {
           obj.tokenservicios = datos[i].tokenservicios
           obj.estatus = datos[i].estatus === '1' ? 'Activo' : 'Inactivo'
           obj.enviocorreo = datos[i].enviocorreo === '1' ? 'Si' : 'No'
+          obj.publicidad = datos[i].publicidad === '1' ? 'Si' : 'No'
           obj.validarinterno = datos[i].validarinterno === '1' ? 'Sin repetidos' : datos[i].validarinterno === '2' ? 'Validar consecutivo' : 'Sin validar'
           obj.asignados = datos[i].asignados || ''
           this.rows.push(obj)
@@ -694,6 +728,7 @@ export default {
         for (const i in datos) {
           const obj = {}
           obj.cod = datos[i].id
+          obj.codigocomercial = datos[i].codigocomercial
           obj.name = datos[i].codigocomercial + '-' + datos[i].descripcion
           this.optionscodes.push(obj)
         }

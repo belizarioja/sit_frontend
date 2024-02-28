@@ -24,50 +24,92 @@
           <div class="row">
             <div class="col">
               <q-card class="my-card tarjetaMain">
-                <q-card-section class="dash_card_main" style="padding-top: 40px;">
-                  <div v-if="!idserviciosmasivo" style="display: flex;margin-bottom: 30px;">
-                    <q-icon name="fact_check" class="text-positive" style="font-size: xx-large;"/>
-                    <span class="itemsCardMain">
-                      Tiene <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalclientes }}</span> emisores con <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalAsignados }}</span> documentos asignados.
-                    </span>
-                  </div>
-                  <div style="display: flex;margin-bottom: 30px;">
-                    <q-icon name="format_list_bulleted" class="text-positive" style="font-size: xx-large;"/>
-                    <span class="itemsCardMain">
-                      Se han procesado <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalUtilizados }}</span> documentos y quedan <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalDisponible }}</span> disponibles.
-                    </span>
-                  </div>
-                  <div v-if="!estatusasignacion" style="display: flex;margin-bottom: 30px;">
-                    <q-icon name="warning" class="text-positive" style="font-size: xx-large;"/>
-                    <span v-if="!idserviciosmasivo" class="itemsCardMain">
-                      Existe(n) <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ clientesTerminando }}</span> emisores con cantidad crítica de asignación de lotes.
-                    </span>
-                    <span v-else class="itemsCardMain">
-                      Presenta una cantidad crítica en la asignación actual.
-                    </span>
-                  </div>
-                  <div v-else style="display: flex;margin-bottom: 30px;">
-                    <q-icon name="done_all" class="text-positive" style="font-size: xx-large;"/>
-                    <span v-if="!idserviciosmasivo" class="itemsCardMain">
-                      Todos los clientes emisores sin problemas de asignación.
-                    </span>
-                    <span v-else class="itemsCardMain">
-                      Tiene una cantidad aceptable en la asignación actual.
-                    </span>
-                  </div>
-                  <div v-if="idserviciosmasivo" style="display: flex;margin-bottom: 30px;">
-                    <q-icon name="rule" class="text-positive" style="font-size: xx-large;"/>
-                    <span class="itemsCardMain">
-                      Se usaron <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ totalAnulados }}</span> entre Anulados y Notas de Créditos.
-                    </span>
-                  </div>
+                <q-card-section horizontal>
+                  <q-card-section class="dash_card_main" style="width: 250px;">
+                    <div v-if="!idserviciosmasivo" style="display: flex;margin-bottom: 30px;">
+                      <q-icon name="people_alt" class="text-primary" style="font-size: 50px;"/>
+                      <div style="display: grid; margin-left: 10px;">
+                        <span class="dash_welcome_count">
+                          <span class="text-primary" style="font-weight: bold;padding: 3px;">{{ totalclientes }}</span>
+                        </span>
+                        <span style="margin-top: -8px; margin-left: 4px;">
+                          Clientes emisores
+                        </span>
+                      </div>
+                    </div>
+                    <div style="display: flex;margin-bottom: 30px;">
+                      <q-icon name="verified" class="text-positive" style="font-size: 50px;"/>
+                      <div style="display: grid; margin-left: 10px;">
+                        <span class="dash_welcome_count">
+                          <span class="text-positive" style="font-weight: bold;padding: 3px;">{{ totalUtilizados }}</span>
+                        </span>
+                        <span style="margin-top: -8px; margin-left: 4px;">
+                          Procesados
+                        </span>
+                      </div>
+                    </div>
+                    <div style="display: flex;margin-bottom: 30px;">
+                      <q-icon name="assignment" class="text-info" style="font-size: 50px;"/>
+                      <div style="display: grid; margin-left: 10px;">
+                        <span class="dash_welcome_count">
+                          <span class="text-info" style="font-weight: bold;padding: 3px;">{{ totalDisponible }}</span>
+                        </span>
+                        <span style="margin-top: -8px; margin-left: 4px;">
+                          Disponibles
+                        </span>
+                      </div>
+                    </div>
+                    <!-- <div v-if="!estatusasignacion" style="display: flex;margin-bottom: 30px;">
+                      <q-icon name="warning" class="text-positive" style="font-size: xx-large;"/>
+                      <span v-if="!idserviciosmasivo" class="itemsCardMain">
+                        Existe(n) <span class="text-secondary" style="font-weight: bold;padding: 3px;">{{ clientesTerminando }}</span> emisores con cantidad crítica de asignación de lotes.
+                      </span>
+                      <span v-else class="itemsCardMain">
+                        Presenta una cantidad crítica en la asignación actual.
+                      </span>
+                    </div>
+                    <div v-else style="display: flex;margin-bottom: 30px;">
+                      <q-icon name="done_all" class="text-positive" style="font-size: 50px;"/>
+                      <div style="display: grid; margin-left: 10px;">
+                        <span class="dash_welcome_count">
+                          <span v-if="!idserviciosmasivo" class="text-secondary" style="font-weight: bold;padding: 3px;">0</span>
+                          <span v-else class="text-secondary" style="font-weight: bold;padding: 3px;">Bien</span>
+                        </span>
+                        <span v-if="!idserviciosmasivo" style="margin-top: -8px;">
+                          Total clientes con alerta
+                        </span>
+                        <span v-else style="margin-top: -8px;">
+                          Estatus asignación
+                        </span>
+                      </div>
+                    </div> -->
+                    <div v-if="idserviciosmasivo" style="display: flex;margin-bottom: 30px;">
+                      <q-icon name="folder_delete" class="text-negative" style="font-size: 50px;"/>
+                      <div style="display: grid; margin-left: 10px;">
+                        <span class="dash_welcome_count">
+                          <span class="text-negative" style="font-weight: bold;padding: 3px;">{{ totalAnulados }}</span>
+                        </span>
+                        <span style="margin-top: -8px; margin-left: 4px;">
+                          Anulados
+                        </span>
+                      </div>
+                    </div>
+                  </q-card-section>
+                  <q-separator vertical style="height: 260px;"/>
+                  <q-card-section>
+                    <div style="display: grid;">
+                      <radial-asignados ref="radialasignados" style="text-align: center; margin-right: 20px;margin-top: -50px;" />
+                      <div class="dash_asignados_main" style="text-align: center;margin-right: 20px;margin-top: 30px;">Total asignados</div>
+                      <div class="dash_tipos_second" style="text-align: center;margin-right: 20px;">{{ totalAsignados }}</div>
+                    </div>
+                  </q-card-section>
                 </q-card-section>
               </q-card>
             </div>
           </div>
       </div>
       <div class="col-7">
-        <div style="padding: 5px;margin-left: 40px;width: 50%;height: 48px;">
+        <div style="padding: 5px;margin-left: 40px;width: 50%;height:48px;">
           <q-select
             v-if="co_rol === '1' || co_rol === '2'"
             label="Buscar por Nombre o RIF del Emisor"
@@ -89,7 +131,7 @@
             @filter="searchEmisor"
           />
         </div>
-        <q-card style="margin: 10px 50px;">
+        <q-card style="margin: 40px 40px 0 60px;">
           <q-card-section >
             <bar-chart ref="barmeses" />
           </q-card-section>
@@ -97,16 +139,18 @@
       </div>
     </div>
     <div class="row">
-      <q-card class="col-5" style="margin: 15px">
+      <q-card class="col-5" style="margin: 20px">
         <q-card-section >
           <q-list>
             <q-item>
               <q-item-section>
                 <div style="margin: 5px;border: solid 1px #ccc;border-radius: 5px;padding: 12px;position: relative;">
                   <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Filtrado por:</span>
-                  <span class="filtros">Desde: {{ dateFrom }}</span>
-                  <span class="filtros">Hasta: {{ dateTo }}</span>
-                  <q-icon name="date_range" style="color: #0999ff;font-size: x-large;cursor: pointer;" @click="openFechas"/>
+                  <div style="display: flex; justify-content: space-around; align-items: center;">
+                    <span class="filtros">Desde: {{ dateFrom }}</span>
+                    <span class="filtros">Hasta: {{ dateTo }}</span>
+                    <q-icon name="date_range" style="color: #0999ff;font-size: x-large;cursor: pointer;" @click="openFechas"/>
+                  </div>
                 </div>
               </q-item-section>
             </q-item>
@@ -327,6 +371,7 @@ import RadialChart2 from '../components/dashboard/tiposfactura/RadialBarChart2.v
 import RadialChart3 from '../components/dashboard/tiposfactura/RadialBarChart3.vue'
 import RadialChart4 from '../components/dashboard/tiposfactura/RadialBarChart4.vue'
 import RadialChart5 from '../components/dashboard/tiposfactura/RadialBarChart5.vue'
+import RadialAsignados from '../components/dashboard/asignados/RadialAsignados.vue'
 
 import { Notify } from 'quasar'
 import axios from 'axios'
@@ -343,6 +388,7 @@ export default defineComponent({
     RadialChart3,
     RadialChart4,
     RadialChart5,
+    RadialAsignados,
     BarChart
   },
   setup () {
@@ -455,7 +501,7 @@ export default defineComponent({
       }
       axios.post(ENDPOINT_PATH_V2 + 'reporte/ultimasemana', body).then(async response => {
         const datos = response.data.data
-        console.log(datos)
+        // console.log(datos)
         this.rowssemana = []
         for (const i in datos) {
           const obj = {}
@@ -554,6 +600,7 @@ export default defineComponent({
       this.crearbitacora(this.dateFrom, this.dateTo, 2)
     },
     getLotes () {
+      this.$refs.radialasignados.createData(this.idserviciosmasivo)
       const body = {
         id: this.idserviciosmasivo
       }
@@ -610,7 +657,6 @@ export default defineComponent({
       this.getUltimaSemana()
       this.getLotes()
       this.$refs.barmeses.createData(this.idserviciosmasivo)
-      // this.$refs.donutipos.createData(this.idserviciosmasivo, this.dateFrom, this.dateTo)
       this.$refs.radialtipos1.createData(this.idserviciosmasivo, this.dateFrom, this.dateTo)
       this.$refs.radialtipos2.createData(this.idserviciosmasivo, this.dateFrom, this.dateTo)
       this.$refs.radialtipos3.createData(this.idserviciosmasivo, this.dateFrom, this.dateTo)
@@ -643,7 +689,7 @@ export default defineComponent({
   },
   watch: {
     fechacustom: function (val) {
-      console.log(val)
+      // console.log(val)
       switch (val) {
         case '1':
           this.dateFrom = moment().format('YYYY-MM-DD')
@@ -680,13 +726,13 @@ export default defineComponent({
       .then(({ ip }) => {
         this.term = ip
         this.listarsedes()
-        console.log(this.co_rol)
+        // console.log(this.co_rol)
         this.idserviciosmasivo = this.co_rol === '3' ? this.co_sede : undefined
         this.serviciosmasivo = this.co_rol === '3' ? this.tx_sede : undefined
 
-        console.log('Mounted')
-        console.log(this.tx_sede_seleted)
-        console.log(this.co_sede_seleted)
+        // console.log('Mounted')
+        // console.log(this.tx_sede_seleted)
+        // console.log(this.co_sede_seleted)
         if (this.co_sede_seleted) {
           const obj = {}
           obj.cod = this.co_sede_seleted
@@ -698,7 +744,7 @@ export default defineComponent({
           this.modelsede = obj
           this.disabledSede = true
         }
-        console.log(this.serviciosmasivo)
+        // console.log(this.serviciosmasivo)
         this.listarReportes()
       })
   }
@@ -717,8 +763,13 @@ export default defineComponent({
   background: #f2f2f2;
 }
 .dash_welcome_long {
-  font-size: 24px;
+  font-size: 23px;
   margin: 20px 0px;
+  color: #65778D;
+  font-weight: bold;
+}
+.dash_welcome_count {
+  font-size: 24px;
   color: #65778D;
   font-weight: bold;
 }
@@ -748,10 +799,15 @@ export default defineComponent({
   color: #38daae;
   font-weight: bold;
 }
+.dash_asignados_main {
+  font-size: 20px;
+  color: #775dd0;
+  font-weight: bold;
+}
 .tarjetaMain {
   margin: -8px 0 0 20px;
   width: 100%;
-  height: 230px;
+  height: 260px;
   background: radial-gradient(circle, rgb(250 250 250) 0%, rgb(250 250 250) 100%);
 }
 .dash_tipos_second {

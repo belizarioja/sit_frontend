@@ -1,16 +1,15 @@
 <template>
-  <div id="radialbarchart4">
+  <div id="radialasignados">
   </div>
 </template>
 
 <script>
 import ApexCharts from 'apexcharts'
 import axios from 'axios'
-import moment from 'moment'
 const config = require('../../../../src/config/endpoints.js')
 const ENDPOINT_PATH_V2 = config.endpoint_path_v2
 export default {
-  name: 'RadialBarChart4',
+  name: 'RadialBarChart5',
   data () {
     return {
       options: {
@@ -22,7 +21,7 @@ export default {
           },
           offsetY: 20
         },
-        colors: ['#ff4560'],
+        colors: ['#775dd0'],
         plotOptions: {
           radialBar: {
             startAngle: -135,
@@ -31,12 +30,12 @@ export default {
               name: {
                 fontSize: '12px',
                 color: '#98A7BA',
-                offsetY: 50
+                offsetY: 5
               },
               value: {
-                offsetY: 20,
+                offsetY: 10,
                 fontSize: '12px',
-                color: '#ff4560',
+                color: '#775dd0',
                 formatter: function (val) {
                   return val + '%'
                 }
@@ -44,7 +43,7 @@ export default {
             }
           }
         },
-        labels: ['Orden de entrega'],
+        labels: ['Relación de uso'],
         series: [],
         theme: {
           monochrome: {
@@ -58,21 +57,27 @@ export default {
     }
   },
   methods: {
-    createData (id, dateFrom, dateTo) {
+    createData (id) {
       const body = {
-        idserviciosmasivo: id,
-        desde: moment(dateFrom, 'YYYY/MM/DD').format('YYYY-MM-DD'),
-        hasta: moment(dateTo, 'YYYY/MM/DD').format('YYYY-MM-DD')
+        id
       }
-      axios.post(ENDPOINT_PATH_V2 + 'reporte/totaldocumentos', body).then(async response => {
+      axios.post(ENDPOINT_PATH_V2 + 'sede/lotes', body).then(async response => {
         const datos = response.data.data
         const datagrafica = []
-        const porcentaje = Number(datos[3].total) > 0 ? (datos[3].totaldoc / datos[3].total) : 0
-        datagrafica.push(Number(porcentaje * 100).toFixed(2))
+        this.totalAsignados = 0
+        this.totalUtilizados = 0
+        this.porcUsados = true
+        for (const i in datos) {
+          this.totalAsignados += Number(datos[i].cantidad)
+          this.totalUtilizados += Number(datos[i].utilizado)
+        }
+        this.porcUsados = this.totalUtilizados / this.totalAsignados
+        // console.log(Number(this.porcUsados * 100).toFixed(2))
+        datagrafica.push(Number(this.porcUsados * 100).toFixed(2))
         this.options.series = datagrafica
-        this.options.chart.height = 130
-        this.options.chart.width = 130
-        new ApexCharts(document.querySelector('#radialbarchart4'), this.options).render()
+        this.options.chart.height = 250
+        this.options.chart.width = 200
+        new ApexCharts(document.querySelector('#radialasignados'), this.options).render()
       }).catch(error => {
         console.log('Problemas al listar Documentos ' + error)
       })

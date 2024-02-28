@@ -119,9 +119,6 @@ export default {
 </script>
 
 <style>
-.q-card {
-  width: auto;
-}
 .fondoimg {
     background: url("../assets/fondo_home.jpg") no-repeat center center fixed;
     -webkit-background-size: cover;
