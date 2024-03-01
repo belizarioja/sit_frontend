@@ -125,11 +125,17 @@
             <div class="row">
               <q-input
                 dense
-                class="col q-pa-sm"
+                class="col-6 q-pa-sm"
                 v-model="email"
                 label="Email"
                 hint="Formato correo@mail.com"
                 :rules="[ val => val.length > 0 || 'Ingresar EMAIL' ]"
+              />
+              <q-input
+                dense
+                class="col-6 q-pa-sm"
+                v-model="emailbcc"
+                label="Email Cco"
               />
             </div>
             <div class="row">
@@ -247,7 +253,7 @@
     <q-dialog v-model="modalactualizar" persistent>
       <q-card style="width: 560px">
         <q-card-section>
-          <div class="text-h6">Cliente Emisor</div>
+          <div class="text-h6">Actualizar cliente emisor</div>
         </q-card-section>
         <q-card-section class="q-pt-none">
           <q-form @submit.prevent="actualizar" class="q-gutter-md">
@@ -281,10 +287,16 @@
             <div class="row">
               <q-input
                 dense
-                class="col q-pa-sm"
+                class="col-6 q-pa-sm"
                 v-model="email"
-                label="Email"
-                :rules="[ val => val.length > 0 || 'Ingresar EMAIL' ]"
+                label="Email principal"
+                :rules="[ val => val.length > 0 || 'Ingresar EMAIL Comercial' ]"
+              />
+              <q-input
+                dense
+                class="col-6 q-pa-sm"
+                v-model="emailbcc"
+                label="Email Cco"
               />
             </div>
             <div class="row">
@@ -310,6 +322,7 @@
                 option-value="cod"
                 class="col-12 q-pa-sm"
                 label="Código comercial"
+                :rules="[myRule]"
               />
               <div class="col-4 q-pa-sm" style="text-align: center;margin-top: 20px;">
                 <div>Envío de correo</div>
@@ -361,6 +374,28 @@
          </q-card-section>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="modalconfirmar" persistent>
+      <q-card >
+        <q-card-section>
+          <div class="text-h6" style="text-align: center;">En Horabuena!</div>
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+          <img src="confirmar.png" alt="Exportar" style="max-width: 285px;">
+          <div>
+            ¡Cliente emisor {{ messageConfirmar }} con éxito!
+           </div>
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+           <div style="display: flex; justify-content: space-evenly;">
+             <q-btn
+              color="secondary"
+              label="Aceptar"
+              v-close-popup
+             />
+           </div>
+         </q-card-section>
+      </q-card>
+    </q-dialog>
     <q-dialog v-model="modallogo" persistent>
       <q-card >
         <q-card-section>
@@ -398,6 +433,7 @@ export default {
     return {
       modalcrear: ref(false),
       modalactualizar: ref(false),
+      modalconfirmar: ref(false),
       modalactualizarestatus: ref(false),
       modallogo: ref(false),
       viewtoken: ref(false),
@@ -408,6 +444,7 @@ export default {
       riftitulo: ref(''),
       razonsocialtitulo: ref(''),
       email: ref(''),
+      emailbcc: ref(''),
       direccion: ref(''),
       telefono: ref(''),
       cantidad: ref(''),
@@ -560,6 +597,7 @@ export default {
       this.razonsocial = row.razonsocial
       this.direccion = row.direccion
       this.email = row.email
+      this.emailbcc = row.emailbcc
       this.modelcodes = codecomercial[0]
       this.telefono = row.telefono
       this.cantidad = row.asignados
@@ -573,7 +611,7 @@ export default {
       this.razonsocialtitulo = row.razonsocial
       this.riftitulo = row.rif
       axios.get(ENDPOINT_PATH_V2 + 'sede/' + row.cod).then(async response => {
-        console.log(response.data)
+        // console.log(response.data)
         const datos = response.data
         this.rowsdetails = []
         this.rowslotes = []
@@ -599,11 +637,11 @@ export default {
       this.viewdetails = true
     },
     limpiar () {
-      console.log('Limpiando')
       this.rif = ''
       this.razonsocial = ''
       this.direccion = ''
       this.email = ''
+      this.emailbcc = ''
       this.telefono = ''
       this.sitioweb = ''
     },
@@ -628,6 +666,7 @@ export default {
         razonsocial: this.razonsocial,
         direccion: this.direccion,
         email: this.email,
+        emailbcc: this.emailbcc,
         telefono: this.telefono,
         asignados: 0,
         sitioweb: this.sitioweb,
@@ -636,8 +675,9 @@ export default {
       }
       // console.log(data)
       axios.post(ENDPOINT_PATH_V2 + 'sede', data).then(async response => {
+        this.messageConfirmar = 'creado'
         this.modalcrear = false
-        console.log(response.data)
+        this.modalconfirmar = true
         this.limpiar()
         this.listar()
       })
@@ -658,11 +698,16 @@ export default {
       if (this.telefono.length === 0) {
         return
       }
+      if (this.modelcodes === undefined) {
+        // console.log('Error this.modelcodes.cod')
+        return
+      }
       const data = {
         rif: this.rif,
         razonsocial: this.razonsocial,
         direccion: this.direccion,
         email: this.email,
+        emailbcc: this.emailbcc,
         telefono: this.telefono,
         sitioweb: this.sitioweb,
         enviocorreo: this.shape,
@@ -671,8 +716,10 @@ export default {
         publicidad: this.shapepublicidad
       }
       axios.put(ENDPOINT_PATH_V2 + 'sede/' + this.idUpd, data).then(async response => {
+        this.messageConfirmar = 'actualizado'
         this.modalactualizar = false
-        console.log(response.data)
+        this.modalconfirmar = true
+        // console.log(response.data)
         this.limpiar()
         this.listar()
       })
@@ -683,7 +730,7 @@ export default {
       }
       axios.put(ENDPOINT_PATH_V2 + 'sede/estatus/' + this.idUpd, data).then(async response => {
         this.modalactualizarestatus = false
-        console.log(response.data)
+        // console.log(response.data)
         this.listar()
       })
     },
@@ -704,6 +751,7 @@ export default {
           obj.razonsocial = datos[i].razonsocial
           obj.direccion = datos[i].direccion
           obj.email = datos[i].email
+          obj.emailbcc = datos[i].emailbcc
           obj.telefono = datos[i].telefono
           obj.sitioweb = datos[i].sitioweb
           obj.codigocomercial = datos[i].codigocomercial
@@ -732,10 +780,15 @@ export default {
           obj.name = datos[i].codigocomercial + '-' + datos[i].descripcion
           this.optionscodes.push(obj)
         }
-        console.log(this.optionscodes)
+        // console.log(this.optionscodes)
       }).catch(error => {
         Notify.create('Problemas al listar Codigos comerciales ' + error)
       })
+    },
+    myRule (val) {
+      if (val === undefined) {
+        return 'Seleccione CÓDIGO COMERCIAL'
+      }
     }
   },
   mounted () {
