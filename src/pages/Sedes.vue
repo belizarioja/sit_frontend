@@ -57,6 +57,13 @@
           </div>
         </q-td>
       </template>
+      <template v-slot:body-cell-plantilla="props">
+        <q-td :props="props">
+          <div class="text-center">
+            <q-btn color="primary" :label="props.row.plantilla" @click.stop="btnviewplantilla(props.row)"/>
+          </div>
+        </q-td>
+      </template>
       <template v-slot:body-cell-tokenservicios="props">
         <q-td :props="props">
           <div>
@@ -86,6 +93,7 @@
         </q-td>
       </template>
     </q-table>
+    <!-- MODAL PARA CREAR CLIENTE EMISOR -->
     <q-dialog v-model="modalcrear" persistent>
       <q-card style="min-width: 550px">
         <q-card-section>
@@ -177,6 +185,7 @@
           </q-card-section>
       </q-card>
     </q-dialog>
+    <!-- MODAL PARA VISUALIZAR TOKEN -->
     <q-dialog v-model="viewtoken" persistent>
       <q-card style="width: auto;">
         <q-card-section class="row items-center">
@@ -250,6 +259,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <!-- MODAL PARA DITAR CLIENTE EMISOR -->
     <q-dialog v-model="modalactualizar" persistent>
       <q-card style="width: 560px">
         <q-card-section>
@@ -352,6 +362,7 @@
           </q-card-section>
       </q-card>
     </q-dialog>
+    <!-- MODAL PARA GESTIONAR STATUS DEL CLIENTE EMISOR -->
     <q-dialog v-model="modalactualizarestatus" persistent>
       <q-card >
         <q-card-section>
@@ -380,7 +391,7 @@
           <div class="text-h6" style="text-align: center;">En Horabuena!</div>
         </q-card-section>
         <q-card-section class="q-pt-none">
-          <img src="confirmar.png" alt="Exportar" style="max-width: 285px;">
+          <img src="confirmar.png" alt="Actualizar" style="max-width: 285px;">
           <div>
             ¡Cliente emisor {{ messageConfirmar }} con éxito!
            </div>
@@ -396,6 +407,7 @@
          </q-card-section>
       </q-card>
     </q-dialog>
+    <!-- MODAL PARA GESTIONAR LOGO -->
     <q-dialog v-model="modallogo" persistent>
       <q-card >
         <q-card-section>
@@ -417,6 +429,38 @@
 
       </q-card>
     </q-dialog>
+    <!-- MODAL PARA GESTIONAR PLANTILLA PDF-->
+    <q-dialog v-model="modalplantillapdf" persistent>
+      <q-card >
+        <q-card-section>
+          <div class="text-h6" style="text-align: center;">Gestionar plantilla PDF</div>
+        </q-card-section>
+        <q-card-section class="q-pt-none flex">
+          <div style="margin: 10px;">
+            <img src="factura1.png" alt="" style="width: 200px;">
+            <div class="text-center">
+              <q-radio v-model="plantilla" checked-icon="task_alt" unchecked-icon="panorama_fish_eye" val="1" label="1" />
+            </div>
+          </div>
+          <div style="margin: 10px;">
+            <img src="factura2.png" alt="" style="width: 200px;">
+            <div class="text-center">
+              <q-radio v-model="plantilla" checked-icon="task_alt" unchecked-icon="panorama_fish_eye" val="2" label="2" />
+            </div>
+          </div>
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+           <div style="display: flex; justify-content: space-evenly;">
+             <q-btn color="negative" label="Cancelar" v-close-popup />
+             <q-btn
+              color="secondary"
+              label="Aceptar"
+              @click="actualizarPlantillapdf"
+             />
+           </div>
+         </q-card-section>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -431,8 +475,10 @@ const ENDPOINT_PATH_V2 = config.endpoint_path_v2
 export default {
   setup () {
     return {
+      plantilla: ref(1),
       modalcrear: ref(false),
       modalactualizar: ref(false),
+      modalplantillapdf: ref(false),
       modalconfirmar: ref(false),
       modalactualizarestatus: ref(false),
       modallogo: ref(false),
@@ -484,7 +530,7 @@ export default {
         { name: 'email', label: 'Correo electrónico', field: 'email', sortable: true },
         { name: 'telefono', label: 'Teléfono contacto', field: 'telefono', sortable: true },
         { name: 'codigocomercial', label: 'Código comercial', field: 'codigocomercial', sortable: true },
-        { name: 'plantilla', label: 'Plantilla', field: 'plantilla' },
+        { name: 'plantilla', label: 'Plantilla PDF', field: 'plantilla' },
         { name: 'tokenservicios', label: 'Token', field: 'tokenservicios', sortable: true },
         { name: 'numeracionactual', label: 'Numeración actual', field: 'numeracionactual', sortable: true },
         { name: 'enviocorreo', label: 'Envio correo', field: 'enviocorreo', sortable: true },
@@ -583,6 +629,12 @@ export default {
       this.riftitulo = row.rif
       this.tokenservicios = row.tokenservicios
       this.viewtoken = true
+    },
+    btnviewplantilla (row) {
+      this.plantilla = row.plantilla
+      this.idUpd = row.cod
+      this.rifUpd = row.rif
+      this.modalplantillapdf = true
     },
     btnOpenUpdEstatus (row) {
       this.idUpd = row.cod
@@ -724,6 +776,17 @@ export default {
         this.listar()
       })
     },
+    actualizarPlantillapdf () {
+      const data = {
+        plantilla: this.plantilla,
+        rif: this.rifUpd
+      }
+      axios.put(ENDPOINT_PATH_V2 + 'sede/plantilla/' + this.idUpd, data).then(async response => {
+        this.modalplantillapdf = false
+        // console.log(response.data)
+        this.listar()
+      })
+    },
     actualizarEstatus () {
       const data = {
         estatus: this.estatusAct === 'Activo' ? 0 : 1
@@ -755,7 +818,7 @@ export default {
           obj.telefono = datos[i].telefono
           obj.sitioweb = datos[i].sitioweb
           obj.codigocomercial = datos[i].codigocomercial
-          obj.plantilla = datos[i].banner
+          obj.plantilla = datos[i].plantillapdf
           obj.tokenservicios = datos[i].tokenservicios
           obj.estatus = datos[i].estatus === '1' ? 'Activo' : 'Inactivo'
           obj.enviocorreo = datos[i].enviocorreo === '1' ? 'Si' : 'No'
