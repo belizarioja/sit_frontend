@@ -859,14 +859,8 @@ export default {
           label: 'Nombre Cliente',
           field: 'nombrecliente'
         },
-        { name: 'exento', label: 'Exento', field: 'exento' },
         { name: 'totalimpuestos', label: 'Impuestos', field: 'totalimpuestos' },
-        { name: 'detail', label: 'Detalles', align: 'center' },
-        {
-          name: 'enviarcorreo',
-          label: 'Envío de correo',
-          field: 'enviarcorreo'
-        }
+        { name: 'detail', label: 'Detalles', align: 'center' }
       ],
       columns3: [
         {
@@ -891,12 +885,7 @@ export default {
           field: 'nombrecliente'
         },
         { name: 'totalimpuestos', label: 'Impuestos', field: 'totalimpuestos' },
-        { name: 'detail', label: 'Detalles', align: 'center' },
-        {
-          name: 'enviarcorreo',
-          label: 'Envío de correo',
-          field: 'enviarcorreo'
-        }
+        { name: 'detail', label: 'Detalles', align: 'center' }
       ],
       rows: [],
       columnsDetallesDoc: [

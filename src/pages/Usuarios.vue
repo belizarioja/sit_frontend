@@ -3,7 +3,7 @@
     <div class="row" style="margin-bottom: 40px;justify-content: space-between;">
       <span class="text-secondary" style="margin: 0 20px; font-size: 25px; font-weight: bolder;">Usuarios</span>
       <q-btn
-         v-if="co_rol === '1'"
+         v-if="co_rol === '1' || co_rol === '2'"
          color="secondary"
          :disabled="btndisable"
          label="Crear usuario"
@@ -36,6 +36,21 @@
         <q-td :props="props">
           <div>
             <q-btn :disable="co_rol !== '1'" icon="key" @click.stop="btnOpenUpdClave(props.row)" dense flat/>
+          </div>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-email="props">
+        <q-td :props="props">
+          <div v-if="co_rol === '1'">
+            <q-badge v-if="props.row.emailbcc" color="blue" @click.stop="btnOpenUpdEmail(props.row)" style="padding: 5px 10px; cursor: pointer;">
+              {{props.row.emailbcc}}
+            </q-badge>
+            <q-badge v-if="(!props.row.emailbcc && props.row.idrol !== '1' && props.row.idrol !== '5')" color="green" @click.stop="btnOpenUpdEmail(props.row)" style="padding: 5px 10px; cursor: pointer;">
+              Agregar email
+            </q-badge>
+          </div>
+          <div v-else>
+            {{props.row.emailbcc}}
           </div>
         </q-td>
       </template>
@@ -177,6 +192,32 @@
          </q-card-section>
       </q-card>
     </q-dialog>
+
+    <q-dialog v-model="modalactualizaremail" persistent>
+      <q-card  style="width: 300px;">
+        <q-card-section>
+          <div class="text-h6" style="text-align: center;">Actualizar Email</div>
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+          <q-input
+            dense
+            v-model="nuevoemail"
+            label="Ingrese nuevo email"
+            autofocus
+          />
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+           <div style="display: flex; justify-content: space-evenly;margin-top: 20px;">
+             <q-btn color="negative" label="Cancelar" v-close-popup />
+             <q-btn
+              color="secondary"
+              label="Aceptar"
+              @click="cambiaremail"
+             />
+           </div>
+         </q-card-section>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
@@ -198,9 +239,11 @@ export default {
       viewdetails: ref(false),
       modalactualizarestatus: ref(false),
       modalactualizarclave: ref(false),
+      modalactualizaremail: ref(false),
       usuario: ref(''),
       clave: ref(''),
       nuevaclave: ref(''),
+      nuevoemail: ref(''),
       nombre: ref(''),
       filter: ref(''),
       loading: ref(false),
@@ -227,6 +270,7 @@ export default {
         { name: 'usuario', align: 'left', label: 'Usuario', field: 'usuario', sortable: true },
         // { name: 'clave', align: 'center', label: 'Clave', field: 'clave', sortable: true },
         { name: 'rol', label: 'Rol', field: 'rol', sortable: true },
+        { name: 'email', label: 'Email', field: 'emailbcc', sortable: true },
         { name: 'bitacora', label: 'Bitácora' },
         { name: 'clave', label: 'Clave' },
         { name: 'estatus', label: 'Estatus', field: 'estatus' }
@@ -249,6 +293,10 @@ export default {
     }
   },
   methods: {
+    btnOpenUpdEmail (row) {
+      this.idUpd = row.id
+      this.modalactualizaremail = true
+    },
     btnOpenUpdEstatus (row) {
       this.idUpd = row.id
       this.messageActualizar = row.estatus === 'Activo' ? 'desactivar' : 'activar'
@@ -313,6 +361,20 @@ export default {
         Notify.create('Calve cambiada en forma correcta')
       })
     },
+    cambiaremail () {
+      if (this.nuevoemail.length < 4) {
+        Notify.create('Debe ingresar nuevo email ')
+        return
+      }
+      const body = {
+        nuevoemail: this.nuevoemail
+      }
+      axios.put(ENDPOINT_PATH_V2 + 'usuario/cambioemail/' + this.idUpd, body).then(async response => {
+        this.modalactualizaremail = false
+        this.listarusuarios()
+        Notify.create('Email cambiado en forma correcta')
+      })
+    },
     crearusuario () {
       this.modalcrear = false
       // console.log(this.usuario)
@@ -347,14 +409,16 @@ export default {
           obj.usuario = datos[i].usuario
           obj.clave = datos[i].clave
           obj.rol = datos[i].rol
+          obj.idrol = datos[i].idrol
           obj.feultacceso = datos[i].feultacceso
+          obj.emailbcc = datos[i].emailbcc
           obj.estatus = datos[i].estatus === '1' ? 'Activo' : 'Inactivo'
-          if (datos[i].idrol === '1' || datos[i].idrol === '3') {
-            if (this.co_rol === '1') {
+          if (this.co_rol === '1') {
+            this.rows.push(obj)
+          } else {
+            if (this.co_rol === '2' && (datos[i].idrol === '2' || datos[i].idrol === '4')) {
               this.rows.push(obj)
             }
-          } else {
-            this.rows.push(obj)
           }
         }
       }).catch(error => {
@@ -369,7 +433,7 @@ export default {
           const obj = {}
           obj.cod = datos[i].id
           obj.name = datos[i].rol
-          if (datos[i].id === '1' || datos[i].id === '3') {
+          if (datos[i].id === '1' || datos[i].id === '3' || datos[i].id === '5') {
             if (this.co_rol === '1') {
               this.optionsrol.push(obj)
             }

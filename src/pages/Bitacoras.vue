@@ -189,7 +189,14 @@ export default {
           obj.name = datos[i].nombre
           obj.usuario = datos[i].usuario
           obj.nameuser = datos[i].usuario + ' ' + datos[i].nombre
-          this.optionsusuarios.push(obj)
+          if (this.co_rol === '1') {
+            this.optionsusuarios.push(obj)
+          } else {
+            // console.log(this.co_rol, datos[i].idrol)
+            if (this.co_rol === '2' && (datos[i].idrol === '2' || datos[i].idrol === '4')) {
+              this.optionsusuarios.push(obj)
+            }
+          }
           this.usuarios = this.optionsusuarios
         }
       }).catch(error => {
@@ -233,7 +240,7 @@ export default {
       }
       axios.post(ENDPOINT_PATH_V2 + 'bitacora/listar', body).then(async response => {
         const datos = response.data.data
-        console.log(datos)
+        // console.log(datos)
         this.rowstodos = []
         let cont = 0
         for (const i in datos.reverse()) {
@@ -248,7 +255,14 @@ export default {
           obj.ip = datos[i].ip
           obj.observacion = datos[i].observacion
           obj.fecha = moment(datos[i].fecha).format('DD/MM/YYYY HH:mm:ss')
-          this.rowstodos.push(obj)
+          if (this.co_rol === '1') {
+            this.rowstodos.push(obj)
+          } else {
+            // console.log(this.co_rol, datos[i].idrol)
+            if (this.co_rol === '2' && (datos[i].idrol === '2' || datos[i].idrol === '4')) {
+              this.rowstodos.push(obj)
+            }
+          }
         }
       }).catch(error => {
         Notify.create('Problemas al listar Detalles bitacora ' + error)
@@ -257,11 +271,11 @@ export default {
   },
   watch: {
     dateFrom: function (val) {
-      console.log(val)
+      // console.log(val)
       this.listar()
     },
     dateTo: function (val) {
-      console.log(val)
+      // console.log(val)
       this.listar()
     }
   },

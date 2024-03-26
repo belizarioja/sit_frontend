@@ -3,8 +3,56 @@
     <q-layout view="lHh Lpr lff" container style="min-height: 100vh;"  class="shadow-2 rounded-borders">
       <q-header class="bg-primary">
         <q-toolbar>
-          <q-toolbar-title>Smart App Web</q-toolbar-title>
           <q-btn flat @click="drawer = !drawer" round dense icon="menu" />
+          <q-toolbar-title>Smart App Web</q-toolbar-title>
+          <q-btn-dropdown
+            class="glossy"
+            color="secondary"
+            :label="tx_nombre"
+          >
+            <div class="row no-wrap q-pa-md" style="color: #65778D;">
+              <div class="column">
+                <div class="text-h6 q-mb-md" style="font-weight: bold;">Configuración de cuenta</div>
+                <div v-if="tx_sede" style="margin: 5px 10px;">
+                  <q-icon name="store" style="font-size: 20px;" />
+                  <span style="margin: 10px;">Emisor:</span>
+                  <span>{{ tx_sede }}</span>
+                </div>
+                <div style="margin: 5px 10px;">
+                  <q-icon name="admin_panel_settings" style="font-size: 20px;" />
+                  <span style="margin: 10px;">Perfil:</span>
+                  <span>{{ tx_rol }}</span></div>
+                <div style="margin: 5px 10px;">
+                  <q-icon name="account_circle" style="font-size: 20px;" />
+                  <span style="margin: 10px;">Usuario:</span>
+                  <span>{{ tx_usuario }}</span>
+                </div>
+                <div v-if="tx_email" style="margin: 5px 10px;">
+                  <q-icon name="email" style="font-size: 20px;" />
+                  <span style="margin: 10px;">Email:</span>
+                  <span>{{ tx_email }}</span>
+                </div>
+              </div>
+
+              <q-separator vertical inset class="q-mx-lg" />
+
+              <div class="column items-center">
+                <q-avatar color="secondary" text-color="white" size="72px">
+                  {{ primeraletra(tx_nombre) }}
+                </q-avatar>
+
+                <div class="text-subtitle1 q-mt-md q-mb-xs">{{tx_nombre}}</div>
+
+                <q-btn
+                  color="negative"
+                  label="Cambiar contraseña"
+                  push
+                  size="sm"
+                  @click.stop="btnOpenUpdClave"
+                />
+              </div>
+            </div>
+          </q-btn-dropdown>
         </q-toolbar>
       </q-header>
 
@@ -145,12 +193,40 @@
         <q-btn fab icon="people_alt" color="primary" @click="sedeschange" />
       </q-page-sticky>
     </q-layout>
+    <q-dialog v-model="modalactualizarclave" persistent>
+      <q-card  style="width: 300px;">
+        <q-card-section>
+          <div class="text-h6" style="text-align: center;">Actualizar Clave</div>
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+          <q-input
+            dense
+            v-model="nuevaclave"
+            label="Ingrese nueva clave"
+            autofocus
+          />
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+           <div style="display: flex; justify-content: space-evenly;margin-top: 20px;">
+             <q-btn color="negative" label="Cancelar" v-close-popup />
+             <q-btn
+              color="secondary"
+              label="Aceptar"
+              @click="cambiarclave"
+             />
+           </div>
+         </q-card-section>
+      </q-card>
+    </q-dialog>
   </div>
 </template>
 
 <script>
 
 import { defineComponent, ref } from 'vue'
+import { Notify } from 'quasar'
+import axios from 'axios'
+import md5 from 'md5'
 const config = require('../config/endpoints.js')
 const ENDPOINT_PATH_V2 = config.endpoint_path_v2
 
@@ -159,6 +235,8 @@ export default defineComponent({
   setup () {
     return {
       drawer: ref(false),
+      nuevaclave: ref(''),
+      modalactualizarclave: ref(false),
       miniState: ref(true)
     }
   },
@@ -167,7 +245,9 @@ export default defineComponent({
       co_sede_seleted: sessionStorage.getItem('co_sede_seleted'),
       tx_sede_seleted: sessionStorage.getItem('tx_sede_seleted'),
       logo_sede: ENDPOINT_PATH_V2 + 'imagen/' + sessionStorage.getItem('rif_sede') + '.png',
-      tx_usuario: sessionStorage.getItem('rol_name'),
+      tx_usuario: sessionStorage.getItem('tx_usuario'),
+      co_usuario: sessionStorage.getItem('id_usuario'),
+      tx_email: sessionStorage.getItem('tx_email'),
       tx_nombre: sessionStorage.getItem('tx_nombre'),
       co_rol: sessionStorage.getItem('co_rol'),
       tx_rol: sessionStorage.getItem('tx_rol'),
@@ -175,6 +255,26 @@ export default defineComponent({
     }
   },
   methods: {
+    cambiarclave () {
+      if (this.nuevaclave.length < 4) {
+        Notify.create('Debe ingresar nueva clave correcta ')
+        return
+      }
+      const body = {
+        nuevaclave: md5(this.nuevaclave)
+      }
+      axios.put(ENDPOINT_PATH_V2 + 'usuario/cambioclave/' + this.idUpd, body).then(async response => {
+        this.modalactualizarclave = false
+        Notify.create('Calve cambiada en forma correcta')
+      })
+    },
+    primeraletra (item) {
+      return item ? item[0] : 'S'
+    },
+    btnOpenUpdClave () {
+      this.idUpd = this.co_usuario
+      this.modalactualizarclave = true
+    },
     listado () {
       this.$router.push('/dashboard')
     },

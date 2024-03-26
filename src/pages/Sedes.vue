@@ -29,13 +29,19 @@
         <q-td :props="props">
           <div>
             <img
+              v-if="co_rol === '1'"
               v-bind:src="props.row.logo"
               onerror="this.src='default.svg'"
               :width="props.row.width"
               style="cursor: pointer;"
               @click.stop="openLogo(props.row)"
             />
-            <!-- <q-btn icon="visibility" @click.stop="openLogo(props.row)" dense flat/>-->
+            <img
+              v-else
+              v-bind:src="props.row.logo"
+              onerror="this.src='default.svg'"
+              :width="props.row.width"
+            />
           </div>
         </q-td>
       </template>
@@ -48,11 +54,18 @@
         <q-td :props="props">
           <div>
             <img
+              v-if="co_rol === '1'"
               v-bind:src="props.row.bannerpublicidad"
               onerror="this.src='publicidad.png'"
               :width="props.row.widthbanner"
               style="cursor: pointer;"
               @click.stop="openPublicidad(props.row)"
+            />
+            <img
+              v-else
+              v-bind:src="props.row.bannerpublicidad"
+              onerror="this.src='publicidad.png'"
+              :width="props.row.widthbanner"
             />
           </div>
         </q-td>
@@ -67,7 +80,7 @@
       <template v-slot:body-cell-tokenservicios="props">
         <q-td :props="props">
           <div>
-            <q-btn icon="visibility" @click.stop="btnviewtoken(props.row)" dense flat/>
+            <q-btn icon="visibility" @click.stop="btnviewtoken(props.row)" dense flat :disable="co_rol !== '1'"/>
           </div>
         </q-td>
       </template>
@@ -81,14 +94,19 @@
       <template v-slot:body-cell-edit="props">
         <q-td :props="props">
           <div>
-            <q-btn color="secondary" icon="edit" @click.stop="btnOpenUpd(props.row)" dense/>
+            <q-btn color="secondary" icon="edit" @click.stop="btnOpenUpd(props.row)" dense :disable="co_rol !== '1'"/>
           </div>
         </q-td>
       </template>
       <template v-slot:body-cell-estatus="props">
         <q-td :props="props">
           <div>
-            <q-btn :color="props.row.estatus === 'Activo' ? 'primary' : 'negative'" :icon="props.row.estatus === 'Activo' ? 'toggle_on' : 'toggle_off' " @click.stop="btnOpenUpdEstatus(props.row)" dense/>
+            <q-btn
+             :color="props.row.estatus === 'Activo' ? 'primary' : 'negative'"
+             :icon="props.row.estatus === 'Activo' ? 'toggle_on' : 'toggle_off' "
+             @click.stop="btnOpenUpdEstatus(props.row)"
+             :disable="co_rol !== '1'"
+             dense/>
           </div>
         </q-td>
       </template>
@@ -201,6 +219,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+    <!-- MODAL PARA MOSTRAR NUMERACION ACTUAL DEL CLIENTE EMISOR -->
     <q-dialog v-model="viewdetails" persistent>
       <q-card style="width: fit-content; max-width: fit-content;">
         <q-card-section class="row items-center">
@@ -255,11 +274,11 @@
 
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn label="Aceptar" color="primary" v-close-popup />
+          <q-btn label="Cerrar" color="negative" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
-    <!-- MODAL PARA DITAR CLIENTE EMISOR -->
+    <!-- MODAL PARA EDITAR CLIENTE EMISOR -->
     <q-dialog v-model="modalactualizar" persistent>
       <q-card style="width: 560px">
         <q-card-section>
@@ -385,6 +404,7 @@
          </q-card-section>
       </q-card>
     </q-dialog>
+    <!-- MODAL PARA CONFIRMAR EDITAR CON EXITO -->
     <q-dialog v-model="modalconfirmar" persistent>
       <q-card >
         <q-card-section>
@@ -439,22 +459,23 @@
           <div style="margin: 10px;">
             <img src="factura1.png" alt="" style="width: 200px;">
             <div class="text-center">
-              <q-radio v-model="plantilla" checked-icon="task_alt" unchecked-icon="panorama_fish_eye" val="1" label="1" />
+              <q-radio v-model="plantilla" checked-icon="task_alt" unchecked-icon="panorama_fish_eye" val="1" label="1"  :disable="co_rol !== '1'" />
             </div>
           </div>
           <div style="margin: 10px;">
             <img src="factura2.png" alt="" style="width: 200px;">
             <div class="text-center">
-              <q-radio v-model="plantilla" checked-icon="task_alt" unchecked-icon="panorama_fish_eye" val="2" label="2" />
+              <q-radio v-model="plantilla" checked-icon="task_alt" unchecked-icon="panorama_fish_eye" val="2" label="2" :disable="co_rol !== '1'"/>
             </div>
           </div>
         </q-card-section>
         <q-card-section class="q-pt-none">
            <div style="display: flex; justify-content: space-evenly;">
-             <q-btn color="negative" label="Cancelar" v-close-popup />
+             <q-btn color="negative" label="Cerrar" v-close-popup />
              <q-btn
               color="secondary"
-              label="Aceptar"
+              label="Actualizar"
+              :disable="co_rol !== '1'"
               @click="actualizarPlantillapdf"
              />
            </div>
@@ -558,7 +579,8 @@ export default {
       rowslotes: [],
       optionscodes: [],
       modelcodes: [],
-      btndisable: true
+      btndisable: true,
+      co_sede_seleted: sessionStorage.getItem('co_sede_seleted')
     }
   },
   methods: {
@@ -825,7 +847,17 @@ export default {
           obj.publicidad = datos[i].publicidad === '1' ? 'Si' : 'No'
           obj.validarinterno = datos[i].validarinterno === '1' ? 'Sin repetidos' : datos[i].validarinterno === '2' ? 'Validar consecutivo' : 'Sin validar'
           obj.asignados = datos[i].asignados || ''
-          this.rows.push(obj)
+          if (this.co_rol === '2') {
+            if (this.co_sede_seleted) {
+              if (this.co_sede_seleted === datos[i].id) {
+                this.rows.push(obj)
+              }
+            } else {
+              this.rows.push(obj)
+            }
+          } else {
+            this.rows.push(obj)
+          }
         }
         console.log(this.rows)
       }).catch(error => {

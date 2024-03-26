@@ -1,6 +1,6 @@
 <template>
- <div class="my-font bg-primary window-height window-width row justify-center">
-  <div class="bg-white col-3">
+ <div class="my-font window-height window-width row justify-center">
+  <div class="my-fondo col-3">
     <div class="" style="text-align: center; padding: 20px;">
       <img src="logo_sit.jpg" style="width: 220px;" />
     </div>
@@ -53,7 +53,7 @@
       />
     </div>
   </div>
-  <div class="col-9">
+  <div class="col-9 fondocolorimg">
     <div
       class="row"
       style="justify-content: center;"
@@ -222,18 +222,18 @@ export default {
 }
 </script>
 <style>
-    .sedeNoSelected{
+  .sedeNoSelected{
     border: 2px solid #ddd;
-    }
-    .sedeSelected {
+  }
+  .sedeSelected {
     border: 2px solid #0999FF;
-    }
+  }
   .iconPaquete {
     background: white;
     text-align: center;
     width: 300px;
     height: 110px;
-    border-radius: 10px;
+    border-radius: 20px;
     margin: 9px;
     padding: 5px;
     float: left;
@@ -244,9 +244,9 @@ export default {
   .iconSeleccionado {
     text-align: center;
     align-items: center;
-    width: 130px;
-    height: 185px;
-    border-radius: 10px;
+    width: 150px;
+    height: 190px;
+    border-radius: 20px;
     border: 2px dashed #5a8f89;
     margin: 20px;
     padding: 5px;
@@ -280,7 +280,7 @@ export default {
     align-items: center;
   }
   .sedePaquete {
-    font-size: 11px;
+    font-size: 14px;
     font-weight: bolder;
     color: #f57b09;
   }
@@ -300,5 +300,12 @@ export default {
     display: grid;
     align-items: center;
     justify-content: center;
+  }
+.fondocolorimg {
+    background: url("../assets/fondo_emisores_up.png") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
   }
 </style>

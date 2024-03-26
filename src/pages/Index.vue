@@ -296,7 +296,15 @@
             row-key="razonsocial"
             hide-pagination
             :rows-per-page-options="[0]"
-          />
+          >
+            <template v-slot:body-cell-total="props">
+              <q-td :props="props">
+                <q-badge color="primary">
+                  {{ props.row.total }}
+                </q-badge>
+              </q-td>
+            </template>
+          </q-table>
         </q-card-section>
       </q-card>
     </div>
@@ -423,13 +431,14 @@ export default defineComponent({
           field: 'razonsocial',
           align: 'left'
         },
-        { name: 'hoy', label: 'Hoy', field: 'hoy' },
-        { name: 'hace1dia', label: moment().subtract(1, 'days').format('DD-MMM'), field: 'hace1dia' },
-        { name: 'hace2dia', label: moment().subtract(2, 'days').format('DD-MMM'), field: 'hace2dia' },
-        { name: 'hace3dia', label: moment().subtract(3, 'days').format('DD-MMM'), field: 'hace3dia' },
-        { name: 'hace4dia', label: moment().subtract(4, 'days').format('DD-MMM'), field: 'hace4dia' },
-        { name: 'hace5dia', label: moment().subtract(5, 'days').format('DD-MMM'), field: 'hace5dia' },
-        { name: 'hace6dia', label: moment().subtract(6, 'days').format('DD-MMM'), field: 'hace6dia' }
+        { name: 'lunes', label: 'Lun ' + moment(moment().subtract(moment().isoWeekday() - 1, 'days')).format('DD'), field: 'lunes' },
+        { name: 'martes', label: 'Mar ' + moment(moment().subtract(moment().isoWeekday() - 1, 'days')).add(1, 'days').format('DD'), field: 'martes' },
+        { name: 'miercoles', label: 'Mie ' + moment(moment().subtract(moment().isoWeekday() - 1, 'days')).add(2, 'days').format('DD'), field: 'miercoles' },
+        { name: 'jueves', label: 'Jue ' + moment(moment().subtract(moment().isoWeekday() - 1, 'days')).add(3, 'days').format('DD'), field: 'jueves' },
+        { name: 'viernes', label: 'Vie ' + moment(moment().subtract(moment().isoWeekday() - 1, 'days')).add(4, 'days').format('DD'), field: 'viernes' },
+        { name: 'sabado', label: 'Sab ' + moment(moment().subtract(moment().isoWeekday() - 1, 'days')).add(5, 'days').format('DD'), field: 'sabado' },
+        { name: 'domingo', label: 'Dom ' + moment(moment().subtract(moment().isoWeekday() - 1, 'days')).add(6, 'days').format('DD'), field: 'domingo' },
+        { name: 'total', label: 'Total', field: 'total' }
       ],
       fechacustom: ref('1'),
       disabledSede: ref(false),
@@ -506,13 +515,14 @@ export default defineComponent({
         for (const i in datos) {
           const obj = {}
           obj.razonsocial = datos[i].razonsocial
-          obj.hoy = datos[i].hoy
-          obj.hace1dia = datos[i].hace1dia
-          obj.hace2dia = datos[i].hace2dia
-          obj.hace3dia = datos[i].hace3dia
-          obj.hace4dia = datos[i].hace4dia
-          obj.hace5dia = datos[i].hace5dia
-          obj.hace6dia = datos[i].hace6dia
+          obj.lunes = datos[i].lunes
+          obj.martes = datos[i].martes
+          obj.miercoles = datos[i].miercoles
+          obj.jueves = datos[i].jueves
+          obj.viernes = datos[i].viernes
+          obj.sabado = datos[i].sabado
+          obj.domingo = datos[i].domingo
+          obj.total = Number(datos[i].lunes) + Number(datos[i].martes) + Number(datos[i].miercoles) + Number(datos[i].jueves) + Number(datos[i].viernes) + Number(datos[i].sabado) + Number(datos[i].domingo)
           this.rowssemana.push(obj)
         }
       }).catch(error => {
@@ -830,4 +840,11 @@ export default defineComponent({
   border-radius: 5px;
   height: 12px;
 }
+.fondocolorupimg {
+    background: url("../assets/fondo_emisores.png") no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
 </style>
