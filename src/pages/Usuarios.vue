@@ -433,7 +433,7 @@ export default {
           const obj = {}
           obj.cod = datos[i].id
           obj.name = datos[i].rol
-          if (datos[i].id === '1' || datos[i].id === '3' || datos[i].id === '5') {
+          if (datos[i].id === '1' || datos[i].id === '3' || datos[i].id === '2' || datos[i].id === '5') {
             if (this.co_rol === '1') {
               this.optionsrol.push(obj)
             }
