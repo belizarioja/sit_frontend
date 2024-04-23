@@ -12,9 +12,9 @@
 
 
 
-import {Dialog,Notify} from 'quasar'
+import {Dialog,Notify,Loading} from 'quasar'
 
 
 
-export default { config: {},plugins: {Dialog,Notify} }
+export default { config: {},plugins: {Dialog,Notify,Loading} }
 

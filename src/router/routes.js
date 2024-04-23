@@ -22,7 +22,8 @@ const routes = [
       { path: '/simuladorAsignacion', component: () => import('pages/SimuladorAsignacion.vue') },
       { path: '/tranzasAsignacion', component: () => import('pages/TranzasAsignacion.vue') },
       { path: '/consulta', component: () => import('pages/Consulta.vue') },
-      { path: '/auditorias', component: () => import('pages/Bitacoras.vue') }
+      { path: '/auditorias', component: () => import('pages/Bitacoras.vue') },
+      { path: '/informes', component: () => import('pages/Informe/Informe.page.vue') }
     ]
   },
 

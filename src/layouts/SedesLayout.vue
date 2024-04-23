@@ -47,7 +47,7 @@
       />
       <q-btn
         v-if="co_rol !== '4'"
-        label="Todos"
+        label="SENIAT"
         v-close-popup color="secondary"
         @click="todos"
       />

@@ -235,7 +235,7 @@
           </div>
           <div v-if="shape === 'concuerpo'" style="font-size: 12px;">
             <div class="row">
-              <span class="col-2" style="margin-rigth:5px:" >Código</span>
+              <span class="col-2" style="margin-right: 5px;" >Código</span>
               <span class="col-3" >Descripción</span>
               <span class="col-1" >Precio</span>
               <span class="col-1" >Cant.</span>
@@ -484,11 +484,11 @@ export default {
       return result1
     },
     selectCrear () {
-      console.log(this.sendlote, this.modeltipo.cod)
+      // console.log(this.sendlote, this.modeltipo.cod)
       if (this.sendlote === '1' && this.modeltipo.cod === '1') {
         this.crear()
       } else {
-        console.log(this.sendlote)
+        // console.log(this.sendlote)
         this.crearLote(this.sendlote)
       }
     },

@@ -64,7 +64,7 @@
       >
         <q-scroll-area style="height: calc(100% - 150px); margin-top: 95px; border-right: 1px solid #ddd">
           <q-list padding>
-            <q-item v-if="co_rol === '1' || co_rol === '3'" clickable v-ripple @click="listado" style="font-size: 12px;">
+            <q-item v-if="co_rol === '1' || co_rol === '3' || co_rol === '2'" clickable v-ripple @click="listado" style="font-size: 12px;">
               <q-item-section avatar>
                 <q-icon color="secondary" name="view_quilt" />
               </q-item-section>
@@ -82,26 +82,21 @@
               <q-item-section>
                 <div class="text-secondary">Consulta</div>
                 <div style="font-size: x-small">
-                  Reportes, exportar
+                  Consultas, registros, exportar
                 </div>
               </q-item-section>
             </q-item>
-            <!-- <q-item clickable v-ripple @click="anulaciones" style="font-size: 12px;">
+            <q-item v-if="co_rol === '1' || co_rol === '2'" clickable v-ripple @click="informes" style="font-size: 12px">
               <q-item-section avatar>
-                <q-icon color="black" name="bookmark_remove" />
-              </q-item-section>
-              <q-item-section>
-                <div>Anulaciones</div>
-              </q-item-section>
-            </q-item>
-            <q-item clickable v-ripple @click="reportes" style="font-size: 12px;">
-              <q-item-section avatar>
-                <q-icon color="secondary" name="print" />
+                <q-icon color="black" name="query_stats" />
               </q-item-section>
               <q-item-section>
                 <div class="text-secondary">Reportes</div>
+                <div style="font-size: x-small">
+                  Emisor, semanal, anual, providencia 0032
+                </div>
               </q-item-section>
-            </q-item>-->
+            </q-item>
             <q-item v-if="co_rol === '1' || co_rol === '2'" clickable v-ripple @click="sedes" style="font-size: 12px;">
               <q-item-section avatar>
                 <q-icon color="secondary" name="store" />
@@ -307,6 +302,9 @@ export default defineComponent({
     },
     usuarios () {
       this.$router.push('/usuarios')
+    },
+    informes () {
+      this.$router.push('/informes')
     },
     salir () {
       this.$q.dialog({

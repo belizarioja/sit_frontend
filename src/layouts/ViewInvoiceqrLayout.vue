@@ -173,7 +173,7 @@
               </tr>
             </table>
           </div>
-          <q-separator />
+          <!-- <q-separator />
           <div class="row">
             <div class="col" style="display: grid; justify-content: center; margin: 10px;">
               <div style="
@@ -186,7 +186,7 @@
                 ORIGINAL
               </div>
             </div>
-          </div>
+          </div> -->
         </div>
         <!-- <q-separator  class="col-12" />
         <q-item class="col-12">

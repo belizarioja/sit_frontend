@@ -5,7 +5,6 @@
       <q-btn
          v-if="co_rol === '1' || co_rol === '2'"
          color="secondary"
-         :disabled="btndisable"
          label="Crear usuario"
          @click="modalcrear = true"
          style="border-radius: 20px;padding: 7px 20px;" />
@@ -39,18 +38,70 @@
           </div>
         </q-td>
       </template>
+      <template v-slot:body-cell-razonsocial="props">
+        <q-td :props="props">
+          <div>
+            {{ (props.row.idrol === '2' || props.row.idrol === '4' ) ? 'SENIAT' : (props.row.idrol === '1' || props.row.idrol === '5' ) ? 'SMART' : props.row.razonsocial }}
+          </div>
+        </q-td>
+      </template>
       <template v-slot:body-cell-email="props">
         <q-td :props="props">
-          <div v-if="co_rol === '1'">
-            <q-badge v-if="props.row.emailbcc" color="blue" @click.stop="btnOpenUpdEmail(props.row)" style="padding: 5px 10px; cursor: pointer;">
+          <div v-if="co_rol === '1' || co_rol === '2'">
+            <q-badge v-if="props.row.emailbcc" color="blue" @click.stop="btnOpenUpdEmail(props.row, 1)" style="padding: 5px 10px; cursor: pointer;">
               {{props.row.emailbcc}}
             </q-badge>
-            <q-badge v-if="(!props.row.emailbcc && props.row.idrol !== '1' && props.row.idrol !== '5')" color="green" @click.stop="btnOpenUpdEmail(props.row)" style="padding: 5px 10px; cursor: pointer;">
+            <q-badge v-if="(!props.row.emailbcc && props.row.idrol !== '1' && props.row.idrol !== '5')" color="green" @click.stop="btnOpenUpdEmail(props.row, 1)" style="padding: 5px 10px; cursor: pointer;">
               Agregar email
             </q-badge>
           </div>
           <div v-else>
             {{props.row.emailbcc}}
+          </div>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-emailrecuperacion="props">
+        <q-td :props="props">
+          <div v-if="co_rol === '1' || co_rol === '2'">
+            <q-badge v-if="props.row.emailrecuperacion" color="blue" @click.stop="btnOpenUpdEmail(props.row, 2)" style="padding: 5px 10px; cursor: pointer;">
+              {{props.row.emailrecuperacion}}
+            </q-badge>
+            <q-badge v-if="(!props.row.emailrecuperacion && props.row.idrol !== '1' && props.row.idrol !== '5')" color="green" @click.stop="btnOpenUpdEmail(props.row, 2)" style="padding: 5px 10px; cursor: pointer;">
+              Agregar email
+            </q-badge>
+          </div>
+          <div v-else>
+            {{props.row.emailrecuperacion}}
+          </div>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-horaentrada="props">
+        <q-td :props="props">
+          <div v-if="co_rol === '1' || co_rol === '2'">
+            <q-badge v-if="props.row.horaentrada" color="blue" @click.stop="btnOpenUpdHora(props.row, 1)" style="padding: 5px 10px; cursor: pointer;">
+              {{props.row.horaentrada}}
+            </q-badge>
+            <q-badge v-if="(!props.row.horaentrada && props.row.idrol !== '1' && props.row.idrol !== '5')" color="green" @click.stop="btnOpenUpdHora(props.row, 1)" style="padding: 5px 10px; cursor: pointer;">
+              Agregar hora
+            </q-badge>
+          </div>
+          <div v-else>
+            {{props.row.horaentrada}}
+          </div>
+        </q-td>
+      </template>
+      <template v-slot:body-cell-horasalida="props">
+        <q-td :props="props">
+          <div v-if="co_rol === '1' || co_rol === '2'">
+            <q-badge v-if="props.row.horasalida" color="blue" @click.stop="btnOpenUpdHora(props.row, 2)" style="padding: 5px 10px; cursor: pointer;">
+              {{props.row.horasalida}}
+            </q-badge>
+            <q-badge v-if="(!props.row.horasalida && props.row.idrol !== '1' && props.row.idrol !== '5')" color="green" @click.stop="btnOpenUpdHora(props.row, 2)" style="padding: 5px 10px; cursor: pointer;">
+              Agregar hora
+            </q-badge>
+          </div>
+          <div v-else>
+            {{props.row.horasalida}}
           </div>
         </q-td>
       </template>
@@ -192,11 +243,11 @@
          </q-card-section>
       </q-card>
     </q-dialog>
-
+    <!-- MODAL PARA ACTUALIZAR EMAIL DE USUARIO-->
     <q-dialog v-model="modalactualizaremail" persistent>
       <q-card  style="width: 300px;">
         <q-card-section>
-          <div class="text-h6" style="text-align: center;">Actualizar Email</div>
+          <div class="text-h6" style="text-align: center;">Actualizar Email {{ idCorreo === 1 ? 'Principal' : 'Secundario' }}</div>
         </q-card-section>
         <q-card-section class="q-pt-none">
           <q-input
@@ -208,11 +259,33 @@
         </q-card-section>
         <q-card-section class="q-pt-none">
            <div style="display: flex; justify-content: space-evenly;margin-top: 20px;">
-             <q-btn color="negative" label="Cancelar" v-close-popup />
+            <q-btn color="negative" label="Cancelar" v-close-popup />
              <q-btn
               color="secondary"
               label="Aceptar"
               @click="cambiaremail"
+             />
+           </div>
+         </q-card-section>
+      </q-card>
+    </q-dialog>
+    <!-- MODAL PARA ACTUALIZAR HORA DE SESION DE USUARIO-->
+    <q-dialog v-model="modalactualizarhora" persistent>
+      <q-card >
+        <q-card-section>
+          <div class="text-h6" style="text-align: center;">Hora de {{ idHora === 1 ? 'Inicio' : 'Fin' }} de Sesión</div>
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+          <q-time v-model="nuevahora" format24h />
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+           <div style="display: flex; justify-content: space-evenly;margin-top: 20px;">
+             <q-btn color="negative" label="Cerrar" v-close-popup />
+             <q-btn color="positive" label="Limpiar" @click="nuevahora = null" />
+             <q-btn
+              color="secondary"
+              label="Guardar"
+              @click="cambiarhora"
              />
            </div>
          </q-card-section>
@@ -235,15 +308,21 @@ const ENDPOINT_PATH_V2 = config.endpoint_path_v2
 export default {
   setup () {
     return {
-      modalcrear: ref(false),
+      idUpd: ref(''),
+      idHora: ref(1),
+      idCorreo: ref(1),
       viewdetails: ref(false),
       modalactualizarestatus: ref(false),
       modalactualizarclave: ref(false),
       modalactualizaremail: ref(false),
+      modalactualizarhora: ref(false),
+      modalcrear: ref(false),
       usuario: ref(''),
       clave: ref(''),
       nuevaclave: ref(''),
       nuevoemail: ref(''),
+      nuevahora: ref(moment().format('HH:mm')),
+      email: ref(''),
       nombre: ref(''),
       filter: ref(''),
       loading: ref(false),
@@ -270,7 +349,11 @@ export default {
         { name: 'usuario', align: 'left', label: 'Usuario', field: 'usuario', sortable: true },
         // { name: 'clave', align: 'center', label: 'Clave', field: 'clave', sortable: true },
         { name: 'rol', label: 'Rol', field: 'rol', sortable: true },
-        { name: 'email', label: 'Email', field: 'emailbcc', sortable: true },
+        { name: 'horaentrada', label: 'Inicio Sesión', field: 'horasalida', sortable: true },
+        { name: 'horasalida', label: 'Fin Sesión', field: 'horasalida', sortable: true },
+        { name: 'email', label: 'Email Principal', field: 'emailbcc', sortable: true },
+        { name: 'emailrecuperacion', label: 'Email Secundario', field: 'emailrecuperacion', sortable: true },
+        { name: 'fecharecuperacion', label: 'Fecha Recuperación', field: 'fecharecuperacion', sortable: true },
         { name: 'bitacora', label: 'Bitácora' },
         { name: 'clave', label: 'Clave' },
         { name: 'estatus', label: 'Estatus', field: 'estatus' }
@@ -293,8 +376,16 @@ export default {
     }
   },
   methods: {
-    btnOpenUpdEmail (row) {
+    btnOpenUpdHora (row, val) {
       this.idUpd = row.id
+      this.idHora = val
+      this.nuevahora = val === 1 ? row.horaentrada : row.horasalida
+      this.modalactualizarhora = true
+    },
+    btnOpenUpdEmail (row, val) {
+      this.idUpd = row.id
+      this.idCorreo = val
+      this.nuevoemail = val === 1 ? row.emailbcc : row.emailrecuperacion
       this.modalactualizaremail = true
     },
     btnOpenUpdEstatus (row) {
@@ -361,13 +452,25 @@ export default {
         Notify.create('Calve cambiada en forma correcta')
       })
     },
+    cambiarhora () {
+      const body = {
+        nuevahora: this.nuevahora,
+        accion: this.idHora
+      }
+      axios.put(ENDPOINT_PATH_V2 + 'usuario/cambiohora/' + this.idUpd, body).then(async response => {
+        this.modalactualizarhora = false
+        this.listarusuarios()
+        Notify.create('Hora cambiada en forma correcta')
+      })
+    },
     cambiaremail () {
       if (this.nuevoemail.length < 4) {
         Notify.create('Debe ingresar nuevo email ')
         return
       }
       const body = {
-        nuevoemail: this.nuevoemail
+        nuevoemail: this.nuevoemail,
+        accion: this.idCorreo
       }
       axios.put(ENDPOINT_PATH_V2 + 'usuario/cambioemail/' + this.idUpd, body).then(async response => {
         this.modalactualizaremail = false
@@ -412,6 +515,10 @@ export default {
           obj.idrol = datos[i].idrol
           obj.feultacceso = datos[i].feultacceso
           obj.emailbcc = datos[i].emailbcc
+          obj.emailrecuperacion = datos[i].emailrecuperacion
+          obj.horaentrada = datos[i].horaentrada
+          obj.horasalida = datos[i].horasalida
+          obj.fecharecuperacion = datos[i].fecharecuperacion ? moment(datos[i].fecharecuperacion).format('DD/MM/YYYY HH:mm:ss') : ''
           obj.estatus = datos[i].estatus === '1' ? 'Activo' : 'Inactivo'
           if (this.co_rol === '1') {
             this.rows.push(obj)
