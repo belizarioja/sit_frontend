@@ -233,7 +233,9 @@ export default {
     },
     async getDataLotes (emisor) {
       const reporte = await getDataLotesAdapter()
-      if (emisor.label === 'Todos') {
+      // console.log(reporte)
+      // console.log(emisor)
+      if (emisor.label === 'Todos' || emisor === 'Todos') {
         this.dataTableLotes = reporte
         this.$q.loading.hide()
         return
@@ -273,13 +275,14 @@ export default {
         month,
         year
       }
+      const reporte = await getReporteSemanalAdapter(body)
+
       if (emisor.label === 'Todos') {
-        const reporte = await getReporteSemanalAdapter(body)
         this.dataTableSemanal = reporte
         this.$q.loading.hide()
         return
       }
-      const reporte = await getReporteSemanalAdapter(body)
+      // const reporte = await getReporteSemanalAdapter(body)
       const emisorFiltered = reporte.filter(
         (item) => item.name === emisor.label
       )
@@ -297,14 +300,53 @@ export default {
       }
 
       const body = { month, year }
+      const listEmisores = await getReporteSemanalAdapter(body)
+      const sem1 = {}
+      sem1.total = 0
+      const sem2 = {}
+      sem2.total = 0
+      const sem3 = {}
+      sem3.total = 0
+      const sem4 = {}
+      sem4.total = 0
+      const sem5 = {}
+      sem5.total = 0
+      for (const i in listEmisores) {
+        // console.log(i)
+        // console.log(listEmisores[i])
+        // console.log(listEmisores[i].mes[0].total)
+        sem1.total += Number(listEmisores[i].mes[0].total)
+        sem1.sem = listEmisores[i].mes[0].semana
+        sem2.total += Number(listEmisores[i].mes[1].total)
+        sem2.sem = listEmisores[i].mes[1].semana
+        sem3.total += Number(listEmisores[i].mes[2].total)
+        sem3.sem = listEmisores[i].mes[2].semana
+        sem4.total += Number(listEmisores[i].mes[3].total)
+        sem4.sem = listEmisores[i].mes[3].semana
+        sem5.total += Number(listEmisores[i].mes[4].total)
+        sem5.sem = listEmisores[i].mes[4].semana
+        // console.log(i)
+      }
+      // console.log(sem1, sem2, sem3, sem4, sem5)
 
+      const obj = {}
+      obj.id = '00'
+      obj.name = 'Total'
+      obj.mes = []
+      obj.mes.push(sem1)
+      obj.mes.push(sem2)
+      obj.mes.push(sem3)
+      obj.mes.push(sem4)
+      obj.mes.push(sem5)
+      obj.total = sem1.total + sem2.total + sem3.total + sem4.total + sem5.total
+      listEmisores.push(obj)
+      // console.log(listEmisores)
       if (lookingFor === 'Todos') {
-        const listEmisores = await getReporteSemanalAdapter(body)
         this.dataTableEmisor = listEmisores
         this.$q.loading.hide()
         return
       }
-      const listEmisores = await getReporteSemanalAdapter(body)
+      // const listEmisores = await getReporteSemanalAdapter(body)
       const filtered = listEmisores.filter(
         (emisor) => emisor.name === lookingFor
       )

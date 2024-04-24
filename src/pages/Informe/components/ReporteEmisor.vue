@@ -55,7 +55,7 @@ export default {
       }
       return `${getNameMonth(month2)}-${year2}`
     })
-
+    console.log(mes, semanas, title)
     return { mes, semanas, title }
   },
   methods: {
