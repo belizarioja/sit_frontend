@@ -35,5 +35,6 @@ export async function getDataLotesAdapter () {
     [loteMap.IDENTIFICADOR]: item.identificador,
     [loteMap.CORELATIVO]: item.corelativo
   }))
+
   return loteAdapted
 }

@@ -853,7 +853,9 @@ export default {
                 this.rows.push(obj)
               }
             } else {
-              this.rows.push(obj)
+              if (datos[i].estatus === '1') {
+                this.rows.push(obj)
+              }
             }
           } else {
             this.rows.push(obj)

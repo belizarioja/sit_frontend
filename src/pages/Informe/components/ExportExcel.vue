@@ -233,7 +233,7 @@ export default {
     },
     async getDataLotes (emisor) {
       const reporte = await getDataLotesAdapter()
-      if (emisor.label === 'Todos') {
+      if (emisor.label === 'Todos' || emisor === 'Todos') {
         this.dataTableLotes = reporte
         this.$q.loading.hide()
         return

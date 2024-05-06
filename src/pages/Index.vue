@@ -651,12 +651,14 @@ export default defineComponent({
             obj.rif = datos[i].rif
             obj.namerif = datos[i].razonsocial + ' ' + datos[i].rif
             obj.tokenservicios = datos[i].tokenservicios
-            this.optionssede.push(obj)
+            if (datos[i].estatus === '1') {
+              this.optionssede.push(obj)
+            }
           }
         }
         this.emisores = this.optionssede
         this.rifs = this.optionssede
-        this.totalclientes = datos.length
+        this.totalclientes = this.optionssede.length - 1
       }).catch(error => {
         Notify.create('Problemas al listar Sedes ' + error)
       })

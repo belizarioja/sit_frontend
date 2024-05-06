@@ -205,7 +205,9 @@ export default {
           obj.telefono = datos[i].telefono
           obj.tokenservicios = datos[i].tokenservicios
           obj.estatus = datos[i].estatus === '1' ? 'Activo' : 'Inactivo'
-          this.rows.push(obj)
+          if (datos[i].estatus === '1') {
+            this.rows.push(obj)
+          }
         }
         console.log(this.rows)
       }).catch(error => {
