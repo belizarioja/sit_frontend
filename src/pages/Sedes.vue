@@ -79,7 +79,7 @@
       </template>
       <template v-slot:body-cell-tokenservicios="props">
         <q-td :props="props">
-          <div>
+          <div v-if="co_rol === '1'">
             <q-btn icon="visibility" @click.stop="btnviewtoken(props.row)" dense flat :disable="co_rol !== '1'"/>
           </div>
         </q-td>
@@ -93,14 +93,14 @@
       </template>
       <template v-slot:body-cell-edit="props">
         <q-td :props="props">
-          <div>
+          <div v-if="co_rol === '1'">
             <q-btn color="secondary" icon="edit" @click.stop="btnOpenUpd(props.row)" dense :disable="co_rol !== '1'"/>
           </div>
         </q-td>
       </template>
       <template v-slot:body-cell-estatus="props">
         <q-td :props="props">
-          <div>
+          <div v-if="co_rol === '1'">
             <q-btn
              :color="props.row.estatus === 'Activo' ? 'primary' : 'negative'"
              :icon="props.row.estatus === 'Activo' ? 'toggle_on' : 'toggle_off' "

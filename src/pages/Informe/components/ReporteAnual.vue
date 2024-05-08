@@ -25,6 +25,7 @@
 <script>
 import XLSX from 'xlsx/dist/xlsx.full.min'
 import autoTable from 'jspdf-autotable'
+import moment from 'moment'
 import { toRefs, computed } from 'vue'
 import { getNameMonth } from '../utils/getNameMonth.js'
 import { getNameCurrentMonth } from '../utils/getNameCurrentMonth.js'
@@ -78,19 +79,27 @@ export default {
       const headers = Object.keys(content[0])
       const marginTop = {
         title: 40,
-        table: 50
+        table: 70
       }
       const marginLeft = {
         title: 60,
         table: 60
       } // eslint-disable-next-line new-cap
       const pdfCreator = new jsPDF('p', 'pt')
-      pdfCreator.text('Smart Reporte Anual', marginLeft.title, marginTop.title)
+      const logo = require('src/assets/logo_smart.png')
+      const imgLogo = new Image()
+      imgLogo.src = logo
+      pdfCreator.addImage(imgLogo, 'PNG', marginLeft.title, marginTop.title - 35, 120, 60)
+      pdfCreator.text('Reporte Anual', marginLeft.title + 170, marginTop.title)
+      pdfCreator.text(moment().format('DD/MM/YYYY HH:mm:ss'), marginLeft.title + 340, marginTop.title)
       autoTable(pdfCreator, {
-        margin: { top: 60 },
+        margin: { top: marginTop.table },
         theme: 'grid',
         head: [headers],
-        body: content2
+        body: content2,
+        styles: {
+          halign: 'center'
+        }
       })
       pdfCreator.save(`smart-anual-${currentMonth}.pdf`)
     }

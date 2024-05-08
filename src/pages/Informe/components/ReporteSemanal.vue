@@ -74,7 +74,7 @@
 <script>
 import { toRefs, computed } from 'vue'
 import jsPDF from 'jspdf'
-
+import moment from 'moment'
 import autoTable from 'jspdf-autotable'
 import XLSX from 'xlsx/dist/xlsx.full.min'
 import { getNameMonth } from '../utils/getNameMonth'
@@ -266,22 +266,26 @@ export default {
     exportPDF () {
       // eslint-disable-next-line new-cap, no-unused-vars
       const pdfCreator = new jsPDF('p', 'pt')
+      const logo = require('src/assets/logo_smart.png')
+      const imgLogo = new Image()
+      imgLogo.src = logo
+      pdfCreator.addImage(imgLogo, 'PNG', 30, 10, 110, 50)
+      pdfCreator.text(
+        'Control de Facturas Semanales',
+        150, // x
+        40 // y
+      )
+      pdfCreator.text(moment().format('DD/MM/YYYY HH:mm:ss'), 400, 40)
 
       this.dataTableOne.forEach((emisor, i) => {
         const colorWhite = [255, 255, 255]
         const colorBlack = [6, 6, 6]
         const columns = emisor.mes.map((el) => el.semana)
         const content = emisor.mes.map((el) => el.total)
-
-        pdfCreator.text(
-          `Control de Facturas Semanales ${emisor.name}`,
-          40, // x
-          50 // y
-        )
         autoTable(pdfCreator, {
           // margin: { top: 70 },
-          startY: 60,
-          head: [[this.nameCurrentMonth()]],
+          startY: 70,
+          head: [[emisor.name + ' - ' + this.nameCurrentMonth() + ' ' + moment().format('YYYY')]],
           headStyles: {
             fillColor: colorWhite,
             fontSize: 16,
@@ -290,10 +294,13 @@ export default {
         })
         autoTable(pdfCreator, {
           // margin: { top: 70 },
-          startY: 90,
+          startY: 100,
           theme: 'grid',
           head: [columns],
-          body: [content]
+          body: [content],
+          styles: {
+            halign: 'center'
+          }
         })
 
         emisor.mes.forEach((el, i) => {
@@ -318,9 +325,9 @@ export default {
             theme: 'grid',
             head: [header],
             body: [content],
-            headStyles: {},
-            bodyStyles: {},
-            footStyles: {}
+            styles: {
+              halign: 'center'
+            }
           })
         })
 

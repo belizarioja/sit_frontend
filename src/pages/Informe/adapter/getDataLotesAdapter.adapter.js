@@ -10,6 +10,7 @@ export const loteMap = {
   UTILIZADO: 'utilizado',
   SOPORTE: 'soportefactura',
   FECHA: 'fecha',
+  FECHAPROD: 'fechaproduccion',
   IDENTIFICADOR: 'identificador',
   CORELATIVO: 'corelativo'
 }
@@ -32,6 +33,7 @@ export async function getDataLotesAdapter () {
     [loteMap.UTILIZADO]: item.utilizado,
     [loteMap.SOPORTE]: item.soportefactura,
     [loteMap.FECHA]: item.fecha,
+    [loteMap.FECHAPROD]: item.fechaproduccion,
     [loteMap.IDENTIFICADOR]: item.identificador,
     [loteMap.CORELATIVO]: item.corelativo
   }))

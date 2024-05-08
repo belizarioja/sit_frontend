@@ -8,13 +8,14 @@
     >
       <template #header>
         <tr>
-          <th>Contribuyente</th>
+          <th>Cliente Emisor</th>
           <th>RIF</th>
           <th>Fecha asig. Nro Control</th>
           <th>Nro Control Inicial</th>
           <th>Nro Control Final</th>
           <th>Cantidad</th>
           <th>Nro Factura Venta</th>
+          <th>Fecha Factura</th>
           <th>Detalles</th>
         </tr>
       </template>
@@ -27,6 +28,7 @@
           <q-td align="center">{{ props.row.termina }}</q-td>
           <q-td align="center">{{ props.row.cantidad }}</q-td>
           <q-td align="center">{{ props.row.soportefactura }}</q-td>
+          <q-td align="center">{{ props.row.fechaproduccion }}</q-td>
           <q-td align="center">
             <q-btn color="secondary" icon="view_list" @click="openDetalles(props.row)" />
           </q-td>
@@ -108,6 +110,8 @@ export default {
     }
     const providencia = lotes.value.map((item) => {
       // console.log(item)
+      const fechaproduccion = moment(item.fechaproduccion, 'YYYY-MM-DD HH:mm:ss').format('DD/MM/YYYY')
+      item.fechaproduccion = fechaproduccion
       const fecha = moment(item.fecha, 'YYYY-MM-DD HH:mm:ss').format('DD/MM/YYYY')
       item.fecha = fecha
       const inicia = getNumControl(item.identificador, item.inicia)
@@ -145,12 +149,13 @@ export default {
     exportExcel () {
       // console.log(this.lotes)
       const content = this.lotes.map((el) => ({
-        Contribuyente: el.razonsocial,
+        'Cliente Emisor': el.razonsocial,
         Rif: el.rif,
-        'Fecha Asig. Nro Control': el.fecha,
+        'Fecha Asig. Nro Control': el.fechaproduccion,
         'Nro Control Inicial': el.inicial,
         'Nro Control Final': el.termina,
         Cantidad: el.cantidad,
+        'Fecha Factura': el.fecha,
         'Nro Factura Venta': el.soportefactura
       }))
       const currentMonth = getNameCurrentMonth()
@@ -163,33 +168,42 @@ export default {
       // console.log(this.lotes)
       const currentMonth = getNameCurrentMonth()
       const content = this.lotes.map((el) => ({
-        Contribuyente: el.razonsocial,
+        'Cliente Emisor': el.razonsocial,
         Rif: el.rif,
-        'Fecha Asig. Nro Control': el.fecha,
+        'Fecha Asig. Nro Control': el.fechaproduccion,
         'Nro Control Inicial': el.inicial,
         'Nro Control Final': el.termina,
         Cantidad: el.cantidad,
+        'Fecha Factura': el.fecha,
         'Nro Factura Venta': el.soportefactura
       }))
 
-      const content2 = this.lotes.map((el) => [el.razonsocial, el.rif, el.fecha, el.inicial, el.termina, el.utilizado, el.soportefactura])
+      const content2 = this.lotes.map((el) => [el.razonsocial, el.rif, el.fechaproduccion, el.inicial, el.termina, el.cantidad, el.fecha, el.soportefactura])
 
       const headers = Object.keys(content[0])
       const marginTop = {
-        title: 40,
-        table: 50
+        title: 50,
+        table: 80
       }
       const marginLeft = {
         title: 60,
         table: 60
       } // eslint-disable-next-line new-cap
       const pdfCreator = new jsPDF('l', 'pt')
-      pdfCreator.text('Smart Reporte Providencia 0032', marginLeft.title, marginTop.title)
+      const logo = require('src/assets/logo_smart.png')
+      const imgLogo = new Image()
+      imgLogo.src = logo
+      pdfCreator.addImage(imgLogo, 'PNG', marginLeft.title, marginTop.title - 40, 120, 60)
+      pdfCreator.text('Reporte Providencia 0032', marginLeft.title + 250, marginTop.title)
+      pdfCreator.text(moment().format('DD/MM/YYYY HH:mm:ss'), marginLeft.title + 580, marginTop.title)
       autoTable(pdfCreator, {
-        margin: { top: 60 },
+        margin: { top: marginTop.table },
         theme: 'grid',
         head: [headers],
-        body: content2
+        body: content2,
+        styles: {
+          halign: 'center'
+        }
       })
       pdfCreator.save(`smart-providencia-0032-${currentMonth}.pdf`)
     }

@@ -33,6 +33,7 @@
 import XLSX from 'xlsx/dist/xlsx.full.min'
 import autoTable from 'jspdf-autotable'
 import jsPDF from 'jspdf'
+import moment from 'moment'
 import { toRefs, computed } from 'vue'
 import { getNameMonth } from '../utils/getNameMonth'
 export default {
@@ -55,7 +56,7 @@ export default {
       }
       return `${getNameMonth(month2)}-${year2}`
     })
-    console.log(mes, semanas, title)
+    // console.log(mes, semanas, title)
     return { mes, semanas, title }
   },
   methods: {
@@ -94,7 +95,7 @@ export default {
       const { mes } = first
       const mesEntries = Object.entries(mes)
       const semanas = mesEntries.map(([k, v]) => v.semana)
-      const header = ['Emisor', ...semanas, 'Total']
+      const header = ['Cliente Emisor', ...semanas, 'Total']
 
       const content = this.mes.map((el) => {
         const semana = el.mes.map((v) => v.total)
@@ -105,19 +106,24 @@ export default {
       const colorWhite = [255, 255, 255]
       const colorBlack = [6, 6, 6]
       const marginTop = {
-        title: 30
+        title: 50
       }
       const marginLeft = {
         title: 60
       }
       // eslint-disable-next-line new-cap
-      const pdfCreator = new jsPDF('p', 'pt')
-      pdfCreator.text('Reporte Smart Semanal de Emisores', marginLeft.title, marginTop.title)
+      const pdfCreator = new jsPDF('l', 'pt')
+      const logo = require('src/assets/logo_smart.png')
+      const imgLogo = new Image()
+      imgLogo.src = logo
+      pdfCreator.addImage(imgLogo, 'PNG', marginLeft.title, marginTop.title - 35, 120, 60)
+      pdfCreator.text('Reporte Semanal de Emisores', marginLeft.title + 200, marginTop.title)
+      pdfCreator.text(moment().format('DD/MM/YYYY HH:mm:ss'), marginLeft.title + 580, marginTop.title)
+      // pdfCreator.text('Reporte Smart Semanal de Emisores', marginLeft.title, marginTop.title)
 
       autoTable(pdfCreator, {
-        // margin: { top: 70 },
-        startY: 60,
-        head: [[this.nameCurrentMonth()]],
+        startY: 80,
+        head: [[this.nameCurrentMonth() + ' ' + moment().format('YYYY')]],
         headStyles: {
           fillColor: colorWhite,
           fontSize: 16,
@@ -125,13 +131,16 @@ export default {
         }
       })
       autoTable(pdfCreator, {
-        margin: { top: 70 },
+        // margin: { top: 70 },
+        startY: 110,
         theme: 'grid',
         head: [header],
-        body: content
+        body: content,
+        styles: {
+          halign: 'center'
+        }
       })
 
-      // pdfCreator.table(marginLeft.table, marginTop.table, content, headers)
       pdfCreator.save('smart_reporte_emisores.pdf')
     }
   }
