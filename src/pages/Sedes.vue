@@ -469,6 +469,14 @@
             </div>
           </div>
         </q-card-section>
+        <!-- <q-card-section class="q-pt-none flex">
+          <div style="margin: 10px;">
+            <img src="factura4.png" alt="" style="width: 200px;">
+            <div class="text-center">
+              <q-radio v-model="plantilla" checked-icon="task_alt" unchecked-icon="panorama_fish_eye" val="4" label="4"  :disable="co_rol !== '1'" />
+            </div>
+          </div>
+        </q-card-section> -->
         <q-card-section class="q-pt-none">
            <div style="display: flex; justify-content: space-evenly;">
              <q-btn color="negative" label="Cerrar" v-close-popup />

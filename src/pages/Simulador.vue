@@ -213,7 +213,7 @@
       <q-card class="col q-pa-md">
 
         <q-card-section>
-          <div class="q-pa-md" v-if="modeltipo.cod === '1'">
+          <div class="" v-if="modeltipo.cod === '1'">
             <div class="q-gutter-sm">
               <q-radio v-model="sendlote" val="1" label="1" />
               <q-radio v-model="sendlote" val="10" label="10" />
@@ -221,16 +221,29 @@
               <q-radio v-model="sendlote" val="200" label="200" />
             </div>
           </div>
-          <div class="q-pa-md">
+          <div class="">
             <div class="q-gutter-sm">
               <q-radio v-model="sendmail" val="0" label="Sin enviar correo" />
               <q-radio v-model="sendmail" val="1" label="Enviar correo" />
             </div>
           </div>
-          <div class="q-pa-md">
+          <div class="">
+            <div class="q-gutter-sm">
+              <q-radio v-model="tipomoneda" val="1" label="Bolívar (Bs.)" />
+              <q-radio v-model="tipomoneda" val="2" label="Dólar ($)" />
+              <q-radio v-model="tipomoneda" val="3" label="Euro (€)" />
+            </div>
+          </div>
+          <div class="">
             <div class="q-gutter-sm">
               <q-radio v-model="shape" val="sincuerpo" label="Sin cuerpo" />
               <q-radio v-model="shape" val="concuerpo" label="Con cuerpo" />
+            </div>
+          </div>
+          <div class="" style="margin-bottom: 20px;">
+            <div class="q-gutter-sm">
+              <q-radio v-model="shapepago" val="conforma" label="Con forma de pago" />
+              <q-radio v-model="shapepago" val="sinforma" label="Sin forma de pago" />
             </div>
           </div>
           <div v-if="shape === 'concuerpo'" style="font-size: 12px;">
@@ -263,12 +276,12 @@
               <input id="pre2" class="col-1" style="width: 8%; margin-right: 4px;font-size: 8px;" value="410.50"/>
               <input id="can2" class="col-1" style="width: 7%; margin-right: 5px;font-size: 8px;" value="1"/>
               <input id="desc2" class="col-1" style="width: 8%; margin-right: 5px;font-size: 8px;" value="0"/>
-              <input id="tas2" class="col-1" style="width: 7%; margin-right: 5px;font-size: 8px;" value="0"/>
-              <input id="exe2" class="col-1" style="width: 8%; margin-right: 4px;font-size: 11px;" value="true"/>
+              <input id="tas2" class="col-1" style="width: 7%; margin-right: 5px;font-size: 8px;" value="8"/>
+              <input id="exe2" class="col-1" style="width: 8%; margin-right: 4px;font-size: 11px;" value="false"/>
               <input id="mon2" class="col-1" style="width: 8%;font-size: 8px;" value="410.50"/>
             </div>
             <div class="row" style="margin-bottom: 5px;">
-              <input id="com2" class="col-10" style="font-size: 11px;" value="Comentario Producto de prueba 2"/>
+              <input id="com2" class="col-10" style="font-size: 11px;" value="1er Comentario Producto de prueba 2|Bs. 2.679,00//2do Comentario Producto de prueba 2|Bs. 2.679,00//2"/>
             </div>
             <div class="row" style="margin-bottom: 5px;">
               <input id="cod3" class="col-2" style="width: 16%; margin-right: 5px;font-size: 11px;" value="9309"/>
@@ -281,7 +294,7 @@
               <input id="mon3" class="col-1" style="width: 8%;font-size: 8px;" value="328.40"/>
             </div>
             <div class="row" style="margin-bottom: 5px;">
-              <input id="com3" class="col-10" style="font-size: 11px;" value="Comentario Producto de prueba 3"/>
+              <input id="com3" class="col-10" style="font-size: 11px;" value="1er Comentario Producto de prueba 3|Bs. 2.679,00//2do Comentario Producto de prueba 3|Bs. 2.679,00//"/>
             </div>
             <div class="row" style="margin-bottom: 5px;margin-top: 20px;">
               <input id="observacion" class="col-10" style="font-size: 11px;" value="Observación de prueba"/>
@@ -399,23 +412,24 @@ export default {
       email: ref('belizarioja@gmail.com'),
       sucursal: ref('cum00123'),
       telefono: ref('+5804125558877'),
-      subtotal: ref(6978.50),
-      nombre: ref('Jesus Ramos'),
-      total: ref(7034.73),
-      exento: ref(6650.10),
+      subtotal: ref(6978.5),
+      nombre: ref('Jesus Ramirez'),
+      total: ref(7067.57),
+      exento: ref(6239.60),
       tasag: ref(16),
       baseg: ref(328.40),
       impuestog: ref(52.54),
-      tasar: ref(0),
-      baser: ref(0),
-      impuestor: ref(0),
+      tasar: ref(8),
+      baser: ref(410.50),
+      impuestor: ref(32.84),
       tasaa: ref(0),
       basea: ref(0),
       impuestoa: ref(0),
       tasaigtf: ref(3),
       baseigtf: ref(123.15),
       impuestoigtf: ref(3.69),
-      tasacambio: ref(0),
+      tasacambio: ref(36.562100),
+      tipomoneda: ref('1'),
       loading: ref(false),
       dateInicioPrueba: ref(''),
       dateFinPrueba: ref(''),
@@ -556,8 +570,8 @@ export default {
           }
         }
         const obs = document.getElementById('observacion').value
-        console.log('obs')
-        console.log(obs)
+        // console.log('obs')
+        // console.log(obs)
         const body = {
           rif: this.rif,
           trackingid: trackingid,
@@ -582,6 +596,7 @@ export default {
           baseigtf: Number(this.baseigtf),
           impuestoigtf: Number(this.impuestoigtf),
           total: Number(this.total),
+          tipomoneda: Number(this.tipomoneda),
           tasacambio: this.tasacambio > 0 ? Number(this.tasacambio) : undefined,
           idtipocedulacliente: Number(this.modelcedula.cod) || 1,
           sendmail: (cuerpofactura.length > 0 && this.sendmail === '1') ? 1 : 0,
@@ -589,7 +604,7 @@ export default {
           formasdepago: formasdepago,
           observacion: obs.length > 0 ? obs : undefined
         }
-        console.log(this.numerointerno)
+        // console.log(this.numerointerno)
         const numeronext = Number(this.numerointerno) + 1
         this.numerointerno = numeronext.toString().padStart(8, '0')
         await axios.post(ENDPOINT_PATH_V2 + 'facturacion', body, headersjwt).then(async response => {
@@ -657,7 +672,7 @@ export default {
             const exe = document.getElementById('exe' + j).value
             const mon = document.getElementById('mon' + j).value
             const com = document.getElementById('com' + j).value
-            console.log(cod)
+            // console.log(cod)
             const obj = {
               codigo: cod,
               descripcion: des,
@@ -683,11 +698,7 @@ export default {
             formasdepago.push(obj2)
           }
         }
-        console.log('this.tasacambio')
-        console.log(this.tasacambio)
         const obs = document.getElementById('observacion').value
-        console.log('obs')
-        console.log(obs)
         const body = {
           rif: this.rif,
           trackingid: trackingid,
@@ -712,6 +723,7 @@ export default {
           baseigtf: Number(this.baseigtf),
           impuestoigtf: Number(this.impuestoigtf),
           total: Number(this.total),
+          tipomoneda: Number(this.tipomoneda),
           tasacambio: this.tasacambio > 0 ? Number(this.tasacambio) : undefined,
           idtipocedulacliente: Number(this.modelcedula.cod) || 1,
           sendmail: (cuerpofactura.length > 0 && this.sendmail === '1') ? 1 : 0,
