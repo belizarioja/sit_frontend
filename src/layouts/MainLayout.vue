@@ -184,8 +184,15 @@
       <q-page-container>
         <router-view />
       </q-page-container>
-      <q-page-sticky v-if="co_rol === '1' || co_rol === '2'" position="bottom-right" :offset="[18, 18]">
-        <q-btn fab icon="people_alt" color="primary" @click="sedeschange" />
+      <q-page-sticky v-if="co_rol === '1' || co_rol === '2'" position="bottom-right" :offset="fabPos">
+        <q-btn
+         fab
+         :disable="draggingFab"
+         icon="people_alt"
+         color="primary"
+         @click="sedeschange"
+         v-touch-pan.prevent.mouse="moveFab"
+        />
       </q-page-sticky>
     </q-layout>
     <q-dialog v-model="modalactualizarclave" persistent>
@@ -246,10 +253,21 @@ export default defineComponent({
       tx_nombre: sessionStorage.getItem('tx_nombre'),
       co_rol: sessionStorage.getItem('co_rol'),
       tx_rol: sessionStorage.getItem('tx_rol'),
-      tx_sede: sessionStorage.getItem('tx_sede')
+      tx_sede: sessionStorage.getItem('tx_sede'),
+      draggingFab: false,
+      fabPos: [18, 18]
     }
   },
   methods: {
+    moveFab (ev) {
+      // console.log(ev)
+      this.draggingFab = ev.isFirst !== true && ev.isFinal !== true
+
+      this.fabPos = [
+        this.fabPos[0] - ev.delta.x,
+        this.fabPos[1] - ev.delta.y
+      ]
+    },
     cambiarclave () {
       if (this.nuevaclave.length < 4) {
         Notify.create('Debe ingresar nueva clave correcta ')

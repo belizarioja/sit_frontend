@@ -79,7 +79,7 @@
               <span style="font-style: italic">{{ props.row.abrev }}: {{ props.row.cedulacliente }}</span>
             </q-td>
             <q-td key="totalimpuestos" :props="props">
-              {{ props.row.totalimpuestos }}
+              {{ props.row.totalimpuestos.toFixed(2) }}
             </q-td>
             <q-td key="estatus" :props="props">
               <q-badge v-if="isNormal(props.row)" class="normal">
