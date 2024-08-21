@@ -105,8 +105,20 @@
           <q-input
             class="col-6 q-pa-md"
             dense
+            v-model="serial"
+            label="Serial"
+          />
+          <q-input
+            class="col-6 q-pa-md"
+            dense
             v-model="sucursal"
             label="Sucursal"
+          />
+          <q-input
+            class="col-6 q-pa-md"
+            dense
+            v-model="direccionsucursal"
+            label="Dirección Sucursal"
           />
           <q-input
             class="col-4 q-pa-md"
@@ -204,6 +216,12 @@
             v-model="tasacambio"
             label="Tasa cambio"
           />
+          <q-input
+            class="col-8 q-pa-md"
+            dense
+            v-model="fechavence"
+            label="Fecha vencimiento (YYYY-MM-DD)"
+          />
         </q-card-section>
 
         <q-card-actions align="right" class="text-primary">
@@ -240,10 +258,20 @@
               <q-radio v-model="shape" val="concuerpo" label="Con cuerpo" />
             </div>
           </div>
-          <div class="" style="margin-bottom: 20px;">
+          <div class="">
             <div class="q-gutter-sm">
               <q-radio v-model="shapepago" val="conforma" label="Con forma de pago" />
               <q-radio v-model="shapepago" val="sinforma" label="Sin forma de pago" />
+            </div>
+          </div>
+          <div class="" style="margin-bottom: 20px;">
+            <div class="q-gutter-sm">
+              <q-radio v-model="shapeunidad" val="0" label="Sin unidad" />
+              <q-radio v-model="shapeunidad" val="1" label="Unidad" />
+              <q-radio v-model="shapeunidad" val="2" label="Kilo" />
+              <q-radio v-model="shapeunidad" val="3" label="Litro" />
+              <q-radio v-model="shapeunidad" val="4" label="Metro" />
+              <q-radio v-model="shapeunidad" val="5" label="Caja" />
             </div>
           </div>
           <div v-if="shape === 'concuerpo'" style="font-size: 12px;">
@@ -397,10 +425,14 @@ export default {
     return {
       shape: ref('sincuerpo'),
       shapepago: ref('conforma'),
+      direccionsucursal: ref(''),
+      shapeunidad: ref('0'),
       sendmail: ref('0'),
       sendlote: ref('1'),
       statusProcess: ref(true),
       resultProcess: ref(''),
+      serial: ref(''),
+      fechavence: ref(''),
       messageProcess: ref(''),
       fechaProcess: ref(''),
       tokenservicios: ref(''),
@@ -410,7 +442,7 @@ export default {
       cedula: ref('11222333'),
       direccion: ref('Cumana Estado Sucre, Venezuela'),
       email: ref('belizarioja@gmail.com'),
-      sucursal: ref('cum00123'),
+      sucursal: ref('cum00123 '),
       telefono: ref('+5804125558877'),
       subtotal: ref(6978.5),
       nombre: ref('Jesus Ramirez'),
@@ -498,7 +530,7 @@ export default {
       return result1
     },
     selectCrear () {
-      // console.log(this.sendlote, this.modeltipo.cod)
+      console.log(this.sendlote, this.modeltipo.cod)
       if (this.sendlote === '1' && this.modeltipo.cod === '1') {
         this.crear()
       } else {
@@ -550,6 +582,7 @@ export default {
               comentario: com,
               precio: Number(pre), // base
               cantidad: Number(can),
+              intipounidad: Number(this.shapeunidad),
               tasa: Number(tas),
               descuento: Number(desc),
               exento: exe, // true o false
@@ -569,7 +602,7 @@ export default {
             formasdepago.push(obj2)
           }
         }
-        const obs = document.getElementById('observacion').value
+        const obs = document.getElementById('observacion') ? document.getElementById('observacion').value : ''
         // console.log('obs')
         // console.log(obs)
         const body = {
@@ -583,6 +616,7 @@ export default {
           sucursal: this.sucursal,
           numerointerno: this.numerointerno,
           relacionado: this.relacionado,
+          fechavence: this.fechavence || null,
           idtipodocumento: Number(this.modeltipo.cod),
           subtotal: Number(this.subtotal),
           exento: Number(this.exento),
@@ -599,9 +633,10 @@ export default {
           tipomoneda: Number(this.tipomoneda),
           tasacambio: this.tasacambio > 0 ? Number(this.tasacambio) : undefined,
           idtipocedulacliente: Number(this.modelcedula.cod) || 1,
-          sendmail: (cuerpofactura.length > 0 && this.sendmail === '1') ? 1 : 0,
+          sendmail: this.sendmail,
           cuerpofactura: cuerpofactura,
           formasdepago: formasdepago,
+          direccionsucursal: this.direccionsucursal,
           observacion: obs.length > 0 ? obs : undefined
         }
         // console.log(this.numerointerno)
@@ -679,6 +714,7 @@ export default {
               comentario: com,
               precio: Number(pre), // base
               cantidad: Number(can),
+              intipounidad: Number(this.shapeunidad),
               tasa: Number(tas),
               descuento: Number(desc),
               exento: exe, // true o false
@@ -698,7 +734,7 @@ export default {
             formasdepago.push(obj2)
           }
         }
-        const obs = document.getElementById('observacion').value
+        const obs = document.getElementById('observacion') ? document.getElementById('observacion').value : ''
         const body = {
           rif: this.rif,
           trackingid: trackingid,
@@ -710,6 +746,8 @@ export default {
           sucursal: this.sucursal,
           numerointerno: this.numerointerno,
           relacionado: this.relacionado,
+          serial: this.serial.length > 0 ? this.serial : undefined,
+          fechavence: this.fechavence.length > 0 ? this.fechavence : undefined,
           idtipodocumento: Number(this.modeltipo.cod),
           subtotal: Number(this.subtotal),
           exento: Number(this.exento),
@@ -726,9 +764,10 @@ export default {
           tipomoneda: Number(this.tipomoneda),
           tasacambio: this.tasacambio > 0 ? Number(this.tasacambio) : undefined,
           idtipocedulacliente: Number(this.modelcedula.cod) || 1,
-          sendmail: (cuerpofactura.length > 0 && this.sendmail === '1') ? 1 : 0,
+          sendmail: this.sendmail,
           cuerpofactura: cuerpofactura,
           formasdepago: formasdepago,
+          direccionsucursal: this.direccionsucursal,
           observacion: obs.length > 0 ? obs : undefined
         }
         // console.log(body)
