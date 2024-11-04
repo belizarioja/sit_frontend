@@ -43,7 +43,7 @@
                           font-weight: bolder;
                         ">{{ registro.numerodocumento }}</span></span>
                     <span>{{ registro.tipodocumentodetail }}:
-                      {{ registro.numerointerno }}</span>
+                      {{ registro.serial }}{{ registro.numerointerno }}</span>
                     <span v-if="numeroafectadoDet.length > 0" style="font-size: 10px">Afecta a: {{ tipodocafectadoDet }}
                       <span style="color: #e00303; font-weight: bolder">{{
                         numeroafectadoDet
@@ -118,6 +118,7 @@
               <template v-slot:body-cell-cantidad="props">
                 <q-td :props="props" style="font-size: 11px;">
                   {{ props.row.cantidad }}
+                  {{ props.row.tdunidaditem }}
                 </q-td>
               </template>
               <template v-slot:body-cell-tasa="props">
@@ -137,14 +138,30 @@
               </template>
             </q-table>
           </div>
-          <div class="row">
+          <div class="row" style="font-size: 10px;">
             <table  class="col" style="margin-right: 20px;">
               <tr>
-                <td style="width: 80%; text-align: right">
-                  Subtotal Bs.:
+                <td style="text-align: left; vertical-align: baseline; padding-left: 10px; height: 30px;">
+                  Observacion
                 </td>
+              </tr>
+              <tr>
+                <td style="text-align: left; vertical-align: baseline; padding-left: 10px;">
+                  {{ registro.observacion }}
+                </td>
+              </tr>
+            </table>
+            <table class="col" style="margin-right: 20px;">
+              <tr v-if="registro.exentodetail !== '0,00'">
+                <td style="text-align: right">Exentos Bs.:</td>
                 <td style="text-align: right">
-                  {{ registro.subtotaldetail }}
+                  {{ registro.exentodetail }}
+                </td>
+              </tr>
+              <tr v-if="registro.impuestogdetail !== '0,00'">
+                <td style="text-align: right">Base imponible IVA 16% Bs.:</td>
+                <td style="text-align: right">
+                  {{ registro.basegdetail }}
                 </td>
               </tr>
               <tr v-if="registro.impuestogdetail !== '0,00'">
@@ -154,13 +171,19 @@
                 </td>
               </tr>
               <tr v-if="registro.impuestordetail !== '0,00'">
+                <td style="text-align: right">Base imponible IVA 8% Bs.:</td>
+                <td style="text-align: right">
+                  {{ registro.baserdetail }}
+                </td>
+              </tr>
+              <tr v-if="registro.impuestordetail !== '0,00'">
                 <td style="text-align: right">IVA 8% Bs.:</td>
                 <td style="text-align: right">
                   {{ registro.impuestordetail }}
                 </td>
               </tr>
               <tr v-if="registro.impuestoigtfdetail !== '0,00'">
-                <td style="text-align: right">IGTF 3% Bs.:</td>
+                <td style="text-align: right">IGTF 3% (${{ registro.baseigtfdetaildiv }}) Bs.:</td>
                 <td style="text-align: right">
                   {{ registro.impuestoigtfdetail }}
                 </td>
@@ -172,8 +195,52 @@
                 </td>
               </tr>
             </table>
+            <table v-if="registro.tipomonedadetail !== '1'" class="col" style="margin-right: 20px;">
+              <tr v-if="registro.exentodetail !== '0,00'">
+                <td style="text-align: right">Exentos $:</td>
+                <td style="text-align: right">
+                  {{ registro.exentodetaildiv }}
+                </td>
+              </tr>
+              <tr v-if="registro.impuestogdetail !== '0,00'">
+                <td style="text-align: right">Base imponible IVA 16% $:</td>
+                <td style="text-align: right">
+                  {{ registro.basegdetaildiv }}
+                </td>
+              </tr>
+              <tr v-if="registro.impuestogdetail !== '0,00'">
+                <td style="text-align: right">IVA 16% $:</td>
+                <td style="text-align: right">
+                  {{ registro.impuestogdetaildiv }}
+                </td>
+              </tr>
+              <tr v-if="registro.impuestordetail !== '0,00'">
+                <td style="text-align: right">Base imponible IVA 8% $:</td>
+                <td style="text-align: right">
+                  {{ registro.baserdetaildiv }}
+                </td>
+              </tr>
+              <tr v-if="registro.impuestordetail !== '0,00'">
+                <td style="text-align: right">IVA 8% $:</td>
+                <td style="text-align: right">
+                  {{ registro.impuestordetaildiv }}
+                </td>
+              </tr>
+              <tr v-if="registro.impuestoigtfdetail !== '0,00'">
+                <td style="text-align: right">IGTF 3% (${{ registro.baseigtfdetaildiv }}) $:</td>
+                <td style="text-align: right">
+                  {{ registro.impuestoigtfdetaildiv }}
+                </td>
+              </tr>
+              <tr>
+                <td style="text-align: right">Total $:</td>
+                <td style="text-align: right">
+                  {{ registro.totaldetaildiv }}
+                </td>
+              </tr>
+            </table>
           </div>
-          <!-- <q-separator />
+          <q-separator />
           <div class="row">
             <div class="col" style="display: grid; justify-content: center; margin: 10px;">
               <div style="
@@ -182,11 +249,8 @@
                 ">
                 {{ registro.piedepagina }}
               </div>
-              <div style="text-align: center; font-size: 8px; color: red">
-                ORIGINAL
-              </div>
             </div>
-          </div> -->
+          </div>
         </div>
         <!-- <q-separator  class="col-12" />
         <q-item class="col-12">
@@ -245,16 +309,16 @@ export default {
           label: 'Descripción',
           field: 'descripcion'
         },
-        { name: 'precio', align: 'left', label: 'Precio', field: 'precio' },
         {
           name: 'cantidad',
           align: 'left',
           label: 'Cantidad',
           field: 'cantidad'
         },
-        { name: 'tasa', align: 'left', label: 'Tasa', field: 'tasa' },
-        { name: 'descuento', label: 'Descuento', field: 'descuento' },
-        { name: 'monto', label: 'Monto', field: 'monto' }
+        { name: 'precio', align: 'left', label: 'Precio Unit.', field: 'precio' },
+        { name: 'tasa', align: 'left', label: '%IVA', field: 'tasa' },
+        { name: 'descuento', label: 'Monto Desc.', field: 'descuento' },
+        { name: 'monto', label: 'Total', field: 'monto' }
       ],
       detallesDoc: []
 
@@ -297,6 +361,9 @@ export default {
             obj.emailcliente = datos[i].emailcliente
             obj.telefonocliente = datos[i].telefonocliente
             obj.estatus = datos[i].estatus
+            obj.serial = datos[i].serial
+            obj.tipomoneda = datos[i].tipomoneda
+            obj.tasacambio = datos[i].tasacambio
 
             obj.observacion = datos[i].observacion
             obj.fecha = moment(datos[i].fecha).format('DD/MM/YYYY hh:mm:ss a')
@@ -325,12 +392,19 @@ export default {
             obj.totalimpuestos = Number(obj.impuestogN) + Number(obj.impuestorN) + Number(obj.impuestoigtfN)
 
             obj.exento = this.completarDecimales(obj.exento)
+            obj.exentodiv = this.completarDecimales(datos[i].exento / obj.tasacambio)
             obj.baseg = this.completarDecimales(obj.baseg)
+            obj.basegdiv = this.completarDecimales(datos[i].baseg / obj.tasacambio)
             obj.impuestog = this.completarDecimales(obj.impuestogN)
+            obj.impuestogdiv = this.completarDecimales(datos[i].impuestog / obj.tasacambio)
             obj.baser = this.completarDecimales(obj.baser)
+            obj.baserdiv = this.completarDecimales(datos[i].baser / obj.tasacambio)
             obj.impuestor = this.completarDecimales(obj.impuestorN)
+            obj.impuestordiv = this.completarDecimales(datos[i].impuestor / obj.tasacambio)
             obj.baseigtf = this.completarDecimales(obj.baseigtf)
+            obj.baseigtfdiv = this.completarDecimales(datos[i].baseigtf / obj.tasacambio)
             obj.impuestoigtf = this.completarDecimales(obj.impuestoigtfN)
+            obj.impuestoigtfdiv = this.completarDecimales(datos[i].impuestoigtf / obj.tasacambio)
             this.buscarDetalles(obj)
           }
           this.loading = false
@@ -362,15 +436,23 @@ export default {
           obj.descripcion = dato.descripcion
           obj.comentario = dato.comentario
           obj.cantidad = dato.cantidad.toFixed(2)
-          obj.precio = dato.precio.toFixed(2)
+          obj.precio = reg.tipomoneda === '1' ? dato.precio.toFixed(2) : (dato.precio / reg.tasacambio).toFixed(2)
           obj.tasa = dato.tasa.toFixed(2)
           obj.exento = dato.exento
           const descuento = (dato.precio * dato.cantidad) - dato.monto
           obj.descuento = Math.abs(descuento).toFixed(2)
-          obj.monto = dato.monto.toFixed(2)
+          obj.descuento = reg.tipomoneda === '1' ? Math.abs(descuento).toFixed(2) : (Math.abs(descuento) / reg.tasacambio).toFixed(2)
+          obj.monto = reg.tipomoneda === '1' ? dato.monto.toFixed(2) : (dato.monto / reg.tasacambio).toFixed(2)
+          obj.intipounidad = dato.intipounidad
+          let tdunidaditem = ''
+          if (obj.intipounidad > 0) {
+            tdunidaditem = obj.intipounidad === '1' ? 'Unidad(es)' : obj.intipounidad === '2' ? 'Kilo(s)' : obj.intipounidad === '3' ? 'Litro(s)' : obj.intipounidad === '4' ? 'Metro(s)' : 'Caja(s)'
+          }
+          obj.tdunidaditem = tdunidaditem
           subtotaldetalle += Number(obj.monto)
           this.detallesDoc.push(obj)
         }
+        // console.log(this.detallesDoc)
         // const $this = this
         this.tipodocafectado = ''
         this.fechaafectado = ''
@@ -397,8 +479,12 @@ export default {
       this.registro.tipodocumentodetail = reg.tipodocumento
       this.registro.numerodocumento = reg.numerodocumento
       this.registro.numerointerno = reg.numerointerno
+      this.registro.serial = reg.serial
       this.registro.nombreclientedetail = reg.nombrecliente
+      this.registro.observacion = reg.observacion
       this.registro.piedepagina = reg.piedepagina
+      this.registro.tipomonedadetail = reg.tipomoneda
+      this.registro.tasacambiodetail = reg.tasacambio
       this.registro.abrevdetail = reg.abrev
       this.registro.cedulaclientedetail = reg.cedulacliente
       this.registro.direccionclientedetail = reg.direccioncliente
@@ -406,21 +492,30 @@ export default {
       this.registro.emailclientedetail = reg.emailcliente
       this.registro.fechadetail = reg.fechasolo
       this.registro.horadetail = reg.hora
+
       this.registro.exentodetail = reg.exento
+      this.registro.exentodetaildiv = reg.exentodiv
 
       this.registro.basegdetail = reg.baseg
+      this.registro.basegdetaildiv = reg.basegdiv
       this.registro.baserdetail = reg.baser
+      this.registro.baserdetaildiv = reg.baserdiv
       this.registro.baseigtfdetail = reg.baseigtf
+      this.registro.baseigtfdetaildiv = reg.baseigtfdiv
 
       this.registro.impuestogdetail = reg.impuestog
+      this.registro.impuestogdetaildiv = reg.impuestogdiv
       this.registro.impuestordetail = reg.impuestor
+      this.registro.impuestordetaildiv = reg.impuestordiv
       this.registro.impuestoigtfdetail = reg.impuestoigtf
+      this.registro.impuestoigtfdetaildiv = reg.impuestoigtfdiv
 
       this.registro.totalimpuestodetail = Number(reg.impuestogN) + Number(reg.impuestorN) + Number(reg.impuestoigtfN)
       reg.total = reg.subtotal + this.registro.totalimpuestodetail
-      this.registro.totalimpuestodetail = this.completarDecimales(this.registro.totalimpuestodetail)
-      this.registro.subtotaldetail = this.completarDecimales(reg.subtotal)
+      // this.registro.totalimpuestodetail = this.completarDecimales(this.registro.totalimpuestodetail)
+      // this.registro.subtotaldetail = this.completarDecimales(reg.subtotal)
       this.registro.totaldetail = this.completarDecimales(reg.total)
+      this.registro.totaldetaildiv = this.completarDecimales(reg.total / reg.tasacambio)
       this.haydata = true
     },
     async getIdClienteEmisor (rif) {
@@ -439,6 +534,8 @@ export default {
       this.idserviciosmasivo = resp.id
       this.listarfacturas()
     } else {
+      this.haydata = false
+      this.loading = false
       console.log('Cliente emisor no encontrado')
     }
   }

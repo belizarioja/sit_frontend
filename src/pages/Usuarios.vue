@@ -490,7 +490,7 @@ export default {
         idrol: Number(this.modelrol.cod),
         idserviciosmasivo: Number(this.modelsede?.cod) || null
       }
-      axios.post(ENDPOINT_PATH_V2 + 'usuario', data).then(async response => {
+      axios.post(ENDPOINT_PATH_V2 + 'usuario/crear', data).then(async response => {
         console.log(response.data)
         this.usuario = ''
         this.clave = ''
@@ -501,7 +501,7 @@ export default {
       })
     },
     listarusuarios () {
-      axios.get(ENDPOINT_PATH_V2 + 'usuario').then(async response => {
+      axios.post(ENDPOINT_PATH_V2 + 'usuario').then(async response => {
         const datos = response.data.resp
         this.rows = []
         for (const i in datos) {
@@ -510,7 +510,7 @@ export default {
           obj.name = datos[i].nombre
           obj.razonsocial = datos[i].razonsocial
           obj.usuario = datos[i].usuario
-          obj.clave = datos[i].clave
+          // obj.clave = datos[i].clave
           obj.rol = datos[i].rol
           obj.idrol = datos[i].idrol
           obj.feultacceso = datos[i].feultacceso

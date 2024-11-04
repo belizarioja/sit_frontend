@@ -299,6 +299,7 @@ export default {
 
       const body = { month, year }
       const listEmisores = await getReporteSemanalAdapter(body)
+
       const sem1 = {}
       sem1.total = 0
       const sem2 = {}
@@ -309,10 +310,11 @@ export default {
       sem4.total = 0
       const sem5 = {}
       sem5.total = 0
+      const sem6 = {}
+      sem6.total = 0
+      let cantsemanas = 4
       for (const i in listEmisores) {
-        // console.log(i)
-        // console.log(listEmisores[i])
-        // console.log(listEmisores[i].mes[0].total)
+        cantsemanas = listEmisores[0].mes.length
         sem1.total += Number(listEmisores[i].mes[0].total)
         sem1.sem = listEmisores[i].mes[0].semana
         sem2.total += Number(listEmisores[i].mes[1].total)
@@ -321,11 +323,19 @@ export default {
         sem3.sem = listEmisores[i].mes[2].semana
         sem4.total += Number(listEmisores[i].mes[3].total)
         sem4.sem = listEmisores[i].mes[3].semana
-        sem5.total += Number(listEmisores[i].mes[4].total)
-        sem5.sem = listEmisores[i].mes[4].semana
+        // sem5.total += Number(listEmisores[i].mes[4].total)
+        // sem5.sem = listEmisores[i].mes[4].semana
+        if (listEmisores[i].mes[4]) {
+          sem5.total += Number(listEmisores[i].mes[4].total)
+          sem5.sem = listEmisores[i].mes[4].semana
+        }
+        if (listEmisores[i].mes[5]) {
+          sem6.total += Number(listEmisores[i].mes[5].total)
+          sem6.sem = listEmisores[i].mes[5].semana
+        }
         // console.log(i)
       }
-      // console.log(sem1, sem2, sem3, sem4, sem5)
+      // console.log(sem1, sem2, sem3, sem4, sem5, sem6)
 
       const obj = {}
       obj.id = '00'
@@ -335,8 +345,14 @@ export default {
       obj.mes.push(sem2)
       obj.mes.push(sem3)
       obj.mes.push(sem4)
-      obj.mes.push(sem5)
-      obj.total = sem1.total + sem2.total + sem3.total + sem4.total + sem5.total
+      console.log('cantsemanas: ', cantsemanas)
+      if (cantsemanas === 5) {
+        obj.mes.push(sem5)
+      }
+      if (cantsemanas === 6) {
+        obj.mes.push(sem6)
+      }
+      obj.total = sem1.total + sem2.total + sem3.total + sem4.total + sem5.total + sem6.total
       listEmisores.push(obj)
       // console.log(listEmisores)
       if (lookingFor === 'Todos') {

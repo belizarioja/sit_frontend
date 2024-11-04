@@ -44,6 +44,7 @@ export default {
     const mes = computed(() => {
       return emisores.value
     })
+    // console.log(mes)
     const semanas = computed(() => {
       return mes.value[0]?.mes
     })

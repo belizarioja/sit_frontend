@@ -987,13 +987,13 @@ export default {
       return item ? item[0] : 'S'
     },
     openDetail () {
-      if (this.co_rol === '3') {
-        const anniomes =
+      // if (this.co_rol === '3') {
+      const anniomes =
         moment(this.registroDetalle.fecha, 'DD/MM/YYYY HH:mm:ss a').format('YYYY') +
         '-' +
         moment(this.registroDetalle.fecha, 'DD/MM/YYYY HH:mm:ss a').format('MM')
-        window.open(
-          ENDPOINT_PATH_V2 +
+      window.open(
+        ENDPOINT_PATH_V2 +
         'archivos/' +
         this.registroDetalle.rif +
         '/' +
@@ -1001,16 +1001,17 @@ export default {
         '/' +
         this.registroDetalle.rif +
         this.registroDetalle.numerodocumento
-        )
-      } else {
+      )
+      /* } else {
         this.buscarDetalles(this.registroDetalle)
         this.viewdetail = true
-      }
+      } */
     },
     openDetailRelacionado () {
       this.buscarDetailRelacionado(this.registroDetalle)
     },
     async openDrawerDetalles (reg) {
+      console.log(reg)
       this.registroDetalle = reg
       this.rowtempxml = []
       this.detallesDoc = []
@@ -1037,7 +1038,7 @@ export default {
         this.tipodocafectado = ''
         this.fechaafectado = ''
         this.numeroafectado = ''
-        if (reg.relacionado.length > 0) {
+        if (reg.relacionado.length > 0 && Number(reg.regimenanterior) === 0) {
           const body = {
             idserviciosmasivo: reg.idserviciosmasivo,
             numerodocumento: reg.relacionado

@@ -84,7 +84,7 @@
             />
           </div>
           <div style="margin: 20px 5px;border: solid 1px #ccc;border-radius: 5px;padding: 15px;position: relative;">
-            <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">N° Control:</span>
+            <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Eventos:</span>
             <q-select
               dense
               class="col-md-4 col-sm-6 col-xs-12"

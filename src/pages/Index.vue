@@ -264,27 +264,36 @@
 
     <div class="row">
       <q-card class="col-5" style="margin: 20px; display: grid;">
-        <div style="display: flex; justify-content: space-between;">
-          <div style="display: grid;">
-            <div class="dash_welcome_long" style="margin-left: 20px">Tipos de documento</div>
-            <img src="dashboard2.png" alt="" style="margin-bottom: -6px;">
-            <div class="dash_welcome_small" style="margin-left: 20px">Información sobre el uso del principal tipo de documento, por parte de los clientes</div>
+        <q-card class="row" style="display: grid;">
+          <div style="display: flex; justify-content: space-between;">
+            <div style="display: grid;">
+              <div class="dash_welcome_long" style="margin-left: 20px">Tipos de documento</div>
+              <img src="dashboard2.png" alt="" style="margin-bottom: -6px;">
+              <div class="dash_welcome_small" style="margin-left: 20px">Información sobre el uso del principal tipo de documento, por parte de los clientes</div>
+            </div>
+            <div style="display: grid;">
+              <radial-chart1 ref="radialtipos1" style="text-align: center; margin-right: 20px;" />
+              <div class="dash_tipos_main" style="text-align: center;margin-right: 20px;">{{totalfacturas}} procesada(s)</div>
+              <div class="dash_tipos_second" style="text-align: center;margin-right: 20px;">Bs. {{sumafacturas}}</div>
+            </div>
           </div>
-          <div style="display: grid;">
-            <radial-chart1 ref="radialtipos1" style="text-align: center; margin-right: 20px;" />
-            <div class="dash_tipos_main" style="text-align: center;margin-right: 20px;">{{totalfacturas}} procesada(s)</div>
-            <div class="dash_tipos_second" style="text-align: center;margin-right: 20px;">Bs. {{sumafacturas}}</div>
+          <div style="margin: 10px;border: solid 1px #ccc;border-radius: 5px;padding: 5px;position: relative;display: grid;">
+            <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Otros tipos de documentos:</span>
+            <div style="display: flex;">
+              <radial-chart2 ref="radialtipos2" style="margin-left: 0px; margin-bottom: 20px; margin-top: -20px;" />
+              <radial-chart3 ref="radialtipos3" style="margin-left: -18px; margin-bottom: 20px; margin-top: -20px;" />
+              <radial-chart4 ref="radialtipos4" style="margin-left: -18px; margin-bottom: 20px; margin-top: -20px;" />
+              <radial-chart5 ref="radialtipos5" style="margin-left: -18px; margin-bottom: 20px; margin-top: -20px;" />
+            </div>
           </div>
-        </div>
-        <div style="margin: 10px;border: solid 1px #ccc;border-radius: 5px;padding: 5px;position: relative;display: grid;">
-          <span class="bg-white" style="position: absolute;top: -12px; left: 10px; color: #ccc;">Otros tipos de documentos:</span>
-          <div style="display: flex;">
-            <radial-chart2 ref="radialtipos2" style="margin-left: 0px; margin-bottom: 20px; margin-top: -20px;" />
-            <radial-chart3 ref="radialtipos3" style="margin-left: -18px; margin-bottom: 20px; margin-top: -20px;" />
-            <radial-chart4 ref="radialtipos4" style="margin-left: -18px; margin-bottom: 20px; margin-top: -20px;" />
-            <radial-chart5 ref="radialtipos5" style="margin-left: -18px; margin-bottom: 20px; margin-top: -20px;" />
+        </q-card>
+        <q-separator />
+        <q-card class="row" style="margin: 20px; display: grid; align-items: baseline;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="dash_welcome_long" style="margin-left: 20px">SMS enviados</div>
+            <div class="text-positive" style="margin: 20px; font-size: 18px; font-weight: bold; ">{{ totalsms }}</div>
           </div>
-        </div>
+        </q-card>
       </q-card>
       <q-card class="col-6" style="margin: 20px;">
         <q-card-section ><div class="dash_welcome_long" style="margin-bottom: -20px; margin-top: 8px;">Última semana</div></q-card-section>
@@ -406,6 +415,7 @@ export default defineComponent({
       clientesTerminando: ref(0),
       totalUtilizados: ref(0),
       avg7Days: ref(22.8),
+      totalsms: ref(0),
       totaldoc: ref(0),
       totalAnulados: ref(0),
       totalexento: ref(0),
@@ -632,6 +642,22 @@ export default defineComponent({
         Notify.create('Problemas al listar Lotes ' + error)
       })
     },
+    getSmsEnviados () {
+      this.$refs.radialasignados.createData(this.idserviciosmasivo)
+      const body = {
+        idserviciosmasivo: this.idserviciosmasivo,
+        desde: moment(this.dateFrom, 'YYYY/MM/DD').format('YYYY-MM-DD'),
+        hasta: moment(this.dateTo, 'YYYY/MM/DD').format('YYYY-MM-DD')
+      }
+      axios.post(ENDPOINT_PATH_V2 + 'reporte/totalsmsenviados', body).then(async response => {
+        const datos = response.data.data[0]
+        console.log(datos)
+
+        this.totalsms = datos.count
+      }).catch(error => {
+        Notify.create('Problemas al listar Total SMS ' + error)
+      })
+    },
     listarsedes () {
       axios.get(ENDPOINT_PATH_V2 + 'sede').then(async response => {
         // console.log(response.data)
@@ -666,6 +692,7 @@ export default defineComponent({
     listarReportes () {
       this.calcularTotalImp()
       this.getDocProcesados()
+      this.getSmsEnviados()
       this.getUltimaSemana()
       this.getLotes()
       this.$refs.barmeses.createData(this.idserviciosmasivo)
@@ -680,6 +707,7 @@ export default defineComponent({
       const selectElementHasta = document.querySelector('.fecha2')
       this.dateFrom = selectElementDesde.value
       this.dateTo = selectElementHasta.value
+      this.listarReportes()
       this.crearbitacora(this.dateFrom, this.dateTo, 2)
     },
     crearbitacora (desde, hasta, idevento) {
@@ -701,7 +729,7 @@ export default defineComponent({
   },
   watch: {
     fechacustom: function (val) {
-      // console.log(val)
+      console.log(val)
       switch (val) {
         case '1':
           this.dateFrom = moment().format('YYYY-MM-DD')

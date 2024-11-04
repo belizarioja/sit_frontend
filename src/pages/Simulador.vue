@@ -264,7 +264,7 @@
               <q-radio v-model="shapepago" val="sinforma" label="Sin forma de pago" />
             </div>
           </div>
-          <div class="" style="margin-bottom: 20px;">
+          <div class="">
             <div class="q-gutter-sm">
               <q-radio v-model="shapeunidad" val="0" label="Sin unidad" />
               <q-radio v-model="shapeunidad" val="1" label="Unidad" />
@@ -272,6 +272,12 @@
               <q-radio v-model="shapeunidad" val="3" label="Litro" />
               <q-radio v-model="shapeunidad" val="4" label="Metro" />
               <q-radio v-model="shapeunidad" val="5" label="Caja" />
+            </div>
+          </div>
+          <div class=""  style="margin-bottom: 20px;">
+            <div class="q-gutter-sm">
+              <q-radio v-model="shaperegimenanterior" val="0" label="Sin Régimen Anterior" />
+              <q-radio v-model="shaperegimenanterior" val="1" label="Con Régimen Anterior" />
             </div>
           </div>
           <div v-if="shape === 'concuerpo'" style="font-size: 12px;">
@@ -425,6 +431,7 @@ export default {
     return {
       shape: ref('sincuerpo'),
       shapepago: ref('conforma'),
+      shaperegimenanterior: ref('0'),
       direccionsucursal: ref(''),
       shapeunidad: ref('0'),
       sendmail: ref('0'),
@@ -443,7 +450,7 @@ export default {
       direccion: ref('Cumana Estado Sucre, Venezuela'),
       email: ref('belizarioja@gmail.com'),
       sucursal: ref('cum00123 '),
-      telefono: ref('+5804125558877'),
+      telefono: ref('584128342274'),
       subtotal: ref(6978.5),
       nombre: ref('Jesus Ramirez'),
       total: ref(7067.57),
@@ -637,6 +644,7 @@ export default {
           cuerpofactura: cuerpofactura,
           formasdepago: formasdepago,
           direccionsucursal: this.direccionsucursal,
+          regimenanterior: this.shaperegimenanterior,
           observacion: obs.length > 0 ? obs : undefined
         }
         // console.log(this.numerointerno)
@@ -768,6 +776,7 @@ export default {
           cuerpofactura: cuerpofactura,
           formasdepago: formasdepago,
           direccionsucursal: this.direccionsucursal,
+          regimenanterior: this.shaperegimenanterior,
           observacion: obs.length > 0 ? obs : undefined
         }
         // console.log(body)
