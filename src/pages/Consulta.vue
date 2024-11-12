@@ -1235,6 +1235,7 @@ export default {
       return xml
     },
     exportXML (arreglo) {
+      const start = new Date()
       let header = '<?xml version="1.0"?>\n'
       header +=
         '<root xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n\n'
@@ -1255,9 +1256,17 @@ export default {
 
       if (status !== true) {
         Notify.create('Browser denied file download...')
+      } else {
+        const desde = moment(this.dateFrom, 'YYYY/MM/DD').format('YYYY-MM-DD')
+        const hasta = moment(this.dateTo, 'YYYY/MM/DD').format('YYYY-MM-DD')
+        const end = new Date()
+        const tiempo = (end.getTime() - start.getTime()) / 1000
+        // console.log(tiempo, 'seg.')
+        this.crearbitacora(desde, hasta, 7, tiempo)
       }
     },
     exportTable () {
+      const start = new Date()
       // naive encoding to csv format
       const content = [this.columns.map((col) => wrapCsvValue(col.label))]
         .concat(
@@ -1281,11 +1290,18 @@ export default {
 
       if (status !== true) {
         Notify.create('Browser denied file download...')
+      } else {
+        const desde = moment(this.dateFrom, 'YYYY/MM/DD').format('YYYY-MM-DD')
+        const hasta = moment(this.dateTo, 'YYYY/MM/DD').format('YYYY-MM-DD')
+        const end = new Date()
+        const tiempo = (end.getTime() - start.getTime()) / 1000
+        // console.log(tiempo, 'seg.')
+        this.crearbitacora(desde, hasta, 7, tiempo)
       }
     },
     exportPDF () {
       const vm = this
-      this.crearbitacora(vm.dateFrom, vm.dateTo, 7)
+      const start = new Date()
       const columns = [
         { title: 'Emisor', dataKey: 'razonsocial' },
         { title: 'Rif', dataKey: 'rif' },
@@ -1342,6 +1358,10 @@ export default {
       })
       addFooters(doc)
       doc.save('smartdigitalRegistros.pdf')
+      const end = new Date()
+      const tiempo = (end.getTime() - start.getTime()) / 1000
+      // console.log(tiempo, 'seg.')
+      this.crearbitacora(vm.dateFrom, vm.dateTo, 7, tiempo)
     },
     exportXMLDetail (reg) {
       this.rowtempxml = []
@@ -1459,6 +1479,7 @@ export default {
       })
     },
     exportarLotes () {
+      const start = new Date()
       const $this = this
       const desde =
         this.numerodocumento.length > 0
@@ -1503,6 +1524,10 @@ export default {
         link.click()
         window.URL.revokeObjectURL(link.href)
         // Notify.create('Documentos exportados con exito ')
+        const end = new Date()
+        const tiempo = (end.getTime() - start.getTime()) / 1000
+        // console.log(tiempo, 'seg.')
+        this.crearbitacora(desde, hasta, 7, tiempo)
       }).catch(error => {
         Notify.create('Problemas al listar Tipos de documentos ' + error)
       })
@@ -1652,29 +1677,44 @@ export default {
           Notify.create('Problemas al Buscar factura ' + error)
         })
     },
-    crearbitacora (desde, hasta, idevento) {
+    crearbitacora (desde, hasta, idevento, tiempo) {
       let observacion = ''
-      let fechas = ' desde el ' + desde + ' hasta el ' + hasta
-      const tipodoc = this.modeltipo.name ? ', ' + this.modeltipo.name : ''
-      observacion += tipodoc
+
+      let exportar = ''
+      if (idevento === 7) {
+        const tipoexportar = this.tipoExportar === '1' ? ' - Exportar PDF'
+          : this.tipoExportar === '2' ? ' - Exportar Comprimido .ZIP'
+            : this.tipoExportar === '3' ? ' - Exportar XML'
+              : this.tipoExportar === '4' ? ' - Exportar CSV' : ''
+        exportar += tipoexportar
+      }
+      observacion += exportar
+      let fechas = ' - Desde el ' + desde + ' Hasta el ' + hasta
+      const tipodocfac = this.tipofactura ? ' - Facturas' : ''
+      const tipodocred = this.tipocredito ? ' - Notas de Crédito' : ''
+      const tipodocdeb = this.tipodebito ? ' - Notas de Débito' : ''
+      const tipodocord = this.tipoorden ? ' - Ordenes de Entrega' : ''
+      const tipodocgui = this.tipoguia ? ' - Guías de Despacho' : ''
+      observacion += tipodocfac + tipodocred + tipodocdeb + tipodocord + tipodocgui
       const cliente = this.modelsede?.name
-        ? ', cliente emisor ' + this.modelsede.namerif
+        ? ' - Cliente Emisor ' + this.modelsede.namerif
         : ''
       observacion += cliente
-      const tipoimpuesto = this.modelimpuesto.name
-        ? ', tipo de impuesto ' + this.modelimpuesto.name
-        : ''
-      observacion += tipoimpuesto
-      const clientefinal = this.modelcliente?.rif
-        ? ', cliente consumidor ' + this.modelcliente.namerif
-        : ''
-      observacion += clientefinal
 
       if (this.numerodocumento.length > 0) {
         fechas = ''
-        observacion += ', N° de control ' + this.numerodocumento
+        observacion = ' - N° de control ' + this.numerodocumento
       }
+
+      // console.log('this.estatusanulados', this.estatusanulados)
+      if (this.estatusanulados !== '4') {
+        const estatus = this.estatusanulados === '1' ? ' - Documentos No Anulados' : ' - Documentos Anulados'
+        observacion += estatus
+      }
+
       observacion += fechas
+      observacion += ' - Duración ' + tiempo + ' segs.'
+
       axios.post(ENDPOINT_PATH_V2 + 'bitacora', {
         idusuario: this.idusuario,
         idevento: idevento,
@@ -1719,6 +1759,7 @@ export default {
       this.rows = lista
     },
     listarfacturas () {
+      const start = new Date()
       this.estatusfilter = this.estatusanulados === '1' ? 'No anulados' : this.estatusanulados === '2' ? 'Anulados' : 'Todos'
       const desde =
         this.numerodocumento.length > 0
@@ -1747,7 +1788,6 @@ export default {
         impuestoigtf: this.impuestoigtf,
         estatus: Number(this.estatusanulados)
       }
-      this.crearbitacora(desde, hasta, 3)
       this.loading = true
       this.btnDisable = true
       axios
@@ -1864,6 +1904,10 @@ export default {
 
           this.loading = false
           this.btnDisable = this.rows.length === 0 || false
+          const end = new Date()
+          const tiempo = (end.getTime() - start.getTime()) / 1000
+          console.log(tiempo, 'seg.')
+          this.crearbitacora(desde, hasta, 3, tiempo)
         })
         .catch((error) => {
           Notify.create('Problemas al listar Reporte ' + error)

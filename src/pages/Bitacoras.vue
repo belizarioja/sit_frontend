@@ -180,7 +180,7 @@ export default {
       })
     },
     listarusuarios () {
-      axios.get(ENDPOINT_PATH_V2 + 'usuario').then(async response => {
+      axios.post(ENDPOINT_PATH_V2 + 'usuario').then(async response => {
         const datos = response.data.resp
         this.optionsusuarios = []
         for (const i in datos) {
@@ -193,7 +193,7 @@ export default {
             this.optionsusuarios.push(obj)
           } else {
             // console.log(this.co_rol, datos[i].idrol)
-            if (this.co_rol === '2' && (datos[i].idrol === '2' || datos[i].idrol === '4')) {
+            if (this.co_rol === '2' && (datos[i].idrol !== '1')) {
               this.optionsusuarios.push(obj)
             }
           }
@@ -259,7 +259,7 @@ export default {
             this.rowstodos.push(obj)
           } else {
             // console.log(this.co_rol, datos[i].idrol)
-            if (this.co_rol === '2' && (datos[i].idrol === '2' || datos[i].idrol === '4')) {
+            if (this.co_rol === '2' && (datos[i].idrol !== '1')) {
               this.rowstodos.push(obj)
             }
           }

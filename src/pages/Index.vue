@@ -616,8 +616,12 @@ export default defineComponent({
     changeSede () {
       this.idserviciosmasivo = this.modelsede?.cod
       this.serviciosmasivo = this.modelsede?.namerif
+      const start = new Date()
       this.listarReportes()
-      this.crearbitacora(this.dateFrom, this.dateTo, 2)
+      const end = new Date()
+      const tiempo = (end.getTime() - start.getTime()) / 1000
+      // console.log(tiempo, 'seg.')
+      this.crearbitacora(this.dateFrom, this.dateTo, 2, tiempo)
     },
     getLotes () {
       this.$refs.radialasignados.createData(this.idserviciosmasivo)
@@ -707,17 +711,22 @@ export default defineComponent({
       const selectElementHasta = document.querySelector('.fecha2')
       this.dateFrom = selectElementDesde.value
       this.dateTo = selectElementHasta.value
+      const start = new Date()
       this.listarReportes()
-      this.crearbitacora(this.dateFrom, this.dateTo, 2)
+      const end = new Date()
+      const tiempo = (end.getTime() - start.getTime()) / 1000
+      // console.log(tiempo, 'seg.')
+      this.crearbitacora(this.dateFrom, this.dateTo, 2, tiempo)
     },
-    crearbitacora (desde, hasta, idevento) {
+    crearbitacora (desde, hasta, idevento, tiempo) {
       let observacion = ''
-      const fechas = ' desde el ' + desde + ' hasta el ' + hasta
+      const fechas = ' - Desde el ' + desde + ' Hasta el ' + hasta
       const cliente = this.modelsede?.name
-        ? 'Cliente emisor ' + this.modelsede.namerif
+        ? ' - Cliente Emisor ' + this.modelsede.namerif
         : ''
       observacion += cliente
       observacion += fechas
+      observacion += ' - Duración ' + tiempo + ' segs.'
       axios.post(ENDPOINT_PATH_V2 + 'bitacora', {
         idusuario: this.idusuario,
         idevento: idevento,
@@ -756,8 +765,12 @@ export default defineComponent({
           break
       }
 
+      const start = new Date()
       this.listarReportes()
-      this.crearbitacora(this.dateFrom, this.dateTo, 2)
+      const end = new Date()
+      const tiempo = (end.getTime() - start.getTime()) / 1000
+      // console.log(tiempo, 'seg.')
+      this.crearbitacora(this.dateFrom, this.dateTo, 2, tiempo)
     }
   },
   mounted () {
