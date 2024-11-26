@@ -274,6 +274,12 @@
               <q-radio v-model="shapeunidad" val="5" label="Caja" />
             </div>
           </div>
+          <div class="">
+            <div class="q-gutter-sm">
+              <q-radio v-model="shapebotondepago" val="0" label="Sin Botón de Pago" />
+              <q-radio v-model="shapebotondepago" val="1" label="Con Botón de Pago" />
+            </div>
+          </div>
           <div class=""  style="margin-bottom: 20px;">
             <div class="q-gutter-sm">
               <q-radio v-model="shaperegimenanterior" val="0" label="Sin Régimen Anterior" />
@@ -434,6 +440,7 @@ export default {
       shaperegimenanterior: ref('0'),
       direccionsucursal: ref(''),
       shapeunidad: ref('0'),
+      shapebotondepago: ref('0'),
       sendmail: ref('0'),
       sendlote: ref('1'),
       statusProcess: ref(true),
@@ -645,6 +652,7 @@ export default {
           formasdepago: formasdepago,
           direccionsucursal: this.direccionsucursal,
           regimenanterior: this.shaperegimenanterior,
+          botondepago: this.shapebotondepago,
           observacion: obs.length > 0 ? obs : undefined
         }
         // console.log(this.numerointerno)
@@ -777,6 +785,7 @@ export default {
           formasdepago: formasdepago,
           direccionsucursal: this.direccionsucursal,
           regimenanterior: this.shaperegimenanterior,
+          botondepago: this.shapebotondepago,
           observacion: obs.length > 0 ? obs : undefined
         }
         // console.log(body)
@@ -842,7 +851,7 @@ export default {
     },
     listartiposcedulas () {
       axios.get(ENDPOINT_PATH_V2 + 'tipodocumento/tipocedula').then(async response => {
-        console.log(response.data)
+        // console.log(response.data)
         const datos = response.data.data
         this.optionscedula = []
         for (const i in datos) {
@@ -857,7 +866,7 @@ export default {
     },
     listarsedes () {
       axios.get(ENDPOINT_PATH_V2 + 'sede').then(async response => {
-        console.log(response.data)
+        // console.log(response.data)
         const datos = response.data.data
         this.optionssede = []
         for (const i in datos) {

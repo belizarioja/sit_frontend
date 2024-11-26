@@ -91,8 +91,14 @@
             </table>
           </div>
           <div class="row">
-            <q-table class="col" :rows="detallesDoc" :columns="columnsDetallesDoc" row-key="codigo" hide-pagination dense
-              style="width: 100%; margin: 10px;">
+            <q-table class="col"
+             :rows="detallesDoc"
+             :columns="columnsDetallesDoc"
+             row-key="codigo"
+             hide-pagination
+             :rows-per-page-options="[0]"
+             dense
+             style="width: 100%; margin: 10px;">
               <template v-slot:body-cell-codigo="props">
                 <q-td :props="props" style="font-size: 11px;">
                   {{ props.row.codigo }}
@@ -152,7 +158,7 @@
               </tr>
             </table>
             <table class="col" style="margin-right: 20px;">
-              <tr v-if="registro.exentodetail !== '0,00'">
+              <tr v-if="registro.exentodetail !== '0,00' && registro.exentodetail !== '0,0000'">
                 <td style="text-align: right">Exentos Bs.:</td>
                 <td style="text-align: right">
                   {{ registro.exentodetail }}
@@ -320,6 +326,10 @@ export default {
         { name: 'descuento', label: 'Monto Desc.', field: 'descuento' },
         { name: 'monto', label: 'Total', field: 'monto' }
       ],
+      pagination: {
+        page: 1,
+        rowsPerPage: 10 // 0 means all rows
+      },
       detallesDoc: []
 
     }
@@ -364,6 +374,7 @@ export default {
             obj.serial = datos[i].serial
             obj.tipomoneda = datos[i].tipomoneda
             obj.tasacambio = datos[i].tasacambio
+            const DECIMALES = datos[i].tipomoneda > 1 ? 4 : 2
 
             obj.observacion = datos[i].observacion
             obj.fecha = moment(datos[i].fecha).format('DD/MM/YYYY hh:mm:ss a')
@@ -391,21 +402,21 @@ export default {
 
             obj.totalimpuestos = Number(obj.impuestogN) + Number(obj.impuestorN) + Number(obj.impuestoigtfN)
 
-            obj.exento = this.completarDecimales(obj.exento)
-            obj.exentodiv = this.completarDecimales(datos[i].exento / obj.tasacambio)
-            obj.baseg = this.completarDecimales(obj.baseg)
-            obj.basegdiv = this.completarDecimales(datos[i].baseg / obj.tasacambio)
-            obj.impuestog = this.completarDecimales(obj.impuestogN)
-            obj.impuestogdiv = this.completarDecimales(datos[i].impuestog / obj.tasacambio)
-            obj.baser = this.completarDecimales(obj.baser)
-            obj.baserdiv = this.completarDecimales(datos[i].baser / obj.tasacambio)
-            obj.impuestor = this.completarDecimales(obj.impuestorN)
-            obj.impuestordiv = this.completarDecimales(datos[i].impuestor / obj.tasacambio)
-            obj.baseigtf = this.completarDecimales(obj.baseigtf)
-            obj.baseigtfdiv = this.completarDecimales(datos[i].baseigtf / obj.tasacambio)
-            obj.impuestoigtf = this.completarDecimales(obj.impuestoigtfN)
-            obj.impuestoigtfdiv = this.completarDecimales(datos[i].impuestoigtf / obj.tasacambio)
-            this.buscarDetalles(obj)
+            obj.exento = this.completarDecimales(obj.exento, 2)
+            obj.exentodiv = this.completarDecimales(datos[i].exento / obj.tasacambio, DECIMALES)
+            obj.baseg = this.completarDecimales(obj.baseg, 2)
+            obj.basegdiv = this.completarDecimales(datos[i].baseg / obj.tasacambio, DECIMALES)
+            obj.impuestog = this.completarDecimales(obj.impuestogN, 2)
+            obj.impuestogdiv = this.completarDecimales(datos[i].impuestog / obj.tasacambio, DECIMALES)
+            obj.baser = this.completarDecimales(obj.baser, 2)
+            obj.baserdiv = this.completarDecimales(datos[i].baser / obj.tasacambio, DECIMALES)
+            obj.impuestor = this.completarDecimales(obj.impuestorN, 2)
+            obj.impuestordiv = this.completarDecimales(datos[i].impuestor / obj.tasacambio, DECIMALES)
+            obj.baseigtf = this.completarDecimales(obj.baseigtf, 2)
+            obj.baseigtfdiv = this.completarDecimales(datos[i].baseigtf / obj.tasacambio, DECIMALES)
+            obj.impuestoigtf = this.completarDecimales(obj.impuestoigtfN, 2)
+            obj.impuestoigtfdiv = this.completarDecimales(datos[i].impuestoigtf / obj.tasacambio, DECIMALES)
+            this.buscarDetalles(obj, DECIMALES)
           }
           this.loading = false
         })
@@ -413,8 +424,8 @@ export default {
           Notify.create('Problemas al listar Factura ' + error)
         })
     },
-    completarDecimales (cadena) {
-      cadena = Intl.NumberFormat('de-DE').format(cadena.toFixed(2))
+    completarDecimales (cadena, decimales) {
+      /* cadena = Intl.NumberFormat('de-DE').format(cadena.toFixed(2))
       const arreglo = cadena.split(',')
       cadena =
         arreglo.length === 1
@@ -422,13 +433,43 @@ export default {
           : arreglo[1].length === 1
             ? cadena + '0'
             : cadena
-      return cadena
+      return cadena */
+      const cadena2 = cadena.toFixed(decimales).toString().replace('.', ',')
+      // const decimal = DECIMALES > 1 ? ',0000' : ',00'
+      const arreglo = cadena2.split(',')
+      let cadenafinal = ''
+      if (decimales > 2) {
+        cadenafinal = arreglo.length === 1 ? cadena2 + ',0000' : arreglo[1].length === 1 ? cadena2 + '000' : arreglo[1].length === 2 ? cadena2 + '00' : arreglo[1].length === 3 ? cadena2 + '0' : cadena2
+      } else {
+        cadenafinal = arreglo.length === 1 ? cadena2 + ',00' : arreglo[1].length === 1 ? cadena2 + '0' : cadena2
+      }
+      console.log('cadenafinal', cadenafinal)
+      const arreglo2 = cadena2.split(',')
+
+      const str = arreglo2[0]
+      // Aquí almacenaremos los resultados.
+      let resultado = ''
+
+      // Recorremos el string con for "str.length" veces.
+      for (let i = 0; i < str.length; i++) {
+        // Cada número, lo concatenamos a "resultado".
+        resultado += str[i]
+
+        // y luego de concatenar el número, verifico si el iterador es un múltiplo de 3.
+        // ponemos "i < str.length - 1" para evitar que el punto se agregue al final del string.
+        if ((str.length - i - 1) % 3 === 0 && i < str.length - 1) {
+          resultado += '.'
+        }
+      }
+      const cadenafinal2 = resultado + ',' + arreglo2[1]
+      // console.log('cadenafinal2', cadenafinal2)
+      return cadenafinal2
     },
-    async buscarDetalles (reg) {
+    async buscarDetalles (reg, DECIMALES) {
       this.detallesDoc = []
       if (reg.cod) {
         const detalles = await axios.get(ENDPOINT_PATH_V2 + 'reporte/facturas/detalles/' + reg.cod)
-        let subtotaldetalle = 0
+        // let subtotaldetalle = 0
         for (const i in detalles.data.data) {
           const dato = detalles.data.data[i]
           const obj = {}
@@ -436,20 +477,20 @@ export default {
           obj.descripcion = dato.descripcion
           obj.comentario = dato.comentario
           obj.cantidad = dato.cantidad.toFixed(2)
-          obj.precio = reg.tipomoneda === '1' ? dato.precio.toFixed(2) : (dato.precio / reg.tasacambio).toFixed(2)
+          obj.precio = reg.tipomoneda === '1' ? dato.precio.toFixed(2) : (dato.precio / reg.tasacambio).toFixed(4)
           obj.tasa = dato.tasa.toFixed(2)
           obj.exento = dato.exento
           const descuento = (dato.precio * dato.cantidad) - dato.monto
-          obj.descuento = Math.abs(descuento).toFixed(2)
-          obj.descuento = reg.tipomoneda === '1' ? Math.abs(descuento).toFixed(2) : (Math.abs(descuento) / reg.tasacambio).toFixed(2)
-          obj.monto = reg.tipomoneda === '1' ? dato.monto.toFixed(2) : (dato.monto / reg.tasacambio).toFixed(2)
+          obj.descuento = Math.abs(descuento).toFixed(DECIMALES)
+          obj.descuento = reg.tipomoneda === '1' ? Math.abs(descuento).toFixed(2) : (Math.abs(descuento) / reg.tasacambio).toFixed(4)
+          obj.monto = reg.tipomoneda === '1' ? dato.monto.toFixed(2) : (dato.monto / reg.tasacambio).toFixed(4)
           obj.intipounidad = dato.intipounidad
           let tdunidaditem = ''
           if (obj.intipounidad > 0) {
             tdunidaditem = obj.intipounidad === '1' ? 'Unidad(es)' : obj.intipounidad === '2' ? 'Kilo(s)' : obj.intipounidad === '3' ? 'Litro(s)' : obj.intipounidad === '4' ? 'Metro(s)' : 'Caja(s)'
           }
           obj.tdunidaditem = tdunidaditem
-          subtotaldetalle += Number(obj.monto)
+          // subtotaldetalle += Number(obj.monto)
           this.detallesDoc.push(obj)
         }
         // console.log(this.detallesDoc)
@@ -469,7 +510,7 @@ export default {
             this.numeroafectado = datosafectado[0].numerointerno.length > 0 ? datosafectado[0].numerointerno : reg.relacionado
           })
         }
-        reg.subtotal = detalles.data.data.length > 0 ? subtotaldetalle : reg.subtotal
+        // reg.subtotal = detalles.data.data.length > 0 ? subtotaldetalle : reg.subtotal
       }
       reg.fecha = moment(reg.fecha, 'DD/MM/YYYY hh:mm:ss a')
       this.registro.logo = reg.logo
@@ -514,8 +555,8 @@ export default {
       reg.total = reg.subtotal + this.registro.totalimpuestodetail
       // this.registro.totalimpuestodetail = this.completarDecimales(this.registro.totalimpuestodetail)
       // this.registro.subtotaldetail = this.completarDecimales(reg.subtotal)
-      this.registro.totaldetail = this.completarDecimales(reg.total)
-      this.registro.totaldetaildiv = this.completarDecimales(reg.total / reg.tasacambio)
+      this.registro.totaldetail = this.completarDecimales(reg.total, 2)
+      this.registro.totaldetaildiv = this.completarDecimales(reg.total / reg.tasacambio, 4)
       this.haydata = true
     },
     async getIdClienteEmisor (rif) {

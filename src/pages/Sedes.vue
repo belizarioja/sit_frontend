@@ -373,6 +373,11 @@
                 <q-radio v-model="shapepublicidad" val="0" label="No" />
                 <q-radio v-model="shapepublicidad" val="1" label="Si" />
               </div>
+              <div class="col-6 q-pa-sm" style="text-align: center;margin-top: 20px;">
+                <div>Botón de pago</div>
+                <q-radio v-model="shapebotondepago" val="0" label="No" />
+                <q-radio v-model="shapebotondepago" val="1" label="Si" />
+              </div>
             </div>
             <div style="display: flex; justify-content: space-evenly;">
               <q-btn color="negative" label="Cancel" v-close-popup />
@@ -481,6 +486,12 @@
               <q-radio v-model="plantilla" checked-icon="task_alt" unchecked-icon="panorama_fish_eye" val="3" label="3"  :disable="co_rol !== '1'" />
             </div>
           </div>
+          <div style="margin: 10px;">
+            <img src="factura4.png" alt="" style="width: 200px;">
+            <div class="text-center">
+              <q-radio v-model="plantilla" checked-icon="task_alt" unchecked-icon="panorama_fish_eye" val="4" label="4"  :disable="co_rol !== '1'" />
+            </div>
+          </div>
         </q-card-section>
         <q-card-section class="q-pt-none">
            <div style="display: flex; justify-content: space-evenly;">
@@ -531,6 +542,7 @@ export default {
       sitioweb: ref(''),
       shape: ref('0'),
       shapesms: ref('0'),
+      shapebotondepago: ref('0'),
       shapeinterno: ref('0'),
       shapepublicidad: ref('0'),
       filter: ref(''),
@@ -570,6 +582,7 @@ export default {
         { name: 'numeracionactual', label: 'Numeración actual', field: 'numeracionactual', sortable: true },
         { name: 'enviocorreo', label: 'Envio correo', field: 'enviocorreo', sortable: true },
         { name: 'enviosms', label: 'Envio SMS', field: 'enviosms', sortable: true },
+        { name: 'botondepago', label: 'Botón de pago', field: 'botondepago', sortable: true },
         { name: 'validarinterno', label: 'Validar interno', field: 'validarinterno', sortable: true },
         { name: 'publicidad', label: 'Publicidad', field: 'publicidad', sortable: true },
         { name: 'bannerpublicidad', label: 'Diseño publicidad', field: 'bannerpublicidad', sortable: true },
@@ -693,6 +706,7 @@ export default {
       this.sitioweb = row.sitioweb
       this.shape = row.enviocorreo === 'Si' ? '1' : '0'
       this.shapesms = row.enviosms === 'Si' ? '1' : '0'
+      this.shapebotondepago = row.shapebotondepago === 'Si' ? '1' : '0'
       this.shapepublicidad = row.publicidad === 'Si' ? '1' : '0'
       this.shapeinterno = row.validarinterno === 'Sin validar' ? '0' : '2'
       this.modalactualizar = true
@@ -802,6 +816,7 @@ export default {
         sitioweb: this.sitioweb,
         enviocorreo: this.shape,
         enviosms: this.shapesms,
+        botondepago: this.shapebotondepago,
         idcodigocomercial: Number(this.modelcodes.cod),
         validarinterno: this.shapeinterno,
         publicidad: this.shapepublicidad
@@ -862,6 +877,7 @@ export default {
           obj.estatus = datos[i].estatus === '1' ? 'Activo' : 'Inactivo'
           obj.enviocorreo = datos[i].enviocorreo === '1' ? 'Si' : 'No'
           obj.enviosms = datos[i].enviosms === '1' ? 'Si' : 'No'
+          obj.botondepago = datos[i].botondepago === '1' ? 'Si' : 'No'
           obj.publicidad = datos[i].publicidad === '1' ? 'Si' : 'No'
           obj.validarinterno = datos[i].validarinterno === '1' ? 'Sin repetidos' : datos[i].validarinterno === '2' ? 'Validar consecutivo' : 'Sin validar'
           obj.asignados = datos[i].asignados || ''
