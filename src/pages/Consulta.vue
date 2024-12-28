@@ -300,32 +300,44 @@
                 </tr>
                 <tr>
                   <td style="height: 20px; font-size: 12px;">
-                    {{filtroDesde}}{{filtroHasta}}{{filtroEmisor}}
-                    {{filtroTipo}}
+                    {{'Desde: ' + dateFrom}} {{'. Hasta: ' + dateTo}} {{'. Emisor: ' + clienteEmisorfilter}}
                   </td>
                   <td style="text-align: right;">Hora reporte: {{hourHoy}}</td>
                 </tr>
                 <tr>
-                  <td colspan="2" style="height: 20px; font-size: 12px;">
-                    {{filtroImpuesto}}{{filtroCliente}}{{filtroNumero}}
+                  <td style="height: 20px; font-size: 12px;">
+                    {{'Tipo: ' + tipodocumentofilter}} {{'. Estatus: ' +  estatusfilter }}
                   </td>
+                  <td style="text-align: right;"></td>
                 </tr>
               </tbody>
             </table>
             <table style="width: 99%;margin: 5px;border: 1px solid #666666;border-collapse: collapse;">
               <thead>
-                <tr>
-                  <template v-for="col in columnsPrintf"  :key="col.name">
+                <tr style="font-size: 12px;">
+                    <td style="border: 1px solid #666666;border-collapse: collapse;padding: 0 0 0 5px;">Tipo Documento</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;padding: 0 0 0 5px;">N° Documento</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;padding: 0 0 0 5px;">Fecha</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;padding: 0 0 0 5px;">Cliente</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;">Exento</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;">BI IVA 16%</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;">IVA 16%</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;">BI IVA 8%</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;">IVA 8%</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;">BI IGTF 3%</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;">IGTF 3%</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;">Estatus</td>
+                  <!-- <template v-for="col in columnsPrintf"  :key="col.name">
                     <td
                       style="border: 1px solid #666666;border-collapse: collapse;text-align: center;font-weight: bolder;"
                       :style="col.name === 'baser' || col.name === 'baseg' || col.name === 'baseigtf' ? 'width: 95px;' : 'width: auto;'"
                     >{{col.label}}</td>
-                  </template>
+                  </template> -->
                 </tr>
               </thead>
               <tbody>
                 <template v-for="row in rows" :key="row.name">
-                  <tr>
+                  <tr style="font-size: 12px;">
                     <td style="border: 1px solid #666666;border-collapse: collapse;padding: 0 0 0 5px;">{{row.tipodocumento}}</td>
                     <td style="border: 1px solid #666666;border-collapse: collapse;padding: 0 0 0 5px;">{{row.numerodocumento}}</td>
                     <td style="border: 1px solid #666666;border-collapse: collapse;padding: 0 0 0 5px;">{{row.fecha}}</td>
@@ -337,9 +349,10 @@
                     <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;">{{row.impuestor}}</td>
                     <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;">{{row.baseigtf}}</td>
                     <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;">{{row.impuestoigtf}}</td>
+                    <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;">{{ row.estatus === '1' ? 'Procesado' : 'Anulado'}}</td>
                   </tr>
                 </template>
-                <tr>
+                <tr style="font-size: 12px;">
                   <td colspan="5" style="border: 1px solid #666666;border-collapse: collapse;padding: 0 0 0 5px;font-weight: bolder;"> Totales</td>
                   <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;font-weight: bolder;">{{totalbaseg}}</td>
                   <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;font-weight: bolder;">{{totalimpuestog}}</td>
@@ -347,6 +360,7 @@
                   <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;font-weight: bolder;">{{totalimpuestor}}</td>
                   <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;font-weight: bolder;">{{totalbaseigtf}}</td>
                   <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;font-weight: bolder;">{{totalimpuestoigtf}}</td>
+                  <td style="border: 1px solid #666666;border-collapse: collapse;text-align: right;padding: 0 5px 0 0;font-weight: bolder;"></td>
                 </tr>
               </tbody>
             </table>
@@ -678,6 +692,19 @@
         </div>
       </q-scroll-area>
     </q-drawer>
+    <div v-if="loading"  style="position: absolute; width: 100%; height: 90vh; align-items: center; justify-content: center; display: flex; top: 60px; background: rgb(175 136 61 / 21%); z-index: 9999;">
+      <!-- <q-spinner
+        color="primary"
+        size="5em"
+      /><br>
+      <div>Cargando! Por favor espere...</div> -->
+      <q-inner-loading
+        :showing="loading"
+        label="Cargando... Por favor espere!"
+        label-class="text-primary"
+        label-style="font-size: 1.8em"
+      />
+    </div>
   </div>
 </template>
 
@@ -761,8 +788,9 @@ export default {
       tipodocumento: ref(undefined),
       colspan: ref(''),
       dateHoy: moment().format('DD/MM/YYYY'),
+      hourHoy: moment().format('HH:mm a'),
       tx_nombre: sessionStorage.getItem('tx_nombre'),
-      loading: ref(false),
+      loading: ref(true),
       numerodocumento: ref(''),
       titulotabla: ref('Documentos'),
       disable: ref(true),
@@ -1849,16 +1877,26 @@ export default {
             obj.tasaigtf = datos[i].tasaigtf ? datos[i].tasaigtf + '%' : '0%'
 
             obj.exento = datos[i].exento || 0
+            obj.exento = datos[i].estatus === '2' || datos[i].idtipodocumento === '3' ? obj.exento * (-1) : obj.exento
             obj.exentoN = datos[i].exento || 0
             obj.baseg = datos[i].baseg || 0
+            obj.baseg = datos[i].estatus === '2' || datos[i].idtipodocumento === '3' ? obj.baseg * (-1) : obj.baseg
             obj.basegN = datos[i].baseg || 0
+            obj.basegN = datos[i].estatus === '2' || datos[i].idtipodocumento === '3' ? obj.basegN * (-1) : obj.basegN
             obj.impuestogN = datos[i].impuestog || 0
+            obj.impuestogN = datos[i].estatus === '2' || datos[i].idtipodocumento === '3' ? obj.impuestogN * (-1) : obj.impuestogN
             obj.baser = datos[i].baser || 0
+            obj.baser = datos[i].estatus === '2' || datos[i].idtipodocumento === '3' ? obj.baser * (-1) : obj.baser
             obj.baserN = datos[i].baser || 0
+            obj.baserN = datos[i].estatus === '2' || datos[i].idtipodocumento === '3' ? obj.baserN * (-1) : obj.baserN
             obj.impuestorN = datos[i].impuestor || 0
+            obj.impuestorN = datos[i].estatus === '2' || datos[i].idtipodocumento === '3' ? obj.impuestorN * (-1) : obj.impuestorN
             obj.baseigtf = datos[i].baseigtf || 0
+            obj.baseigtf = datos[i].estatus === '2' || datos[i].idtipodocumento === '3' ? obj.baseigtf * (-1) : obj.baseigtf
             obj.baseigtfN = datos[i].baseigtf || 0
+            obj.baseigtfN = datos[i].estatus === '2' || datos[i].idtipodocumento === '3' ? obj.baseigtfN * (-1) : obj.baseigtfN
             obj.impuestoigtfN = datos[i].impuestoigtf || 0
+            obj.impuestoigtfN = datos[i].estatus === '2' || datos[i].idtipodocumento === '3' ? obj.impuestoigtfN * (-1) : obj.impuestoigtfN
 
             this.totalbaseg += Number(obj.basegN)
             this.totalbaser += Number(obj.baserN)
